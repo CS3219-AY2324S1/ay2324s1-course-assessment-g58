@@ -5,13 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PeerPrep</title>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" type="text/css" href="./css/styles.css">
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
   </head>
   <body>
     <main>
-        <h1>Welcome to PeerPrep</h1>  
+      <h1>Welcome to PeerPrep</h1>  
+
+      <form id="questionForm">          
+        <label for="questionTitle">Enter Question Title:</label>
+        <input type="text" id="questionTitle" name="questionTitle">
+        <br><br>
+    
+        <label for="questionDescription">Enter Question Description:</label>
+        <input type="text" id="questionDescription" name="questionDescription">
+        <br><br>
+    
+        <label for="questionCategory">Enter Question Category:</label>
+        <input type="text" id="questionCategory" name="questionCategory">
+        <br><br>
+    
+        <label for="questionComplexity">Enter Question Complexity:</label>
+        <input type="text" id="questionComplexity" name="questionComplexity">
+        <br><br>
+    
+        <button type="submit">Add</button>
+        <button id="clearAllButton" type="button">Clear All</button>
+      </form>
+
+      <table id="questionTable">
+          <thead>
+              <tr>
+                  <th>Question Id</th>
+                  <th>Question Title</th>
+                  <th>Question Description</th>
+                  <th>Question Category</th>
+                  <th>Question Complexity</th>
+                  <th>Delete</th>
+              </tr>
+          </thead>
+          <tbody id="questionTableBody">
+          </tbody>
+      </table>
     </main>
-	<script src="index.js"></script>
+  <script src="./src/index.js"></script>
   </body>
 </html>
