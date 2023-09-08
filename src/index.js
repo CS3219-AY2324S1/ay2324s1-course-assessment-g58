@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var questionCategory = document.getElementById('questionCategory').value;
 
         // Set question id
-        const questionId = questions.length + 1;
+        const questionId = getNextId();
 
         // Get question difficulty
         var questionDifficulty = document.getElementById('questionComplexity').value;
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Clear the table (assuming you have a function to do this)
         populateTable();
-
+        resetIds();
         alert('All questions cleared successfully');
     });
 
@@ -100,8 +100,36 @@ document.addEventListener('DOMContentLoaded', function() {
             // Alert the user
             alert('Question deleted successfully');
         }
+        if (event.target.classList.contains('details')) {
+            // Get all questions from local storage
+            var questions = JSON.parse(localStorage.getItem(ALL_QUESTIONS));
+    
+            // Get the id of the question whose details are to be displayed
+            const idToDisplay = parseInt(event.target.getAttribute('data-id'), 10);
+    
+            // Find the question from the array
+            const questionToDisplay = questions.find(question => question.id === idToDisplay);
+    
+            // Display the details
+            displayDetails(questionToDisplay);
+        }
     });
 
+    // Get the modal and the close button
+    var modal = document.getElementById('detailsModal');
+    var closeBtn = document.querySelector('.close-btn');
+
+    // When the user clicks on the close button, close the modal
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
 });
   
 // Function to populate the question table
@@ -123,8 +151,9 @@ function populateTable() {
                 <td>${question.id}</td>
                 <td>${question.title}</td>
                 <td>${question.difficulty}</td>
-                <td>${question.category}</td>
-                <td>${question.description}</td>
+                <td class="truncate">${question.category}</td>
+                <td class="truncate">${question.description}</td>
+                <td><button class="btn btn-info btn-sm details" data-id="${question.id}">Details</button></td>
                 <td><a href="#" class="btn btn-danger btn-sm delete" data-id="${question.id}">X</a></td>
             `;
             tableBody.appendChild(row);
@@ -132,6 +161,31 @@ function populateTable() {
     }
 }
 
+function displayDetails(question) {
+    // Replace newline characters with <br> for HTML formatting
+    const formattedDescription = question.description.replace(/\n/g, '<br>');
+
+    document.getElementById('modalDetails').innerHTML = `
+        <strong>Title:</strong> ${question.title}<br>
+        <strong>Description:</strong> ${formattedDescription}<br>
+        <strong>Category:</strong> ${question.category}<br>
+        <strong>Complexity:</strong> ${question.difficulty}
+    `;
+    
+    // Display the modal
+    document.getElementById('detailsModal').style.display = "block";
+}
+
+function getNextId() {
+    var lastId = localStorage.getItem('LAST_ID') || 0;
+    var newId = parseInt(lastId) + 1;
+    localStorage.setItem('LAST_ID', newId);
+    return newId;
+}
+
+function resetIds() {
+    localStorage.setItem('LAST_ID', 0);
+}
 // Populate the table initially
 populateTable();
 
