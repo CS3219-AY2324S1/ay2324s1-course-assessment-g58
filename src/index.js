@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get question title
         var questionTitle = document.getElementById('questionTitle').value;
         
+        // Check that question title is not a duplicate, even if case is different
+        const duplicateQuestion = questions.find(q => q.title.toLowerCase() === questionTitle.toLowerCase());
+        if (duplicateQuestion !== undefined) {
+            alert('Question title already exists');
+            return;
+        }
+
         // Get question category
         var questionCategory = document.getElementById('questionCategory').value;
 
