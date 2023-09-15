@@ -11,7 +11,7 @@ function Home() {
         if (!user) {
           router.push('/login');
         }
-    }, []);
+    }, [user]);
 
     if (!user) {
         return (
