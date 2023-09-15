@@ -6,6 +6,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+If you are using VSCode, download the tailwind css extension for code suggestions!
+
 First, run the development server:
 
 ```bash
