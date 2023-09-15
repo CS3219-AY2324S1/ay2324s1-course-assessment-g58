@@ -6,6 +6,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+**Create a new `.env` folder with the same contents as .env.example in the frontend directory**
+
 If you are using VSCode, download the tailwind css extension for code suggestions!
 
 First, run the development server:
