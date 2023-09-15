@@ -1,13 +1,16 @@
 import '../styles/globals.css'; 
 import { AppProps } from 'next/app';
+import MainContext from '../contexts/MainContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div className="app-container p-4">
-      <main>
-        <Component {...pageProps} />
-      </main>
-    </div>
+    <MainContext>
+      <div className="app-container p-4">
+        <main>
+          <Component {...pageProps} />
+        </main>
+      </div>
+    </MainContext>
   );
 }
 
