@@ -11,8 +11,13 @@ const styles = {
 };
 
 function QuestionForm(props: QuestionFormProps) {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        // TODO: Handle form submission logic 
+    };
+
     return (
-        <form id="questionForm">          
+        <form id="questionForm" onSubmit={handleSubmit}>          
             <label htmlFor="questionTitle">Enter Question Title:</label>
             <input type="text" id="questionTitle" name="questionTitle" />
             <br /><br />

@@ -1,3 +1,7 @@
+# References:
+1. Login box visuals: https://codepen.io/amit0009/pen/ZEaygxa
+1. AuthContext: https://www.mikealche.com/software-development/how-to-implement-authentication-in-next-js-without-third-party-libraries
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
