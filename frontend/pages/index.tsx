@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
-import LandingPage from '../components/LandingPage/LandingPage';
+import QuestionPage from '../components/QuestionsPage/QuestionsPage';
+import { NextPage } from 'next';
 
-function Home() {
+const Home: NextPage = () => {
     const { user } = useAuth();
     const router = useRouter();
 
@@ -22,7 +23,7 @@ function Home() {
         )
     }
 
-    return <LandingPage />;
+    return <QuestionPage />;
 }
 
 export default Home;
