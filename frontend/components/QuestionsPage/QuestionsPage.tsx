@@ -4,7 +4,7 @@ import QuestionTable from './QuestionTable';
 import DescriptionModal from './DescriptionModal';
 import UserDemo from './UserDemo';
 
-function LandingPage() {
+const QuestionPage = () => {
     return (
         <main>
             <Header />
@@ -16,4 +16,4 @@ function LandingPage() {
     );
   }
   
-  export default LandingPage;
+  export default QuestionPage;
