@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { fetchPost, fetchGet } from "@/utils/apiHelpers";
+
+type User = {
+    username: string,
+    email: string
+}
 
 const SignupBox: React.FC = () => {
     const router = useRouter();
 
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [ email, setEmail ] = useState("");
+    const [ username, setUsername ] = useState("");
 
-    const handleSignupClick = async () => {
-        // Your signup logic here
+    const handleSignupClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
+        console.log("sending username, email, password: {} {} {} ", username, email, password);
+        await fetchPost(
+            "/api/users", {
+                username: username,
+                email: email
+            }
+        ).then(res => {
+            alert("Success! Added: " + res.data)
+            router.push('/login?mode=login');
+        }).catch(err => {
+            alert(err)
+        });
     };
 
     return (
@@ -20,10 +38,10 @@ const SignupBox: React.FC = () => {
                         <h1 className="text-2xl mb-5">Signup</h1>
                         <input
                             type="text"
-                            placeholder="Full Name"
+                            placeholder="Username"
                             className="w-full my-1 h-11 border border-dddfe2 text-1d2129 px-2 outline-none"
-                            value={fullName}
-                            onChange={e => setFullName(e.target.value)}
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
                         />
                         <input
                             type="text"
