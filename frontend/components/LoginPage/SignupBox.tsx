@@ -7,7 +7,7 @@ type User = {
     email: string
 }
 
-const SignupBox: React.FC = () => {
+const SignupBox = () => {
     const router = useRouter();
 
     const [password, setPassword] = useState('');

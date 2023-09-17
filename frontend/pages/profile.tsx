@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
+import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
-import QuestionPage from '../components/QuestionsPage/QuestionsPage';
-import { NextPage } from 'next';
+import ProfilePage from '@/components/ProfilePage/ProfilePage';
 
-const Home: NextPage = () => {
+const Profile: NextPage = () => {
     const { user } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
         if (!user) {
+            alert("login in first");
             router.push('/login');
         }
     }, [user]);
@@ -23,7 +24,9 @@ const Home: NextPage = () => {
         )
     }
 
-    return <QuestionPage />;
+    return (
+        <ProfilePage />
+    );
 }
 
-export default Home;
+export default Profile;
