@@ -10,7 +10,7 @@ const Home: NextPage = () => {
 
     useEffect(() => {
         if (!user) {
-          router.push('/login');
+            router.push('/login');
         }
     }, [user]);
 
