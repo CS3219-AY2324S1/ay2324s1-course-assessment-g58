@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 
-const LoginBox: React.FC = () => {
+const LoginBox = () => {
     const { login } = useAuth();
     const router = useRouter();
   

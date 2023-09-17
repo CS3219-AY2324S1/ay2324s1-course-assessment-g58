@@ -1,0 +1,1 @@
+/* Common naviagtion bar across whole app */
