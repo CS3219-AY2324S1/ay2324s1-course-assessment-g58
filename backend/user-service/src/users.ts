@@ -1,21 +1,24 @@
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
+import { generateToken, hashPassword, verifyUser } from "./auth/auth";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response) => {
+console.log("userRouter launched");
+
+router.get("/", async (req: Request, res: Response) => {
     const users = await prisma.user.findMany();
     res.json(users);
 });
 
-router.post('/', async (req: Request, res: Response) => {
-    const { username, email } = req.body
+router.post("/", async (req: Request, res: Response) => {
+    const { username, email, password } = req.body;
 
     const existingUser = await prisma.user.findUnique({
         where: {
-            email: email
-        }
+            email: email,
+        },
     });
 
     if (existingUser) {
@@ -27,10 +30,11 @@ router.post('/', async (req: Request, res: Response) => {
         data: {
             username: username,
             email: email,
-            proficiency: "Beginner"
-        }
+            password: await hashPassword(password),
+            proficiency: "Beginner",
+            role: "admin",
+        },
     });
-
 
     res.json(newUser);
 });
