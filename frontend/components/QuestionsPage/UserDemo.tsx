@@ -1,4 +1,4 @@
-import { fetchPost, fetchGet, fetchPut } from "@/utils/apiHelpers";
+import { fetchPost, fetchGet, fetchPut, fetchDelete } from "@/utils/apiHelpers";
 import { FormEvent, useState } from "react";
 
 type User = {
@@ -6,6 +6,8 @@ type User = {
     email: string
 }
 
+// TODO: Check for robustness, FE & BE
+// TODO: Add into profile pages
 const UserDemo = () => {
     const [ email, setEmail ] = useState("");
     const [ username, setUsername ] = useState("");
@@ -24,9 +26,12 @@ const UserDemo = () => {
                 email: email
             }
         ).then(res => {
-            alert("Success! Added: " + res.data)
-        }).catch(err => {
-            alert(err)
+            console.log(res)
+            if (res.status == 201) {
+                alert("Success! Added: " + res.data.email);
+            } else {
+                alert(res.message);
+            }
         });
     }
 
@@ -34,7 +39,7 @@ const UserDemo = () => {
         event.preventDefault(); 
         await fetchGet("/api/users").then(res => {
             console.log(res);
-            if (res.data) setUsers(res.data);
+            if (res.status == 200 && res.data) setUsers(res.data);
         });
     }
     
@@ -46,16 +51,34 @@ const UserDemo = () => {
                 email: email
             }
         ).then(res => {
-            alert("Success! Updated: " + res.data)
-        }).catch(err => {
-            alert(err)
+            if (res.status == 201) {
+                alert("Success! Updated: " + res.data.email);
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    const deleteUser = async (event: FormEvent) => {
+        event.preventDefault();
+        await fetchDelete(
+            "/api/users", {
+                email: email
+            }
+        ).then(res => {
+            console.log(res)
+            if (res.status == 200) {
+                alert("Success! Deleted: " + res.data.email);
+            } else {
+                alert(res.message);
+            }
         });
     }
 
     return (
         <div>
             <form id="questionForm">          
-                <label htmlFor="questionTitle">Enter User Email:</label>
+                <label htmlFor="questionTitle">Enter User Email, add and delete:</label>
                 <input 
                     type="text"
                     placeholder="Email"
@@ -95,6 +118,10 @@ const UserDemo = () => {
                 onClick={updateUser}
                 className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow ml-2"
             >Update User</button>
+            <button
+                onClick={deleteUser}
+                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow ml-2"
+            >Delete User</button>
             <table id="questionTable" className="border-collapse w-full border-[3px] border-black mt-2 mb-20">
                 <thead>
                     <tr>

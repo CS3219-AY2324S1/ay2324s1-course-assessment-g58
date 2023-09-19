@@ -19,8 +19,8 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-        console.error(`Email: ${email}is already being used`);
-        res.sendStatus(403);
+        res.status(403).json({ message: `Email: ${email} is already being used` });
+        return;
     }
 
     const newUser = await prisma.user.create({
