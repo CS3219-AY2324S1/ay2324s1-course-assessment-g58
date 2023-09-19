@@ -20,7 +20,7 @@ const UserDemo = () => {
         event.preventDefault(); 
         await fetchPost(
             "/api/users", {
-                username: updatedUsername,
+                username: username,
                 email: email
             }
         ).then(res => {
