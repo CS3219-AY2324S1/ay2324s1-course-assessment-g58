@@ -10,7 +10,7 @@ import { connectToDb } from './utils/connectToDb.utils';
 
 const app = express();
 
-mongoose.connect("mongodb+srv://Alexander:ED9uP9nIh39CGxCW@cluster0.iza9wik.mongodb.net/questionBank?retryWrites=true&w=majority")
+mongoose.connect(process.env.DB_CONN_STRING as string);
 
 const db = mongoose.connection
 
