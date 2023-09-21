@@ -8,7 +8,6 @@ dotenv.config()
 
 import { connectToDb } from './utils/connectToDb.utils';
 
-const port = config.get('port') as number; 
 const app = express();
 
 mongoose.connect("mongodb+srv://Alexander:ED9uP9nIh39CGxCW@cluster0.iza9wik.mongodb.net/questionBank?retryWrites=true&w=majority")
@@ -21,14 +20,4 @@ db.once('open', async () => {
 })
 
 app.use(json());
-app.listen(port, async () => {
-    try {
-      console.log(`App is running at http://localhost:${port}`);
-      // rdiConnection();
-      // vqttConnection();
-      const dbConn = await connectToDb('DB_CONN_STRING');    
-    } catch (err: any) {
-      console.error("Error loading the app due to: ", err.message);
-    }
-  });
 app.use(QuestionRouter);
