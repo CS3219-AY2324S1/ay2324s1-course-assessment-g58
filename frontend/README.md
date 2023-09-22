@@ -25,11 +25,11 @@ pnpm dev
 **How frontend is linked to backend**
 
 Flow is as such:
-1. **Comonent level**: In respective component, one or more text fields keep track of react state variable. On action button eg. `Submit` button, the button executes the `onClick` function. `onClick` function take the react state variable and calls `fetchPost`, `fetchGet` etc. from `frontend/utils/apiHelpers.ts`
+1. **Component level**: In respective component, one or more text fields keep track of react state variable. On action button eg. `Submit` button, the button executes the `onClick` function. `onClick` function take the react state variable and calls `fetchPost`, `fetchGet` etc. from `frontend/utils/apiHelpers.ts`
 2. **apiHelper level**: Depending on what you want the button from the component level to do, `fetchGet`, `fetchPost`, `fetchPut`, or `fetchDelete` is called. At this stage and level, `url` should be the frontend's `/api/<service>` page, and the `data` should be the respective data you want to pass on to the backend/ micro service. The fetch<ACTION> is passed on to the frontend routing
 3. **Frontend routing level**: The previous level would decide which frontend route to query. The frontend routes are in `./pages/api`. The frontend route page uses its handler to handle `POST`, `GET`, `PUT`, `DELETE` requests, and passes it back to the **apiHelper level**, but now it specifies the url of the respective backend service. This url is configured in `.env`
 4. **apiHelper level**: `fetchGet`, `fetchPost`, `fetchPut`, or `fetchDelete` is called, depending on the nature of the previous levels. A  `POST`, `GET`, `PUT` or `DELETE` request is then passed on to the backend service with the url specified in the previous level
-5. **Comonent level**: Handles response with the success alert or error with the error message alert
+5. **Component level**: Handles response with the success alert or error with the error message alert
 
 
 
