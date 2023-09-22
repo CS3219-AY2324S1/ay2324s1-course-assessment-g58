@@ -12,3 +12,7 @@
 1. Update `.env` file with the connect string
 
 1. Run `npm start`
+
+# Testing 
+- Executing tests- `npm run tests`
+- Creating tests- add to `src/tests`
