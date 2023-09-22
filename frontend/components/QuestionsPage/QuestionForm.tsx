@@ -39,6 +39,11 @@ function QuestionForm(props: QuestionFormProps) {
             console.log(res)
             if (res.status == 201) {
                 alert("Success! Added: " + res.data.title);
+                // Reset the state values to clear input fields
+                setQuestionTitle("");
+                setQuestionDescription("");
+                setQuestionCategory("");
+                setQuestionComplexity("");
             } else {
                 alert(res.message);
             }
