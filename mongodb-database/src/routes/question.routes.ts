@@ -9,7 +9,10 @@ router.post('/api/new-question', async (req, res) => {
     try {
         const questionData = req.body;
         console.log(questionData);
+        console.log('Creating new question...');
         const newQuestion = await createQuestion(questionData);
+        console.log('New question created!');
+        console.log(newQuestion);
         res.status(201).json(newQuestion);
     } catch (err: any) {
         res.status(500).json({ error: err.message });

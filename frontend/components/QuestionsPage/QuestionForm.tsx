@@ -1,47 +1,101 @@
-import React from 'react';
+import { fetchPost } from "@/utils/apiHelpers";
+import React, { FormEvent, useState } from 'react';
 
 interface QuestionFormProps {}
 
-const styles = {
-    textarea: {
-        whiteSpace: 'pre-wrap',
-        wordWrap: 'break-word', 
-        resize: 'vertical' as 'vertical',
-    }
-};
-
 function QuestionForm(props: QuestionFormProps) {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const [ questionTitle, setQuestionTitle ] = React.useState("");
+    const [ questionDescription, setQuestionDescription ] = React.useState("");
+    const [ questionCategory, setQuestionCategory ] = React.useState("");
+    const [ questionComplexity, setQuestionComplexity ] = React.useState("");
+
+    const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        // TODO: Handle form submission logic 
+        // Handle null values
+        if (questionTitle == "") {
+            alert("Please enter a question title.");
+            return;
+        }
+        if (questionDescription == "") {
+            alert("Please enter a question description.");
+            return;
+        }
+        if (questionCategory == "") {
+            alert("Please enter a question category.");
+            return;
+        }
+        if (questionComplexity == "") {
+            alert("Please enter a question complexity.");
+            return;
+        }
+        await fetchPost(
+            "/api/questions", {
+                title: questionTitle,
+                description: questionDescription,
+                category: questionCategory,
+                complexity: questionComplexity
+            }
+        ).then(res => {
+            console.log(res)
+            if (res.status == 201) {
+                alert("Success! Added: " + res.data.title);
+            } else {
+                alert(res.message);
+            }
+        });
     };
 
     return (
         <form id="questionForm" onSubmit={handleSubmit}>          
             <label htmlFor="questionTitle">Enter Question Title:</label>
-            <input type="text" id="questionTitle" name="questionTitle" />
+            <input 
+                type="text"
+                id="questionTitle"
+                name="questionTitle" 
+                placeholder="Question Title"
+                value={questionTitle}
+                onChange={e => {setQuestionTitle(e.target.value)}}
+            />
             <br /><br />
     
             <label htmlFor="questionDescription" className="block">Enter Question Description:</label>
             <textarea
                 id="questionDescription"
                 name="questionDescription"
+                placeholder='Question Description...'
+                value={questionDescription}
+                onChange={e => {setQuestionDescription(e.target.value)}}
                 rows={10}
                 cols={50}
-                style={styles.textarea as React.CSSProperties}>
+                className="whitespace-pre-wrap break-words resize-y">
             </textarea>
             <br /><br />
     
             <label htmlFor="questionCategory">Enter Question Category:</label>
-            <input type="text" id="questionCategory" name="questionCategory" />
+            <input 
+                type="text"
+                id="questionCategory"
+                name="questionCategory"
+                placeholder='Question Category'
+                value={questionCategory}
+                onChange={e => {setQuestionCategory(e.target.value)}}
+            />
             <br /><br />
     
             <label htmlFor="questionComplexity">Enter Question Complexity:</label>
-            <input type="text" id="questionComplexity" name="questionComplexity" />
+            <input 
+                type="text"
+                id="questionComplexity"
+                name="questionComplexity"
+                placeholder='Question Complexity'
+                value={questionComplexity}
+                onChange={e => {setQuestionComplexity(e.target.value)}}
+            />
             <br /><br />
     
             <button
-                type="submit"
+                type='submit'
+                onClick={handleSubmit}
                 className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
             >Add</button>
             <button 

@@ -20,23 +20,16 @@ yarn dev
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Developer guide
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**How frontend is linked to backend**
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Flow is as such:
+1. **Comonent level**: In respective component, one or more text fields keep track of react state variable. On action button eg. `Submit` button, the button executes the `onClick` function. `onClick` function take the react state variable and calls `fetchPost`, `fetchGet` etc. from `frontend/utils/apiHelpers.ts`
+2. **apiHelper level**: Depending on what you want the button from the component level to do, `fetchGet`, `fetchPost`, `fetchPut`, or `fetchDelete` is called. At this stage and level, `url` should be the frontend's `/api/<service>` page, and the `data` should be the respective data you want to pass on to the backend/ micro service. The fetch<ACTION> is passed on to the frontend routing
+3. **Frontend routing level**: The previous level would decide which frontend route to query. The frontend routes are in `./pages/api`. The frontend route page uses its handler to handle `POST`, `GET`, `PUT`, `DELETE` requests, and passes it back to the **apiHelper level**, but now it specifies the url of the respective backend service. This url is configured in `.env`
+4. **apiHelper level**: `fetchGet`, `fetchPost`, `fetchPut`, or `fetchDelete` is called, depending on the nature of the previous levels. A  `POST`, `GET`, `PUT` or `DELETE` request is then passed on to the backend service with the url specified in the previous level
+5. **Comonent level**: Handles response with the success alert or error with the error message alert
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
