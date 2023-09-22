@@ -19,15 +19,14 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-        console.error(`Email: ${email}is already being used`);
-        res.sendStatus(403);
+        res.status(403).json({ message: `Email: ${email} is already being used` });
+        return;
     }
 
     const newUser = await prisma.user.create({
         data: {
             username: username,
-            email: email,
-            proficiency: "Beginner"
+            email: email
         }
     });
 
@@ -63,6 +62,33 @@ router.put('/', async (req: Request, res: Response) => {
     });
 
     res.json(updateUser);
+});
+
+router.delete('/',  async (req: Request, res: Response) => {
+    const { email } = req.body;
+    if (!email) {
+        res.status(400).json({ message: 'Email is required for deletion.' });
+        return;
+    }
+
+    const existingUser = await prisma.user.findUnique({
+        where: {
+            email: email,
+        }
+    });
+
+    if (!existingUser) {
+        res.status(404).json({ message: `User with email: ${email} not found.` });
+        return;
+    }
+
+    const deletedUser = await prisma.user.delete({
+        where: {
+            email: email,
+        },
+    });
+
+    res.json(deletedUser);
 });
 
 export default router;
