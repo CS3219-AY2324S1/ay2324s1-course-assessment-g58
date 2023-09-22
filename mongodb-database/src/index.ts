@@ -1,23 +1,43 @@
-import config from 'config';
-import express, { Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { json } from 'body-parser';
+import dotenv from 'dotenv';
+
+// Internal modules
 import { QuestionRouter } from './routes/question.routes';
-import dotenv from 'dotenv'
-dotenv.config()
 
-import { connectToDb } from './utils/connectToDb.utils';
+// Load environment variables
+dotenv.config();
 
-const app = express();
+// Create Express app
+const app: Application = express();
 
-mongoose.connect("mongodb+srv://Alexander:ED9uP9nIh39CGxCW@cluster0.iza9wik.mongodb.net/questionBank?retryWrites=true&w=majority")
+// Get port number from .env
+const PORT = parseInt(process.env.NEXT_PUBLIC_PORT_NUMBER as string);
 
-const db = mongoose.connection
-
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', async () => {
-    console.log('Connected to DB ')
-})
-
+// Middleware
 app.use(json());
+
+// Routes
 app.use(QuestionRouter);
+
+// Database connection
+const db = mongoose.connection;
+mongoose.connect(process.env.DB_CONN_STRING as string);
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+    console.log('Connected to DB');
+});
+
+// Basic error handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
