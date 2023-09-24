@@ -1,23 +1,16 @@
 import { fetchPost, fetchGet } from "@/utils/apiHelpers";
 import React, { FormEvent, useState } from 'react';
+import Question from '@/types/Question';
 
-interface QuestionFormProps {}
+interface QuestionFormProps {
+    addQuestion: (newQuestion: Question) => Promise<number>;
+}
 
-function QuestionForm(props: QuestionFormProps) {
+function QuestionForm({ addQuestion }: QuestionFormProps) {
     const [ questionTitle, setQuestionTitle ] = React.useState("");
     const [ questionDescription, setQuestionDescription ] = React.useState("");
     const [ questionCategory, setQuestionCategory ] = React.useState("");
     const [ questionComplexity, setQuestionComplexity ] = React.useState("");
-
-    const refreshQuestionTable = async () => {
-        await fetchGet("/api/questions").then(res => {
-            if (res.status == 200 && res.data) {
-                console.log("2.", res.data)
-            } else {
-                alert("Something went wrong: " + res.message);
-            }
-        });
-    };
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -38,26 +31,22 @@ function QuestionForm(props: QuestionFormProps) {
             alert("Please enter a question complexity.");
             return;
         }
-        await fetchPost(
-            "/api/questions", {
-                title: questionTitle,
-                description: questionDescription,
-                category: questionCategory,
-                complexity: questionComplexity
-            }
-        ).then(res => {
-            if (res.status == 201) {
-                alert("Success! Added: " + res.data.title);
-                // Reset the state values to clear input fields
-                setQuestionTitle("");
-                setQuestionDescription("");
-                setQuestionCategory("");
-                setQuestionComplexity("");
-            } else {
-                alert(res.message);
-            }
-        });
-        await refreshQuestionTable();
+        const newQuestion: Question = {
+            title: questionTitle,
+            description: questionDescription,
+            difficulty: questionComplexity,
+            category: questionCategory            
+        };
+        const status = await addQuestion(newQuestion);
+    
+        if (status === 201) {
+            // Reset the state values to clear input fields
+            setQuestionTitle("");
+            setQuestionDescription("");
+            setQuestionCategory("");
+            setQuestionComplexity("");
+        };
+            
     };
 
     return (

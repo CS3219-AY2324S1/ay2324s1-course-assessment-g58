@@ -23,6 +23,8 @@ router.get('/api/new-question', async (req, res) => {
     try {
         console.log('Getting all questions...');
         const questions = await getQuestions();
+        console.log('Got all questions!');
+        console.log(questions);
         res.status(200).json(questions);
     } catch (err: any) {
         res.status(500).json({ error: err.message });

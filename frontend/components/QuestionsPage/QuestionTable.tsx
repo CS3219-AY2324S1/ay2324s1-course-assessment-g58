@@ -1,6 +1,9 @@
 import React from 'react';
+import Question from '@/types/Question';
 
-interface QuestionTableProps {}
+interface QuestionTableProps {
+    questions: Question[];
+}
 
 import { CSSProperties } from 'react';
 
@@ -31,12 +34,12 @@ const styles: Record<string, CSSProperties> = {
     }
 };
 
-function QuestionTable(props: QuestionTableProps) {
+function QuestionTable({ questions }: QuestionTableProps) {
+    console.log("refreshing question table", questions);
     return (
         <table id="questionTable" style={styles.table}>
             <thead>
                 <tr>
-                    <th style={styles.th}>Question Id</th>
                     <th style={styles.th}>Question Title</th>
                     <th style={styles.th}>Question Complexity</th>
                     <th style={styles.th}>Question Category</th>
@@ -45,7 +48,18 @@ function QuestionTable(props: QuestionTableProps) {
                     <th style={styles.th}>Delete</th>
                 </tr>
             </thead>
-            <tbody id="questionTableBody"></tbody>
+            <tbody id="questionTableBody">
+                {Array.isArray(questions) && questions.map(question => (
+                    <tr key={question.title}>
+                        <td>{question.title}</td>
+                        <td>{question.difficulty}</td>
+                        <td>{question.category}</td>
+                        <td>{question.description}</td>
+                        <td>Details Button</td> {/* You can replace this with an actual button or link */}
+                        <td>Delete Button</td> {/* You can replace this with an actual button or link */}
+                    </tr>
+                ))}
+            </tbody>
         </table>
     );
 }

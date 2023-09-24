@@ -3,13 +3,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler (req: NextApiRequest, res: NextApiResponse<ResponseData>) {
     if (req.method === "POST") {
-        const { title, description, complexity, category } = req.body;
+        const { title, description, difficulty, category } = req.body;
         try {
             const response = await fetchPost(
                 process.env.NEXT_PUBLIC_QUESTION_SERVER_URL as string, {
                     title: title,
                     description: description,
-                    difficulty: complexity,
+                    difficulty: difficulty,
                     category: category
                 }
             );
