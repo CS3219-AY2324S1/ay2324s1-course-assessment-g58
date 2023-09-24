@@ -3,7 +3,7 @@ import QuestionForm from './QuestionForm';
 import QuestionTable from './QuestionTable';
 import DescriptionModal from './DescriptionModal';
 import UserDemo from './UserDemo';
-import { fetchPost, fetchGet } from "@/utils/apiHelpers";
+import { fetchPost, fetchGet, fetchDelete } from "@/utils/apiHelpers";
 import { useState, useEffect } from 'react';
 import Question from '@/types/Question';
 
@@ -25,6 +25,19 @@ const QuestionPage = () => {
         return response.status; 
     };
 
+    const deleteQuestion = async (question: Question) => {
+        console.log("delete", question);
+        // Add the new question to the backend and then update the state
+        const response = await fetchDelete("/api/questions", question);
+        if (response.status == 200) {
+            alert("Success! Deleted: " + response.data.title);
+            setRefresh(prev => !prev);
+        } else {
+            alert(response.message);
+        }
+        return response.status; 
+    };
+
     useEffect(() => {
         const fetchQuestions = async () => {
             const fetchedQuestions = await fetchGet("/api/questions");
@@ -38,7 +51,7 @@ const QuestionPage = () => {
         <main>
             <Header />
             <QuestionForm addQuestion={addQuestion} />
-            <QuestionTable questions={questions} />
+            <QuestionTable questions={questions} deleteQuestion={deleteQuestion} />
             <DescriptionModal />
             <UserDemo/>
         </main>

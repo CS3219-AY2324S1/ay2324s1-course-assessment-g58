@@ -23,8 +23,7 @@ router.get('/api/new-question', async (req, res) => {
     try {
         console.log('Getting all questions...');
         const questions = await getQuestions();
-        console.log('Got all questions!');
-        console.log(questions);
+        console.log('Got {%i} questions!', questions.length);
         res.status(200).json(questions);
     } catch (err: any) {
         res.status(500).json({ error: err.message });
@@ -33,6 +32,7 @@ router.get('/api/new-question', async (req, res) => {
 
 router.delete('/api/new-question', async (req, res) => {
     try {
+        // deletes based on title as frontend doesn't have id
         const title = req.body.title;
         console.log('Deleting question with title:', title);
         const deletedQuestion = await deleteQuestionByTitle(title);
@@ -44,6 +44,7 @@ router.delete('/api/new-question', async (req, res) => {
             res.status(404).json({ error: 'Question not found' });
         }
     } catch (err: any) {
+        console.log(err.message);
         res.status(500).json({ error: err.message });
     }
 });

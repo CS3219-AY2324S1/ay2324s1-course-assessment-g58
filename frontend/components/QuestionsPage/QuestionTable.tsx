@@ -3,9 +3,18 @@ import Question from '@/types/Question';
 
 interface QuestionTableProps {
     questions: Question[];
+    deleteQuestion: (question: Question) => Promise<number>;
 }
 
-function QuestionTable({ questions }: QuestionTableProps) {
+function QuestionTable({ questions, deleteQuestion }: QuestionTableProps) {
+    const handleDelete = async (question: Question) => {
+        try {
+            const status = await deleteQuestion(question);
+        } catch (error) {
+            console.error("Error deleting question:", error);
+        }
+    };
+    
     console.log("refreshing question table", questions);
     return (
         <table id="questionTable" 
@@ -50,10 +59,23 @@ function QuestionTable({ questions }: QuestionTableProps) {
                         >{question.description}</td>
                         <td
                             className='text-left p-3 border border-black truncate w-36'
-                        >Details Button</td> {/* You can replace this with an actual button or link */}
+                        >
+                            <button 
+                                id="detailsButton"
+                                type="button"
+                                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                            >Details</button>
+                        </td>
                         <td
                             className='text-left p-3 border border-black truncate w-36'
-                        >Delete Button</td> {/* You can replace this with an actual button or link */}
+                        >
+                            <button 
+                                id="deleteButton"
+                                type="button"
+                                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                                onClick={() => handleDelete(question)}
+                            >Delete</button>
+                        </td> 
                     </tr>
                 ))}
             </tbody>
