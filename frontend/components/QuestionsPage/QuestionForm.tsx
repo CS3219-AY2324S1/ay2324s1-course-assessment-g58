@@ -1,4 +1,4 @@
-import { fetchPost } from "@/utils/apiHelpers";
+import { fetchPost, fetchGet } from "@/utils/apiHelpers";
 import React, { FormEvent, useState } from 'react';
 
 interface QuestionFormProps {}
@@ -8,6 +8,16 @@ function QuestionForm(props: QuestionFormProps) {
     const [ questionDescription, setQuestionDescription ] = React.useState("");
     const [ questionCategory, setQuestionCategory ] = React.useState("");
     const [ questionComplexity, setQuestionComplexity ] = React.useState("");
+
+    const refreshQuestionTable = async () => {
+        await fetchGet("/api/questions").then(res => {
+            if (res.status == 200 && res.data) {
+                console.log("2.", res.data)
+            } else {
+                alert("Something went wrong: " + res.message);
+            }
+        });
+    };
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -36,7 +46,6 @@ function QuestionForm(props: QuestionFormProps) {
                 complexity: questionComplexity
             }
         ).then(res => {
-            console.log(res)
             if (res.status == 201) {
                 alert("Success! Added: " + res.data.title);
                 // Reset the state values to clear input fields
@@ -48,6 +57,7 @@ function QuestionForm(props: QuestionFormProps) {
                 alert(res.message);
             }
         });
+        await refreshQuestionTable();
     };
 
     return (

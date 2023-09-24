@@ -1,6 +1,6 @@
 import express from 'express';
 import { json } from 'body-parser';
-import { createQuestion } from '../services/question.service';
+import { createQuestion, getQuestions } from '../services/question.service';
 
 const router = express.Router();
 router.use(json());
@@ -14,6 +14,16 @@ router.post('/api/new-question', async (req, res) => {
         console.log('New question created!');
         console.log(newQuestion);
         res.status(201).json(newQuestion);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+router.get('/api/new-question', async (req, res) => {
+    try {
+        console.log('Getting all questions...');
+        const questions = await getQuestions();
+        res.status(200).json(questions);
     } catch (err: any) {
         res.status(500).json({ error: err.message });
     }

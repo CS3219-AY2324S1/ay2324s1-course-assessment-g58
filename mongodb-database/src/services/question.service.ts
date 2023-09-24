@@ -5,3 +5,6 @@ export async function createQuestion(question: Partial<IQuestion>): Promise<IQue
     return newQuestion.save();
 }
 
+export async function getQuestions(): Promise<IQuestion[]> {
+    return QuestionModel.find();
+}

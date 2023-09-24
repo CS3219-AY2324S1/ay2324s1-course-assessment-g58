@@ -21,5 +21,18 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
                 return res.json({ status: 400, data: error })
             }
         }
+    } else if (req.method === "GET") {
+        try {
+            const response = await fetchGet(
+                process.env.NEXT_PUBLIC_QUESTION_SERVER_URL as string
+            );
+            return res.json({ status: 200, data: response });
+        } catch (error) {
+            if (error instanceof HttpError) {
+                return res.json({ status: error.status, message: error.message })
+            } else {
+                return res.json({ status: 400, data: error })
+            }
+        }
     }
 }
