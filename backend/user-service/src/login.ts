@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { verifyUser, generateToken } from "./auth/auth";
+import { verifyUser, generateToken, getUserData } from "./auth/auth";
 
 const router = Router();
 
@@ -10,9 +10,11 @@ router.post("/", async (req: Request, res: Response) => {
         const isVerified = await verifyUser(email, password);
 
         if (isVerified) {
-            const user = { email: email };
-            const accessToken = generateToken(user);
-            res.status(200).json({ accessToken });
+            const userData = await getUserData(email);
+            const accessToken = generateToken(userData);
+            res.cookie("token", accessToken, { httpOnly: true }).sendStatus(
+                200
+            );
         } else {
             res.status(500).send("Login failed");
         }

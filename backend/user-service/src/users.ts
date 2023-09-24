@@ -32,7 +32,7 @@ router.post("/", async (req: Request, res: Response) => {
             email: email,
             password: await hashPassword(password),
             proficiency: "Beginner",
-            role: "admin",
+            admin: true,
         },
     });
 

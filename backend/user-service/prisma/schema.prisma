@@ -8,13 +8,12 @@ datasource db {
 }
 
 model User {
-  id          BigInt   @id(map: "users_pkey") @default(autoincrement())
-  username    String   @unique(map: "user_username_key")
-  email       String   @unique(map: "user_email_key")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  proficiency String
-  password    String
-  role        String
+  id        BigInt   @id(map: "users_pkey") @default(autoincrement())
+  username  String   @unique(map: "user_username_key")
+  email     String   @unique(map: "user_email_key")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  password  String
+  admin     Boolean
 
   @@map("User")
 }
