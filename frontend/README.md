@@ -1,6 +1,7 @@
 # References:
 1. Login box visuals: https://codepen.io/amit0009/pen/ZEaygxa
 1. AuthContext: https://www.mikealche.com/software-development/how-to-implement-authentication-in-next-js-without-third-party-libraries
+1. Modal: https://mui.com/material-ui/react-modal/ 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
