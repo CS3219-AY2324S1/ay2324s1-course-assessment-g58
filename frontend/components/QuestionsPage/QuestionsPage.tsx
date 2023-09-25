@@ -8,6 +8,19 @@ import { useState, useEffect } from 'react';
 import Question from '@/types/Question';
 
 const QuestionPage = () => {
+    // Stuff for modal popup
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
+    const handleOpenModal = (question: Question) => {
+        setSelectedQuestion(question);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    // Stuff for question table
     const [questions, setQuestions] = useState<Question[]>([]);
     // state is changed on adding, editing or deleting qns, useEffect is called
     // and refreshes the table
@@ -51,8 +64,8 @@ const QuestionPage = () => {
         <main>
             <Header />
             <QuestionForm addQuestion={addQuestion} />
-            <QuestionTable questions={questions} deleteQuestion={deleteQuestion} />
-            <DescriptionModal />
+            <QuestionTable questions={questions} deleteQuestion={deleteQuestion} openModal={handleOpenModal} />
+            {isModalOpen && <DescriptionModal question={selectedQuestion} closeModal={handleCloseModal} />}
             <UserDemo/>
         </main>
     );
