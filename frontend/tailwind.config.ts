@@ -17,9 +17,5 @@ const config: Config = {
     },
   },
   plugins: [],
-  // This will fix the material-ui buttons but ruin the preexisting styling. 
-  // corePlugins: {
-  //     preflight: false,
-  // },
 }
 export default config

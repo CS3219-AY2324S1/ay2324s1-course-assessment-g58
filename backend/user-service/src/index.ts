@@ -13,4 +13,4 @@ app.use(express.urlencoded({ extended: false }));
 // app.use("/api/users", require("./routes/api/users"));
 app.use("/api/users", userRouter);
 
-app.listen(process.env.NEXT_PUBLIC_PORT_NUMBER, () => console.log("Server started at port", port));
+app.listen(process.env.NEXT_PUBLIC_PORT_NUMBER, () => console.log("Server Started"));
