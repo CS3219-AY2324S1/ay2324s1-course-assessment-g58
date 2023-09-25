@@ -14,6 +14,6 @@ export async function deleteQuestionByObjectId(_id: string): Promise<IQuestion |
     return QuestionModel.findByIdAndDelete(_id);
 }
 
-export async function editQuestionByTitle(title: string, updatedQuestion: Partial<IQuestion>): Promise<IQuestion | null> {
-    return QuestionModel.findOneAndUpdate({ title: title }, updatedQuestion, { new: true });
+export async function editQuestionById(id: string, updatedQuestion: Partial<IQuestion>): Promise<IQuestion | null> {
+    return QuestionModel.findByIdAndUpdate(id, updatedQuestion);
 }

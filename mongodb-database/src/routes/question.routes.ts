@@ -1,6 +1,6 @@
 import express from 'express';
 import { json } from 'body-parser';
-import { createQuestion, getQuestions, deleteQuestionByObjectId, editQuestionByTitle } from '../services/question.service';
+import { createQuestion, getQuestions, deleteQuestionByObjectId, editQuestionById } from '../services/question.service';
 
 const router = express.Router();
 router.use(json());
@@ -57,10 +57,16 @@ router.delete('/delete-question', async (req, res) => {
 
 router.put('/edit-question', async (req, res) => {
     try {
-        const title = req.body.title;
-        const updatedQuestion = req.body.updatedQuestion;
-        console.log('Updating question with title:', title);
-        const editedQuestion = await editQuestionByTitle(title, updatedQuestion);
+        console.log(req.body)
+        const updatedQuestion = {
+            title: req.body.title,
+            description: req.body.description,
+            difficulty: req.body.difficulty,
+            category: req.body.category
+        };
+        const id = req.body._id;
+        console.log('Updating question with title:', req.body.title);
+        const editedQuestion = await editQuestionById(id, updatedQuestion);
         if (editedQuestion) {
             console.log('Question updated!');
             res.status(200).json(editedQuestion);

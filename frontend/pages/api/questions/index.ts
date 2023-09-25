@@ -56,12 +56,15 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
             }
         }
     } else if (req.method === "PUT") {
-        const { title, updatedQuestion } = req.body;
+        const { _id, title, description, difficulty, category } = req.body;
         try {
             const response = await fetchPut(
                 process.env.NEXT_PUBLIC_EDIT_QUESTION_SERVER_URL as string, {
+                    _id: _id,
                     title: title,
-                    updatedQuestion: updatedQuestion
+                    description: description,
+                    difficulty: difficulty,
+                    category: category
                 }
             );
             return res.json({ status: 200, data: response });
