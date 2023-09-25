@@ -1,7 +1,7 @@
 import express, { Application } from "express";
-import userRouter from "./users";
-import loginRouter from "./login";
-import cookieParser from "cookie-parser";
+import userRouter from "./routes/users";
+import loginRouter from "./routes/login";
+import logoutRouter from "./routes/logout";
 
 const app: Application = express();
 
@@ -18,4 +18,5 @@ app.use(express.urlencoded({ extended: false }));
 
 // app.use("/api/users", require("./routes/api/users"));
 app.use("/api/login", loginRouter);
+app.use("/api/logout", logoutRouter);
 app.use("/api/users", userRouter);

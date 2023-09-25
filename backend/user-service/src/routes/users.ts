@@ -1,11 +1,9 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { generateToken, hashPassword, verifyUser } from "./auth/auth";
+import { hashPassword } from "../auth/helpers";
 
 const prisma = new PrismaClient();
 const router = express.Router();
-
-console.log("userRouter launched");
 
 router.get("/", async (req: Request, res: Response) => {
     const users = await prisma.user.findMany();

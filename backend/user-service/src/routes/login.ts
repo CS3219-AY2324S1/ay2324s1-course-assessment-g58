@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { verifyUser, generateToken, getUserData } from "./auth/auth";
+import { verifyUser, generateToken, getUserData } from "../auth/helpers";
 
 const router = Router();
 
@@ -12,15 +12,16 @@ router.post("/", async (req: Request, res: Response) => {
         if (isVerified) {
             const userData = await getUserData(email);
             const accessToken = generateToken(userData);
-            res.cookie("token", accessToken, { httpOnly: true }).sendStatus(
-                200
-            );
+            res.cookie("accessToken", accessToken, {
+                httpOnly: true,
+            })
+                .status(200)
+                .json({ message: "Login successful" });
         } else {
-            res.status(500).send("Login failed");
+            res.status(401).send({ message: "Incorrect email or password" });
         }
     } catch (e) {
-        console.log(e);
-        res.status(500).send("Incorrect email or password");
+        res.status(500).json({ message: `An error has occurred: ${e}` });
     }
 });
 
