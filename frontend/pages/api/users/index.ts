@@ -65,5 +65,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
                 return res.json({ status: 400, data: error })
             }
         }
+    } else {
+        return res.json({ status: 405, message: "Method Not Allowed" })
     }
 }

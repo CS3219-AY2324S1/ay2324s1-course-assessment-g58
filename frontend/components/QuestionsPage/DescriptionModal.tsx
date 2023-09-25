@@ -8,6 +8,7 @@ import Question from '@/types/Question';
 interface DescriptionModalProps {
     question: Question | null;
     closeModal: () => void;
+    editQuestion: (question: Question) => Promise<number>;
 }
 
 const style = {
@@ -33,7 +34,7 @@ function formatText(text: string) {
     );
 }
 
-function DescriptionModal({ question, closeModal } : DescriptionModalProps) {
+function DescriptionModal({ question, closeModal, editQuestion } : DescriptionModalProps) {
     if (!question) {
         return null;
     }
@@ -51,7 +52,7 @@ function DescriptionModal({ question, closeModal } : DescriptionModalProps) {
                         id="editButton"
                         type="button"
                         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-                        onClick={() => console.log("edit")}
+                        onClick={() => editQuestion(question)}
                     >Edit</button>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         {question.title}
