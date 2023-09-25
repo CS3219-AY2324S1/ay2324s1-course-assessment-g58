@@ -16,10 +16,9 @@ function QuestionTable({ questions, deleteQuestion, openModal }: QuestionTablePr
         }
     };
     
-    console.log("refreshing question table", questions);
     return (
         <table id="questionTable" 
-            className='w-full border-collapse border-4 border-black my-5'
+            className='w-full border-collapse border-4 border-black my-5 table-fixed'
         >
             <thead>
                 <tr>
@@ -59,7 +58,7 @@ function QuestionTable({ questions, deleteQuestion, openModal }: QuestionTablePr
                             className='text-left p-3 border border-black truncate w-36'
                         >{question.description}</td>
                         <td
-                            className='text-left p-3 border border-black truncate w-36'
+                            className='text-left p-3 border border-black'
                         >
                             <button 
                                 id="detailsButton"
@@ -69,7 +68,7 @@ function QuestionTable({ questions, deleteQuestion, openModal }: QuestionTablePr
                             >Details</button>
                         </td>
                         <td
-                            className='text-left p-3 border border-black truncate w-36'
+                            className='text-left p-3 border border-black'
                         >
                             <button 
                                 id="deleteButton"

@@ -1,3 +1,4 @@
+// src: https://mui.com/material-ui/react-modal/
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -15,11 +16,22 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
+    maxHeight: '80vh', // set a maximum height relative to the viewport height
+    overflowY: 'auto', // enable vertical scrolling
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
 };
+
+function formatText(text: string) {
+    return text.split('\n').map((str, index, array) => 
+        index === array.length - 1 ? str : <>
+            {str}
+            <br />
+        </>
+    );
+}
 
 function DescriptionModal({ question, closeModal } : DescriptionModalProps) {
     if (!question) {
@@ -39,7 +51,7 @@ function DescriptionModal({ question, closeModal } : DescriptionModalProps) {
                         {question.title}
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Question Description: {question.description}
+                        Question Description: {formatText(question.description)}
                     </Typography>
                     <Typography id="modal-modal-difficulty" sx={{ mt: 2 }}>
                         Question Difficulty: {question.difficulty}
@@ -50,7 +62,7 @@ function DescriptionModal({ question, closeModal } : DescriptionModalProps) {
                 </Box>
             </Modal>
         </div>
-    );
+      );
 }
 
 export default DescriptionModal;

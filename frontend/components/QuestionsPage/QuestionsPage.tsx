@@ -39,7 +39,6 @@ const QuestionPage = () => {
     };
 
     const deleteQuestion = async (question: Question) => {
-        console.log("delete", question);
         // Add the new question to the backend and then update the state
         const response = await fetchDelete("/api/questions", question);
         if (response.status == 200) {
@@ -54,7 +53,6 @@ const QuestionPage = () => {
     useEffect(() => {
         const fetchQuestions = async () => {
             const fetchedQuestions = await fetchGet("/api/questions");
-            console.log("fetched", fetchedQuestions);
             setQuestions(fetchedQuestions.data);
         };
         fetchQuestions();
