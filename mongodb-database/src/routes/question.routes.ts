@@ -1,6 +1,6 @@
 import express from 'express';
 import { json } from 'body-parser';
-import { createQuestion, getQuestions, deleteQuestionByTitle, editQuestionByTitle } from '../services/question.service';
+import { createQuestion, getQuestions, deleteQuestionByObjectId, editQuestionByTitle } from '../services/question.service';
 
 const router = express.Router();
 router.use(json());
@@ -32,10 +32,9 @@ router.get('/get-all-questions', async (req, res) => {
 
 router.delete('/delete-question', async (req, res) => {
     try {
-        // deletes based on title as frontend doesn't have id
-        const title = req.body.title;
-        console.log('Deleting question with title:', title);
-        const deletedQuestion = await deleteQuestionByTitle(title);
+        const id = req.body._id;
+        console.log('Deleting question with title:', req.body.title);
+        const deletedQuestion = await deleteQuestionByObjectId(id);
         if (deletedQuestion) {
             console.log('Question deleted!');
             res.status(200).json(deletedQuestion);

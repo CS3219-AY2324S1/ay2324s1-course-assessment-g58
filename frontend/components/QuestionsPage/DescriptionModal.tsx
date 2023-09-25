@@ -60,6 +60,7 @@ function DescriptionModal({ question, closeModal, editQuestion } : DescriptionMo
     
     const handleConfirmEdit = () => {
         const updatedQuestion: Question = {
+            _id: question?._id || "",
             title: updatedTitle,
             description: updatedDescription,
             difficulty: updatedDifficulty,

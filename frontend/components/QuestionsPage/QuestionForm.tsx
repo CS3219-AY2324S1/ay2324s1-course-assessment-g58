@@ -32,6 +32,7 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
             return;
         }
         const newQuestion: Question = {
+            _id: "",
             title: questionTitle,
             description: questionDescription,
             difficulty: questionComplexity,

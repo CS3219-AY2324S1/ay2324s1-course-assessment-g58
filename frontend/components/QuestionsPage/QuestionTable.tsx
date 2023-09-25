@@ -44,7 +44,7 @@ function QuestionTable({ questions, deleteQuestion, openModal }: QuestionTablePr
             </thead>
             <tbody id="questionTableBody">
                 {Array.isArray(questions) && questions.map(question => (
-                    <tr key={question.title}>
+                    <tr key={question._id}>
                         <td
                             className='text-left p-3 border border-black truncate w-36'
                         >{question.title}</td>
