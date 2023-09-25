@@ -47,6 +47,12 @@ function DescriptionModal({ question, closeModal } : DescriptionModalProps) {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
+                    <button 
+                        id="editButton"
+                        type="button"
+                        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                        onClick={() => console.log("edit")}
+                    >Edit</button>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         {question.title}
                     </Typography>
