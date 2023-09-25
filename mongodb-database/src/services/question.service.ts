@@ -13,3 +13,7 @@ export async function deleteQuestionByTitle(title: string): Promise<IQuestion | 
     // Delete by title instead of index as the frontend does not store index
     return QuestionModel.findOneAndDelete({ title: title });
 }
+
+export async function editQuestionByTitle(title: string, updatedQuestion: Partial<IQuestion>): Promise<IQuestion | null> {
+    return QuestionModel.findOneAndUpdate({ title: title }, updatedQuestion, { new: true });
+}
