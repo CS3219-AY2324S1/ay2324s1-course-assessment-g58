@@ -31,5 +31,10 @@ Flow is as such:
 4. **apiHelper level**: `fetchGet`, `fetchPost`, `fetchPut`, or `fetchDelete` is called, depending on the nature of the previous levels. A  `POST`, `GET`, `PUT` or `DELETE` request is then passed on to the backend service with the url specified in the previous level
 5. **Component level**: Handles response with the success alert or error with the error message alert
 
+**How question page props work**
 
-
+1. `addQuestion`, `deleteQuestion` functions are passed to `QuestionPage`'s inner compononents as props. 
+2. Link the prop to the component's relevant button's `onclick` function.
+3. Do `setRefresh(prev => !prev);` after a successful api call to the backend (recieved necessary info) in the prop function
+4. useEffect in the main `QuestionPage` is called as it has a dependency on refresh, updating `questions`
+5. `QuestionTable` component updates and re-renders whenever `questions` prop changes, updating the table 
