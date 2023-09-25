@@ -6,7 +6,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
         const { title, description, difficulty, category } = req.body;
         try {
             const response = await fetchPost(
-                process.env.NEXT_PUBLIC_QUESTION_SERVER_URL as string, {
+                process.env.NEXT_PUBLIC_ADD_QUESTION_SERVER_URL as string, {
                     title: title,
                     description: description,
                     difficulty: difficulty,
@@ -24,7 +24,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     } else if (req.method === "GET") {
         try {
             const response = await fetchGet(
-                process.env.NEXT_PUBLIC_QUESTION_SERVER_URL as string
+                process.env.NEXT_PUBLIC_GET_QUESTION_SERVER_URL as string
             );
             return res.json({ status: 200, data: response });
         } catch (error) {
@@ -38,7 +38,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
         const { title, description, difficulty, category } = req.body;
         try {
             const response = await fetchDelete(
-                process.env.NEXT_PUBLIC_QUESTION_SERVER_URL as string, {
+                process.env.NEXT_PUBLIC_DELETE_QUESTION_SERVER_URL as string, {
                     title: title,
                     description: description,
                     difficulty: difficulty,
@@ -54,14 +54,12 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
             }
         }
     } else if (req.method === "PUT") {
-        const { title, description, difficulty, category } = req.body;
+        const { title, updatedQuestion } = req.body;
         try {
             const response = await fetchPut(
-                process.env.NEXT_PUBLIC_QUESTION_SERVER_URL as string, {
+                process.env.NEXT_PUBLIC_EDIT_QUESTION_SERVER_URL as string, {
                     title: title,
-                    description: description,
-                    difficulty: difficulty,
-                    category: category
+                    updatedQuestion: updatedQuestion
                 }
             );
             return res.json({ status: 200, data: response });
