@@ -20,3 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/users", userRouter);
+
+app.listen(process.env.NEXT_PUBLIC_PORT_NUMBER, () =>
+    console.log("Server started at port", port)
+);
