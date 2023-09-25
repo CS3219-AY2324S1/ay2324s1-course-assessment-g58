@@ -6,6 +6,7 @@ type JwtVerifyError = JsonWebTokenError | TokenExpiredError;
 /**
  * The `authenticate` function is used to verify the authentication token provided in the request and
  * attach the user information to the request body if the token is valid.
+ * Include `authenticate` in routes that require user authentication.
  * @param {Request} req - The `req` parameter represents the HTTP request object, which contains
  * information about the incoming request such as headers, query parameters, and request body.
  * @param {Response} res - The `res` parameter is the response object that is used to send the HTTP
@@ -53,6 +54,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 /**
  * The `authorize` function checks if a user is authenticated and authorized to access a route, based
  * on a token provided in the request cookies.
+ * Include `authorize` in routes that require a user to be an `admin` to access.
  * @param {Request} req - The `req` parameter represents the HTTP request object, which contains
  * information about the incoming request such as headers, query parameters, and request body.
  * @param {Response} res - The `res` parameter is the response object that is used to send the HTTP
