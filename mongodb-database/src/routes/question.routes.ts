@@ -7,7 +7,12 @@ router.use(json());
 
 router.post('/add-new-question', async (req, res) => {
     try {
-        const questionData = req.body;
+        const questionData = {
+            title: req.body.title,
+            description: req.body.description,
+            difficulty: req.body.difficulty,
+            category: req.body.category
+        };
         console.log(questionData);
         console.log('Creating new question...');
         const newQuestion = await createQuestion(questionData);
