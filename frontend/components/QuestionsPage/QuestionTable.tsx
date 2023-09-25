@@ -24,6 +24,9 @@ function QuestionTable({ questions, deleteQuestion, openModal }: QuestionTablePr
                 <tr>
                     <th 
                         className='bg-gray-200 text-left p-3 border border-black'
+                    >No.</th>
+                    <th 
+                        className='bg-gray-200 text-left p-3 border border-black'
                     >Question Title</th>
                     <th
                         className='bg-gray-200 text-left p-3 border border-black'
@@ -43,8 +46,11 @@ function QuestionTable({ questions, deleteQuestion, openModal }: QuestionTablePr
                 </tr>
             </thead>
             <tbody id="questionTableBody">
-                {Array.isArray(questions) && questions.map(question => (
+                {Array.isArray(questions) && questions.map((question, index) => (
                     <tr key={question._id}>
+                        <td
+                            className='text-left p-3 border border-black truncate w-10'
+                        >{index + 1}</td>
                         <td
                             className='text-left p-3 border border-black truncate w-36'
                         >{question.title}</td>
