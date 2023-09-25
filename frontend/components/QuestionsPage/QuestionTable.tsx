@@ -1,51 +1,84 @@
 import React from 'react';
+import Question from '@/types/Question';
 
-interface QuestionTableProps {}
+interface QuestionTableProps {
+    questions: Question[];
+    deleteQuestion: (question: Question) => Promise<number>;
+}
 
-import { CSSProperties } from 'react';
-
-const styles: Record<string, CSSProperties> = {
-    table: {
-        borderCollapse: 'collapse',
-        width: '100%',
-        border: '3px solid black',
-        marginTop: '20px',
-        marginBottom: '20px'
-    },
-    th: {
-        backgroundColor: '#f2f2f2',
-        textAlign: 'left',
-        padding: '12px',
-        border: '1px solid black'
-    },
-    td: {
-        textAlign: 'left',
-        padding: '12px',
-        border: '1px solid black'
-    },
-    truncate: {
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        maxWidth: '150px'
-    }
-};
-
-function QuestionTable(props: QuestionTableProps) {
+function QuestionTable({ questions, deleteQuestion }: QuestionTableProps) {
+    const handleDelete = async (question: Question) => {
+        try {
+            const status = await deleteQuestion(question);
+        } catch (error) {
+            console.error("Error deleting question:", error);
+        }
+    };
+    
+    console.log("refreshing question table", questions);
     return (
-        <table id="questionTable" style={styles.table}>
+        <table id="questionTable" 
+            className='w-full border-collapse border-4 border-black my-5'
+        >
             <thead>
                 <tr>
-                    <th style={styles.th}>Question Id</th>
-                    <th style={styles.th}>Question Title</th>
-                    <th style={styles.th}>Question Complexity</th>
-                    <th style={styles.th}>Question Category</th>
-                    <th style={styles.th}>Question Description</th>
-                    <th style={styles.th}>Details</th>
-                    <th style={styles.th}>Delete</th>
+                    <th 
+                        className='bg-gray-200 text-left p-3 border border-black'
+                    >Question Title</th>
+                    <th
+                        className='bg-gray-200 text-left p-3 border border-black'
+                    >Question Complexity</th>
+                    <th
+                        className='bg-gray-200 text-left p-3 border border-black'                    
+                    >Question Category</th>
+                    <th
+                        className='bg-gray-200 text-left p-3 border border-black'                    
+                    >Question Description</th>
+                    <th
+                        className='bg-gray-200 text-left p-3 border border-black'                    
+                    >Details</th>
+                    <th
+                        className='bg-gray-200 text-left p-3 border border-black'                    
+                    >Delete</th>
                 </tr>
             </thead>
-            <tbody id="questionTableBody"></tbody>
+            <tbody id="questionTableBody">
+                {Array.isArray(questions) && questions.map(question => (
+                    <tr key={question.title}>
+                        <td
+                            className='text-left p-3 border border-black truncate w-36'
+                        >{question.title}</td>
+                        <td
+                            className='text-left p-3 border border-black truncate w-36'
+                        >{question.difficulty}</td>
+                        <td
+                            className='text-left p-3 border border-black truncate w-36'
+                        >{question.category}</td>
+                        <td
+                            className='text-left p-3 border border-black truncate w-36'
+                        >{question.description}</td>
+                        <td
+                            className='text-left p-3 border border-black truncate w-36'
+                        >
+                            <button 
+                                id="detailsButton"
+                                type="button"
+                                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                            >Details</button>
+                        </td>
+                        <td
+                            className='text-left p-3 border border-black truncate w-36'
+                        >
+                            <button 
+                                id="deleteButton"
+                                type="button"
+                                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                                onClick={() => handleDelete(question)}
+                            >Delete</button>
+                        </td> 
+                    </tr>
+                ))}
+            </tbody>
         </table>
     );
 }
