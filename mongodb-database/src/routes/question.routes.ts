@@ -1,6 +1,6 @@
 import express from 'express';
 import { json } from 'body-parser';
-import { createQuestion, getQuestions, deleteQuestionByTitle } from '../services/question.service';
+import { createQuestion, getQuestions, deleteQuestionByTitle, editQuestionByTitle } from '../services/question.service';
 
 const router = express.Router();
 router.use(json());
@@ -39,6 +39,26 @@ router.delete('/api/new-question', async (req, res) => {
         if (deletedQuestion) {
             console.log('Question deleted!');
             res.status(200).json(deletedQuestion);
+        } else {
+            console.log('Question not found!');
+            res.status(404).json({ error: 'Question not found' });
+        }
+    } catch (err: any) {
+        console.log(err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// edit question by title
+router.put('/api/new-question', async (req, res) => {
+    try {
+        const title = req.body.title;
+        const updatedQuestion = req.body.updatedQuestion;
+        console.log('Updating question with title:', title);
+        const editedQuestion = await editQuestionByTitle(title, updatedQuestion);
+        if (editedQuestion) {
+            console.log('Question updated!');
+            res.status(200).json(editedQuestion);
         } else {
             console.log('Question not found!');
             res.status(404).json({ error: 'Question not found' });
