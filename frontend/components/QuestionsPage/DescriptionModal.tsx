@@ -8,7 +8,7 @@ import Question from '@/types/Question';
 interface DescriptionModalProps {
     question: Question | null;
     closeModal: () => void;
-    editQuestion: (updatedQuestion: Question, originalTitle: string) => Promise<number>;
+    editQuestion: (updatedQuestion: Question) => Promise<number>;
 }
 
 const style = {
@@ -60,6 +60,7 @@ function DescriptionModal({ question, closeModal, editQuestion } : DescriptionMo
     
     const handleConfirmEdit = () => {
         const updatedQuestion: Question = {
+            _id: question?._id || "",
             title: updatedTitle,
             description: updatedDescription,
             difficulty: updatedDifficulty,
@@ -70,7 +71,7 @@ function DescriptionModal({ question, closeModal, editQuestion } : DescriptionMo
             alert("Please fill in all fields.");
             return;
         }
-        editQuestion(updatedQuestion, question?.title || "");
+        editQuestion(updatedQuestion);
         setEditMode(false);
     };
 

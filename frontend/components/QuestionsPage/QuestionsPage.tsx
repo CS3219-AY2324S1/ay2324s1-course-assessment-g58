@@ -50,13 +50,9 @@ const QuestionPage = () => {
         return response.status; 
     };
 
-    const editQuestion = async (updatedQuestion: Question, originalTitle: string) => {
+    const editQuestion = async (updatedQuestion: Question) => {
         // Edit the question from the backend and then update the state
-        const editPayload = {
-            title: originalTitle,
-            updatedQuestion: updatedQuestion
-        }
-        const response = await fetchPut("/api/questions", editPayload);
+        const response = await fetchPut("/api/questions", updatedQuestion);
         if (response.status == 200) {
             alert("Success! Updated: " + response.data.title);
             setRefresh(prev => !prev);

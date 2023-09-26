@@ -1,13 +1,18 @@
 import express from 'express';
 import { json } from 'body-parser';
-import { createQuestion, getQuestions, deleteQuestionByTitle, editQuestionByTitle } from '../services/question.service';
+import { createQuestion, getQuestions, deleteQuestionByObjectId, editQuestionById } from '../services/question.service';
 
 const router = express.Router();
 router.use(json());
 
 router.post('/add-new-question', async (req, res) => {
     try {
-        const questionData = req.body;
+        const questionData = {
+            title: req.body.title,
+            description: req.body.description,
+            difficulty: req.body.difficulty,
+            category: req.body.category
+        };
         console.log(questionData);
         console.log('Creating new question...');
         const newQuestion = await createQuestion(questionData);
@@ -32,10 +37,9 @@ router.get('/get-all-questions', async (req, res) => {
 
 router.delete('/delete-question', async (req, res) => {
     try {
-        // deletes based on title as frontend doesn't have id
-        const title = req.body.title;
-        console.log('Deleting question with title:', title);
-        const deletedQuestion = await deleteQuestionByTitle(title);
+        const id = req.body._id;
+        console.log('Deleting question with title:', req.body.title);
+        const deletedQuestion = await deleteQuestionByObjectId(id);
         if (deletedQuestion) {
             console.log('Question deleted!');
             res.status(200).json(deletedQuestion);
@@ -53,10 +57,16 @@ router.delete('/delete-question', async (req, res) => {
 
 router.put('/edit-question', async (req, res) => {
     try {
-        const title = req.body.title;
-        const updatedQuestion = req.body.updatedQuestion;
-        console.log('Updating question with title:', title);
-        const editedQuestion = await editQuestionByTitle(title, updatedQuestion);
+        console.log(req.body)
+        const updatedQuestion = {
+            title: req.body.title,
+            description: req.body.description,
+            difficulty: req.body.difficulty,
+            category: req.body.category
+        };
+        const id = req.body._id;
+        console.log('Updating question with title:', req.body.title);
+        const editedQuestion = await editQuestionById(id, updatedQuestion);
         if (editedQuestion) {
             console.log('Question updated!');
             res.status(200).json(editedQuestion);
