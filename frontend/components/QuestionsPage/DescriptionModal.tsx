@@ -111,6 +111,7 @@ function DescriptionModal({ question, closeModal, editQuestion } : DescriptionMo
                                 onChange={(e) => setUpdatedTitle(e.target.value)}
                                 placeholder="Title"
                                 style={inputStyle}
+                                
                             />
                             <Typography id="modal-modal-category" sx={{ mt: 2 }}>
                                 New Question Category:

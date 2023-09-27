@@ -5,9 +5,11 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
+    
     const users = await prisma.user.findMany();
     res.json(users);
 });
+
 
 router.post('/', async (req: Request, res: Response) => {
     const { username, email } = req.body

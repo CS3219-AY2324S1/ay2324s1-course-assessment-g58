@@ -1,13 +1,23 @@
-import { Avatar, Box, Button, Card, Divider, Grid, IconButton, Stack, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Divider, Grid, IconButton, Stack, TextField, Typography, List, ListItem, ListItemAvatar, ListItemText, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText } from '@mui/material';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
+import { fetchPost, fetchGet, fetchPut, fetchDelete } from "@/utils/apiHelpers";
 // import ContributionTracker from './ContributionTracker';
 import CloseIcon from '@mui/icons-material/Close';
+
+type User = {
+    username: string,
+    email: string
+}
 
 const ProfilePage = () => {
     const { user } = useAuth();
     const [ submissions, setSubmissions ] = useState(0);
     const [ isEditing, setEditing ] = useState(false);
+    const [ users, setUsers ] = useState<User[]>([]);
+    const [ email, setEmail ] = useState(user);
+    const [ updatedUsername, setUpatedUsername ] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     
     // useEffect(() => {
     //     const squares = document.querySelector('.squares');
@@ -20,13 +30,57 @@ const ProfilePage = () => {
     //     }
     //     setSubmissions(totalSubmissions);
     // }, [])
+    const refreshUsers = async (event: FormEvent) => {
+        event.preventDefault(); 
+        await fetchGet("/api/users").then(res => {
+            console.log(res);
+            if (res.status == 200 && res.data) setUsers(res.data);
+        });
+    }
+    
+    const updateUser = async (event: FormEvent) => {
+        event.preventDefault();
+        await fetchPut(
+            "/api/users", {
+                username: updatedUsername,
+                email: email
+            }
+        ).then(res => {
+            if (res.status == 201) {
+                alert("Success! Updated: " + res.data.email);
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    const deleteUser = async (event: FormEvent) => {
+        event.preventDefault();
+        await fetchDelete(
+            "/api/users", {
+                email: email
+            }
+        ).then(res => {
+            console.log(res)
+            if (res.status == 200) {
+                alert("Success! Deleted: " + res.data.email);
+            } else {
+                alert(res.message);
+            }
+        });
+    }
     return (
-        <Box width="full" height="full">
+        
+
+        <Box width="full" height="full" >
             <Stack direction="row">
-                <Stack className="w-2/12"/>
-                <Grid container spacing={3} className="w-8/12">
+                
+                <Grid container spacing={3} className="w-10/12">
                     <Grid item className="w-1/3">
-                        <Card className="p-4">
+                        <Card className="p-4" 
+                                sx={{
+                                    backgroundColor: 'white',  position : "relative", // Set the background color here
+                                }}>
                             <Stack direction="row">
                                 <Avatar className="w-20 h-20 text-4xl">{(user as string)[0]}</Avatar>
                                 <Stack className="p-4">
@@ -34,7 +88,7 @@ const ProfilePage = () => {
                                         {user}
                                     </Typography>
                                     <Typography variant="caption">
-                                        User email
+                                        {user}
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -46,27 +100,53 @@ const ProfilePage = () => {
                                 Edit Profile
                             </Button>
                             {isEditing && 
-                                <Stack>
+                                (<Stack>
                                     <Divider className="my-4"/>
                                     <TextField
                                         variant="outlined"
                                         label="Enter a New Username"
+                                        value={updatedUsername}
                                         size="small"
+                                        onChange={e => {setUpatedUsername(e.target.value)}}
                                     />
                                     <Stack direction="row" className="mt-2 justify-between">
-                                        <Button className="w-[49%] border-none hover:border-none bg-green-50" variant="outlined" color="success" onClick={() => console.log("TODO: Add this functionality!")}>
+                                        <Button className="w-[49%] border-none hover:border-none bg-green-50" variant="outlined" color="success" onClick={updateUser}>
                                             Save
                                         </Button>
                                         <Button className="w-[49%] border-none hover:border-none bg-red-50" variant="outlined" color="error" onClick={() => setEditing(false)}>
                                             Cancel
                                         </Button>
                                     </Stack>
+                                    <Button
+                                        className="w-[49%] border-none hover:border-none bg-red-50"
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => setIsDialogOpen(true)}
+                                        style={{ marginTop: '100px', marginLeft: 'auto' }}
+                                    >
+                                        Delete
+                                    </Button>
+                                    <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+                                        <DialogTitle>Warning</DialogTitle>
+                                        <DialogContent>
+                                        <DialogContentText>
+                                            Are you sure you want to delete your account? This action cannot be undone.
+                                        </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                        <Button onClick={() => setIsDialogOpen(false)} color="primary">
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={deleteUser} color="error">
+                                            Delete
+                                        </Button>
+                                        </DialogActions>
+                                    </Dialog>
                                 </Stack>
-                                // TODO: Fill out the inputs to edit username + password
-                            }
+                                )}
                         </Card>
                     </Grid>
-                    <Grid item className="w-2/3">
+                    <Grid item className="w-2/3" >
                         {/* <Grid container spacing={3} className="w-full"> 
                             <Grid item className="w-1/2">
                                 <Card>
@@ -79,7 +159,7 @@ const ProfilePage = () => {
                                 </Card>
                             </Grid>
                         </Grid> */}
-                        <Grid container spacing={3} className="w-full"> 
+                        <Grid container spacing={3} className="w-2/3"> 
                             <Grid item className="w-full">
                                 <Card className="p-4">
                                     <Stack direction="row" className="items-center">
@@ -94,13 +174,51 @@ const ProfilePage = () => {
                                 </Card>
                             </Grid>
                         </Grid>
-                    </Grid>
+                        
+                    </Grid>   
                 </Grid>
-                
-                <Stack className="w-2/12"/>
-            </Stack>
+                <Grid item className="w-2/12">
+                <Card className="p-0" sx={{
+                backgroundColor: 'white', // Set the background color here
+                // Other CSS properties can also be defined
+            }}> 
+                    {/* Header */}
+                    <Typography variant="h6" gutterBottom sx={{ backgroundColor: '#E0E9FF', color: 'Black', padding: '1px' }}>
+                        Our Users
+                    </Typography>
 
+                    {/* User List */}    
+                    <List sx={{ maxHeight: '200px', overflowY: 'auto' }}>
+                        {/* Example list of current users */}
+                        {users.map((user) => (
+                        <ListItem key = {user.email}>
+                            <ListItemAvatar>
+                            <Avatar sx={{ width: 32, height: 32 }}>{user.username}</Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={user.username} />
+                        </ListItem>
+                    ))}
+                    </List>
+    
+                    <Button
+                        className="w-[40%] border-none hover:border-none bg-red-50 font-size-small"
+                        variant="outlined"
+                        color="error"
+                        onClick={refreshUsers}
+                        sx={{
+                            fontSize: '9px', // Adjust the font size as needed
+                          }}
+                        >
+                        expand / refresh
+                    </Button>
+
+                </Card>
+
+                </Grid >
+                
+            </Stack>
         </Box>
+        
     );
 }
 

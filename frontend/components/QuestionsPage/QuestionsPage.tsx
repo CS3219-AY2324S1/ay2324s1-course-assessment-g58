@@ -2,7 +2,6 @@ import Header from './Header';
 import QuestionForm from './QuestionForm';
 import QuestionTable from './QuestionTable';
 import DescriptionModal from './DescriptionModal';
-import UserDemo from './UserDemo';
 import { fetchPost, fetchGet, fetchDelete, fetchPut } from "@/utils/apiHelpers";
 import { useState, useEffect } from 'react';
 import Question from '@/types/Question';
@@ -81,7 +80,6 @@ const QuestionPage = () => {
                 closeModal={handleCloseModal}
                 editQuestion={editQuestion}
             />}
-            <UserDemo/>
         </main>
     );
   }

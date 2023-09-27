@@ -6,7 +6,7 @@ import SignupBox from './SignupBox';
 const LoginPage = () => {
     const router = useRouter();
     const [isLogin, setIsLogin] = useState(true);  // Default to login mode
-
+    
     useEffect(() => {
         const { mode } = router.query;
         setIsLogin((prev) =>
