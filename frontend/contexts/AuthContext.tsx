@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useState, useContext } from 'react';
+import React, { createContext, ReactNode, useState, useContext, FormEvent } from 'react';
+import { fetchPost, fetchGet, fetchPut, fetchDelete } from "@/utils/apiHelpers";
 
 interface AuthContextType {
     user: string | null;
@@ -13,8 +14,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         //TODO: implement login
-
         setUser(email);
+        
     };
 
     const logout = () => {

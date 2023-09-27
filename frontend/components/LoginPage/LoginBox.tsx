@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 
+
 const LoginBox = () => {
     const { login } = useAuth();
     const router = useRouter();
-  
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    
 
     const handleLoginClick = async () => {
         await login(email, password);
