@@ -1,0 +1,32 @@
+apiEndpoints:
+  user:
+    host: "*"
+    paths: "/users"
+  questionBank:
+    host: "*"
+    paths: "/questions"
+
+   serviceEndpoints:
+     userService:
+       url: 'http://localhost:${USER_SERVICE_PORT}'
+     questionService:
+       url: 'http://localhost:${QUESTION_SERVICE_PORT}'
+
+pipelines:
+  userPipeline:
+    apiEndpoints:
+      - user
+    policies:
+      - 
+          - proxy:
+              - action:
+                  serviceEndpoint: userService
+
+  questionPipeline:
+    apiEndpoints:
+      - questionBank
+    policies:
+      - proxy
+    serviceEndpoint: questionService
+
+
