@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useState, useContext, FormEvent } from 'react';
-import { fetchPost, fetchGet, fetchPut, fetchDelete } from "@/utils/apiHelpers";
+import { useRouter } from 'next/router';
 
 interface AuthContextType {
     user: string | null;
@@ -11,6 +11,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<string | null>(null);
+    const router = useRouter();
 
     const login = async (email: string, password: string) => {
         //TODO: implement login
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         setUser(null);
+        router.push('/login');
     };
 
     return (
