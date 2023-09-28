@@ -7,10 +7,14 @@ apiEndpoints:
   # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
   user:
     host: "*"
-    paths: "/users"
+    paths: "/api/users"
   questionBank:
     host: "*"
-    paths: "/questions"
+    paths: 
+      - "/add-new-question"
+      - "/get-all-questions"
+      - "/delete-question"
+      - "/edit-question"
 
 serviceEndpoints:
   # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints

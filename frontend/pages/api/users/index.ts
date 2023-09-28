@@ -4,8 +4,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 export default async function handler (req: NextApiRequest, res: NextApiResponse<ResponseData>) {
     if (req.method === "GET") {
         try {
+            const express_gateway: string = process.env.GATEWAY_SERVER_URL as string
+                + process.env.USER_SERIVCE_ENDPOINT as string;
             const response = await fetchGet(
-                process.env.NEXT_PUBLIC_USER_SERVER_URL as string
+                express_gateway as string
             );
             return res.json({ status: 200, data: response });
         } catch (error) {
@@ -18,8 +20,10 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     } else if (req.method === "POST") {
         const { email, username } = req.body
         try {
+            const express_gateway: string = process.env.GATEWAY_SERVER_URL as string
+                + process.env.USER_SERIVCE_ENDPOINT as string;
             const response = await fetchPost(
-                process.env.NEXT_PUBLIC_USER_SERVER_URL as string, {
+                express_gateway as string, {
                     username: username,
                     email: email
                 }
@@ -35,8 +39,10 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     } else if (req.method === "PUT") {
         const { email, username } = req.body
         try {
+            const express_gateway: string = process.env.GATEWAY_SERVER_URL as string
+                + process.env.USER_SERIVCE_ENDPOINT as string;
             const response = await fetchPut(
-                process.env.NEXT_PUBLIC_USER_SERVER_URL as string, {
+                express_gateway as string, {
                     username: username,
                     email: email
                 }
@@ -52,8 +58,10 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     } else if (req.method === "DELETE") {
         const { email } = req.body
         try {
+            const express_gateway: string = process.env.GATEWAY_SERVER_URL as string
+                + process.env.USER_SERIVCE_ENDPOINT as string;
             const response = await fetchDelete(
-                process.env.NEXT_PUBLIC_USER_SERVER_URL as string, {
+                express_gateway as string, {
                     email: email
                 }
             );
