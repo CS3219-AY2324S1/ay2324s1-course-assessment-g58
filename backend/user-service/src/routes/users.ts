@@ -33,6 +33,11 @@ router.post("/", async (req: Request, res: Response) => {
             password: await hashPassword(password),
             admin: true,
         },
+        select: {
+            username: true,
+            email: true,
+            admin: true,
+        },
     });
 
     res.json(newUser);

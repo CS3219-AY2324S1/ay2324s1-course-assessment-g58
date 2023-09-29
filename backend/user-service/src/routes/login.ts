@@ -16,7 +16,12 @@ router.post("/", async (req: Request, res: Response) => {
                 httpOnly: true,
             })
                 .status(200)
-                .json({ message: "Login successful" });
+                .json({
+                    message: "Login successful",
+                    email: email,
+                    username: userData.username,
+                    admin: userData.admin,
+                });
         } else {
             res.status(401).send({ message: "Incorrect email or password" });
         }
