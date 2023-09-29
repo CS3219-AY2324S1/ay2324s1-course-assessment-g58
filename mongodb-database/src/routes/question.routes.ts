@@ -20,7 +20,12 @@ router.post('/add-new-question', async (req, res) => {
         console.log(newQuestion);
         res.status(201).json(newQuestion);
     } catch (err: any) {
-        res.status(500).json({ error: err.message });
+        // Check for duplicate key error
+        if (err.code === 11000) {
+            res.status(400).json({ message: "Duplicate value detected. Please ensure unique values for unique fields (Title)." });
+        } else {
+            res.status(500).json({ message: "500 Internal Server Error" + err.message });
+        }
     }
 });
 
@@ -31,7 +36,7 @@ router.get('/get-all-questions', async (req, res) => {
         console.log('Got {%i} questions!', questions.length);
         res.status(200).json(questions);
     } catch (err: any) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ message: "500 Internal Server Error" + err.message });
     }
 });
 
@@ -45,11 +50,10 @@ router.delete('/delete-question', async (req, res) => {
             res.status(200).json(deletedQuestion);
         } else {
             console.log('Question not found!');
-            res.status(404).json({ error: 'Question not found' });
+            res.status(404).json({ message: 'Question not found' });
         }
     } catch (err: any) {
-        console.log(err.message);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ message: "500 Internal Server Error" + err.message });
     }
 });
 
@@ -72,11 +76,14 @@ router.put('/edit-question', async (req, res) => {
             res.status(200).json(editedQuestion);
         } else {
             console.log('Question not found!');
-            res.status(404).json({ error: 'Question not found' });
+            res.status(404).json({ message: 'Question not found' });
         }
     } catch (err: any) {
-        console.log(err.message);
-        res.status(500).json({ error: err.message });
+        if (err.code === 11000) {
+            console.log('Duplicate title detected.');
+            return res.status(400).json({ message: 'A question with this title already exists. Please choose a different title.' });
+        }
+        res.status(500).json({ message: "500 Internal Server Error" + err.message });
     }
 });
 

@@ -23,8 +23,12 @@ const SignupBox = () => {
                 email: email
             }
         ).then(res => {
-            alert("Success! Added: " + res.data)
-            router.push('/login?mode=login');
+            if (res.status == 201) {
+                alert("Success! Added: " + res.data.email);
+                router.push('/login?mode=login');
+            } else {
+                alert(res.message);
+            }
         }).catch(err => {
             alert(err)
         });

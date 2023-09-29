@@ -4,6 +4,7 @@ import { useEffect, useState, FormEvent } from 'react';
 import { fetchPost, fetchGet, fetchPut, fetchDelete } from "@/utils/apiHelpers";
 // import ContributionTracker from './ContributionTracker';
 import CloseIcon from '@mui/icons-material/Close';
+import { log } from 'console';
 
 type User = {
     username: string,
@@ -11,7 +12,7 @@ type User = {
 }
 
 const ProfilePage = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [ submissions, setSubmissions ] = useState(0);
     const [ isEditing, setEditing ] = useState(false);
     const [ users, setUsers ] = useState<User[]>([]);
@@ -63,7 +64,9 @@ const ProfilePage = () => {
         ).then(res => {
             console.log(res)
             if (res.status == 200) {
+                setIsDialogOpen(false);
                 alert("Success! Deleted: " + res.data.email);
+                logout();
             } else {
                 alert(res.message);
             }
