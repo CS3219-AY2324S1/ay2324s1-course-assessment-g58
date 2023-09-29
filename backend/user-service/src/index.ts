@@ -16,7 +16,6 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-// app.use("/api/users", require("./routes/api/users"));
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/users", userRouter);

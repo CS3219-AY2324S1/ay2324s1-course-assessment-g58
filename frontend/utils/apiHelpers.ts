@@ -4,7 +4,7 @@ export type ResponseData = {
     status: number;
     message?: string;
     data?: any;
-}
+};
 
 export class HttpError extends Error {
     status: number;
@@ -52,6 +52,7 @@ export async function fetchPost(url: string, data: any) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
     const res = await response.json(); // parses JSON response into native JavaScript objects
+
     if (response.status >= 300) {
         throw new HttpError(res.status, res.message);
     } else {
