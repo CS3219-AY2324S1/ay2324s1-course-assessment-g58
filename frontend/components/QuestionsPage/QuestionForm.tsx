@@ -1,9 +1,12 @@
-import { fetchPost, fetchGet } from "@/utils/apiHelpers";
 import React, { FormEvent, useState } from 'react';
 import Question from '@/types/Question';
 
 interface QuestionFormProps {
     addQuestion: (newQuestion: Question) => Promise<number>;
+}
+
+const labelStyle = {
+    marginRight: '10px',
 }
 
 function QuestionForm({ addQuestion }: QuestionFormProps) {
@@ -32,6 +35,7 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
             return;
         }
         const newQuestion: Question = {
+            _id: "",
             title: questionTitle,
             description: questionDescription,
             difficulty: questionComplexity,
@@ -51,7 +55,7 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
 
     return (
         <form id="questionForm" onSubmit={handleSubmit}>          
-            <label htmlFor="questionTitle">Enter Question Title:</label>
+            <label htmlFor="questionTitle" style={labelStyle}>Enter Question Title:</label>
             <input 
                 type="text"
                 id="questionTitle"
@@ -59,6 +63,7 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
                 placeholder="Question Title"
                 value={questionTitle}
                 onChange={e => {setQuestionTitle(e.target.value)}}
+                
             />
             <br /><br />
     
@@ -75,7 +80,7 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
             </textarea>
             <br /><br />
     
-            <label htmlFor="questionCategory">Enter Question Category:</label>
+            <label htmlFor="questionCategory" style={labelStyle} >Enter Question Category:</label>
             <input 
                 type="text"
                 id="questionCategory"
@@ -86,7 +91,7 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
             />
             <br /><br />
     
-            <label htmlFor="questionComplexity">Enter Question Complexity:</label>
+            <label htmlFor="questionComplexity" style={labelStyle}>Enter Question Complexity:</label>
             <input 
                 type="text"
                 id="questionComplexity"

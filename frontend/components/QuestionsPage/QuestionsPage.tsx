@@ -2,8 +2,7 @@ import Header from './Header';
 import QuestionForm from './QuestionForm';
 import QuestionTable from './QuestionTable';
 import DescriptionModal from './DescriptionModal';
-import UserDemo from './UserDemo';
-import { fetchPost, fetchGet, fetchDelete } from "@/utils/apiHelpers";
+import { fetchPost, fetchGet, fetchDelete, fetchPut } from "@/utils/apiHelpers";
 import { useState, useEffect } from 'react';
 import Question from '@/types/Question';
 
@@ -39,7 +38,7 @@ const QuestionPage = () => {
     };
 
     const deleteQuestion = async (question: Question) => {
-        // Add the new question to the backend and then update the state
+        // Delete the question from the backend and then update the state
         const response = await fetchDelete("/api/questions", question);
         if (response.status == 200) {
             alert("Success! Deleted: " + response.data.title);
@@ -48,6 +47,19 @@ const QuestionPage = () => {
             alert(response.message);
         }
         return response.status; 
+    };
+
+    const editQuestion = async (updatedQuestion: Question) => {
+        // Edit the question from the backend and then update the state
+        const response = await fetchPut("/api/questions", updatedQuestion);
+        if (response.status == 200) {
+            alert("Success! Updated: " + response.data.title);
+            setRefresh(prev => !prev);
+            handleCloseModal();
+        } else {
+            alert(response.message);
+        }
+        return response.status;
     };
 
     useEffect(() => {
@@ -63,8 +75,11 @@ const QuestionPage = () => {
             <Header />
             <QuestionForm addQuestion={addQuestion} />
             <QuestionTable questions={questions} deleteQuestion={deleteQuestion} openModal={handleOpenModal} />
-            {isModalOpen && <DescriptionModal question={selectedQuestion} closeModal={handleCloseModal} />}
-            <UserDemo/>
+            {isModalOpen && <DescriptionModal
+                question={selectedQuestion}
+                closeModal={handleCloseModal}
+                editQuestion={editQuestion}
+            />}
         </main>
     );
   }

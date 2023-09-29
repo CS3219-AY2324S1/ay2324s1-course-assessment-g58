@@ -6,7 +6,9 @@ import SignupBox from './SignupBox';
 const LoginPage = () => {
     const router = useRouter();
     const [isLogin, setIsLogin] = useState(true);  // Default to login mode
-
+    
+    // Check if we are in login or register mode, to show correct component
+    // (Login box and signup box is in same page)
     useEffect(() => {
         const { mode } = router.query;
         setIsLogin((prev) =>
