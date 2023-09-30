@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (!user) {
             fetchUserFromToken();
         }
-    });
+    }, [user]);
 
     const login = async (email: string, password: string) => {
         // login user

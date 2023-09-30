@@ -54,7 +54,7 @@ const ProfilePage = () => {
     // loads list of users upon entering profile page
     useEffect(() => {
         refreshUsers();
-    });
+    }, [user]);
 
     const refreshUsers = async () => {
         await fetchGet("/api/users").then((res) => {
