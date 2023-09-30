@@ -30,7 +30,7 @@ export class HttpError extends Error {
 export async function fetchGet(url: string) {
     const response = await fetch(url);
     const res = await response.json(); // parses JSON response into native JavaScript objects
-    console.log(res);
+
     if (response.status >= 300) {
         throw new HttpError(res.status, res.message);
     } else {
