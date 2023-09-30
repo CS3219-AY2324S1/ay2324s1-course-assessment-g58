@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(userData.username);
                 setEmail(userData.email);
                 setAdmin(userData.admin);
-                setAdmin(false);
             } catch (error: any) {
                 localStorage.removeItem("accessToken");
                 alert("Please login again");
