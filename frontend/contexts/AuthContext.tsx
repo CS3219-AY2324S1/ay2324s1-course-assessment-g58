@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     async function fetchUserFromToken() {
         const token = localStorage.getItem("accessToken");
+
         if (!user && token) {
             try {
                 const res = await fetchPost("/api/token-login", {
@@ -36,12 +37,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setAdmin(userData.admin);
             } catch (error: any) {
                 localStorage.removeItem("accessToken");
-
                 alert("Please login again");
             }
         }
     }
 
+    // try to login using token
     useEffect(() => {
         if (!user) {
             fetchUserFromToken();
