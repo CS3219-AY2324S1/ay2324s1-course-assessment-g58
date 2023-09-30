@@ -30,7 +30,7 @@ export default async function handler(
             }
         }
     } else if (req.method === "POST") {
-        const { email, username, password } = req.body;
+        const { email, username, password, admin } = req.body;
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
@@ -39,6 +39,7 @@ export default async function handler(
                 username: username,
                 email: email,
                 password: password,
+                admin: admin,
             });
             return res.json({ status: 201, data: response });
         } catch (error) {

@@ -17,7 +17,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, admin } = req.body;
 
     const existingUser = await prisma.user.findUnique({
         where: {
@@ -32,12 +32,24 @@ router.post("/", async (req: Request, res: Response) => {
         return;
     }
 
+    const duplicateUser = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
+
+    if (duplicateUser) {
+        return res.status(409).json({
+            message: `User with username: ${username} already exists.`,
+        });
+    }
+
     const newUser = await prisma.user.create({
         data: {
             username: username,
             email: email,
             password: await hashPassword(password),
-            admin: true,
+            admin: admin,
         },
         select: {
             username: true,
