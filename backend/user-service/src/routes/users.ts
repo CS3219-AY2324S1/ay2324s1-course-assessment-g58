@@ -1,12 +1,17 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { hashPassword } from "../auth/helpers";
+import { hashPassword } from "../utils/authHelpers";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        select: {
+            email: true,
+            username: true,
+        },
+    });
     res.json(users);
 });
 

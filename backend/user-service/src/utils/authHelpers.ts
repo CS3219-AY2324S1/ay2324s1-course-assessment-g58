@@ -97,5 +97,5 @@ export async function getUserData(email: string) {
  * @returns a JSON Web Token (JWT) generated using the `jwt.sign()` method.
  */
 export function generateToken(user: object) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN || "");
+    return jwt.sign(user, process.env.ACCESS_TOKEN || "", { expiresIn: "1d" });
 }

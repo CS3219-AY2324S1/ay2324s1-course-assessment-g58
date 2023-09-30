@@ -23,11 +23,13 @@ type JwtVerifyError = JsonWebTokenError | TokenExpiredError;
  */
 export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
-        const token = req.cookies.token;
+        const token = req.headers.authorization;
 
         // no token provided
         if (!token) {
-            return res.status(401).json({ message: "Authentication required" });
+            return res
+                .status(401)
+                .json({ status: 401, message: "Authentication required" });
         }
 
         jwt.verify(
@@ -35,9 +37,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
             process.env.ACCESS_TOKEN ?? "",
             (err: JwtVerifyError | null, user: any) => {
                 if (err) {
-                    return res
-                        .status(403)
-                        .json({ message: "Authentication failed" });
+                    return res.status(403).json({
+                        status: 403,
+                        message: "Authentication failed",
+                    });
                 }
 
                 req.body.user = user;
@@ -45,9 +48,10 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
             }
         );
     } catch (e) {
-        return res
-            .status(500)
-            .json({ message: `An unexpected error occurred: ${e}` });
+        return res.status(500).json({
+            status: 500,
+            message: `An unexpected error occurred: ${e}`,
+        });
     }
 }
 
@@ -70,7 +74,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
  */
 export function authorize(req: Request, res: Response, next: NextFunction) {
     try {
-        const token = req.cookies.token;
+        const token = req.headers.authorization;
 
         if (!token) {
             return res.status(401).json({ message: "Authentication required" });

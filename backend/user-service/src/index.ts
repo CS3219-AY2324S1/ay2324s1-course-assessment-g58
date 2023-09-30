@@ -2,6 +2,8 @@ import express, { Application } from "express";
 import userRouter from "./routes/users";
 import loginRouter from "./routes/login";
 import logoutRouter from "./routes/logout";
+import tokenRouter from "./routes/tokenLogin";
+import { authenticate } from "./middleware/authorize";
 
 const app: Application = express();
 
@@ -19,3 +21,4 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/users", userRouter);
+app.use("/api/token-login", authenticate, tokenRouter);

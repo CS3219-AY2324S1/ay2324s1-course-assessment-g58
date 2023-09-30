@@ -9,15 +9,14 @@ export default async function handler(
         const { email, password } = req.body;
 
         try {
-            const express_gateway: string = process.env
-                .USER_LOGIN_ENDPOINT as string;
+            const express_gateway: string = ((process.env
+                .GATEWAY_SERVER_URL as string) +
+                process.env.USER_LOGIN_ENDPOINT) as string;
 
             const response = await fetchPost(express_gateway as string, {
                 email: email,
                 password: password,
             });
-
-            console.log(response.status);
 
             return res.json({ status: response.status, data: response });
         } catch (error: any) {
