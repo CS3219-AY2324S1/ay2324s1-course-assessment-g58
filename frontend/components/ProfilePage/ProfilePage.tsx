@@ -69,8 +69,10 @@ const ProfilePage = () => {
             email: email,
         }).then((res) => {
             if (res.data) {
+                // get new token
+                localStorage.setItem("accessToken", res.data.token);
                 setUser(updatedUsername);
-                alert("Success! Updated: " + res.data.email);
+                alert("Success! Updated: " + res.data.user.email);
             } else {
                 alert(res.message);
             }

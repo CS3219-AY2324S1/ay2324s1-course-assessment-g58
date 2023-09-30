@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { hashPassword } from "../utils/authHelpers";
+import { generateToken, getUserData, hashPassword } from "../utils/authHelpers";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
@@ -108,7 +108,9 @@ router.put("/", async (req: Request, res: Response) => {
         },
     });
 
-    res.status(200).json(updateUser);
+    const newToken = generateToken(updateUser);
+
+    res.status(200).json({ token: newToken, user: updateUser });
 });
 
 router.delete("/", async (req: Request, res: Response) => {
