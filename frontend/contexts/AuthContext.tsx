@@ -11,6 +11,7 @@ import { fetchPost } from "@/utils/apiHelpers";
 interface AuthContextType {
     user: string | null;
     admin: boolean | null;
+    email: string | null;
     login: (email: string, password: string) => void;
     logout: () => void;
 }
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
     const [admin, setAdmin] = useState<boolean | null>(null);
     const router = useRouter();
 
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 const userData = res.data;
 
                 setUser(userData.username);
+                setEmail(userData.email);
                 setAdmin(userData.admin);
             } catch (error: any) {
                 localStorage.removeItem("accessToken");
@@ -70,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // check if the login is successful
         if (res.status === 200 && res.data) {
             setUser(user.username);
+            setEmail(user.email);
             setAdmin(user.admin);
             router.push("/");
         } else {
@@ -79,13 +83,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         setUser(null);
+        setEmail(null);
         setAdmin(null);
         localStorage.removeItem("accessToken");
         router.push("/login");
     };
 
     return (
-        <AuthContext.Provider value={{ user, admin, login, logout }}>
+        <AuthContext.Provider value={{ user, admin, email, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

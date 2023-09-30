@@ -32,11 +32,10 @@ type User = {
 };
 
 const ProfilePage = () => {
-    const { user, logout } = useAuth();
+    const { user, email, logout } = useAuth();
     const [submissions, setSubmissions] = useState(0);
     const [isEditing, setEditing] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
-    const [email, setEmail] = useState(user);
     const [updatedUsername, setUpatedUsername] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -55,7 +54,7 @@ const ProfilePage = () => {
     // loads list of users upon entering profile page
     useEffect(() => {
         refreshUsers();
-    }, [user]);
+    });
 
     const refreshUsers = async () => {
         await fetchGet("/api/users").then((res) => {
