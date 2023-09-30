@@ -32,11 +32,11 @@ type User = {
 };
 
 const ProfilePage = () => {
-    const { user, email, logout } = useAuth();
+    const { user, email, logout, setUser } = useAuth();
     const [submissions, setSubmissions] = useState(0);
     const [isEditing, setEditing] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
-    const [updatedUsername, setUpatedUsername] = useState("");
+    const [updatedUsername, setUpdatedUsername] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     // useEffect(() => {
@@ -68,7 +68,8 @@ const ProfilePage = () => {
             username: updatedUsername,
             email: email,
         }).then((res) => {
-            if (res.status == 201) {
+            if (res.data) {
+                setUser(updatedUsername);
                 alert("Success! Updated: " + res.data.email);
             } else {
                 alert(res.message);
@@ -115,7 +116,7 @@ const ProfilePage = () => {
                                         {user}
                                     </Typography>
                                     <Typography variant="caption">
-                                        {user}
+                                        {email}
                                     </Typography>
                                 </Stack>
                             </Stack>
@@ -137,7 +138,7 @@ const ProfilePage = () => {
                                         value={updatedUsername}
                                         size="small"
                                         onChange={(e) => {
-                                            setUpatedUsername(e.target.value);
+                                            setUpdatedUsername(e.target.value);
                                         }}
                                     />
                                     <Stack

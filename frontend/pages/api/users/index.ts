@@ -61,7 +61,7 @@ export default async function handler(
                 username: username,
                 email: email,
             });
-            return res.json({ status: 201, data: response });
+            return res.json({ status: response.status, data: response });
         } catch (error) {
             if (error instanceof HttpError) {
                 return res.json({

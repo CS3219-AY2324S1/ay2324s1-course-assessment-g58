@@ -78,9 +78,10 @@ export async function fetchPut(url: string, data: any) {
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
+
     const res = await response.json(); // parses JSON response into native JavaScript objects
     if (response.status >= 300) {
-        throw new HttpError(res.status, res.message);
+        throw new HttpError(response.status, res.message);
     } else {
         return res;
     }

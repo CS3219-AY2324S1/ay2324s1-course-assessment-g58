@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../utils/authHelpers";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -64,10 +65,21 @@ router.put("/", async (req: Request, res: Response) => {
     });
 
     if (!existingUser) {
-        res.status(404).json({
+        return res.status(404).json({
             message: `User with email: ${email} not found.`,
         });
-        return;
+    }
+
+    const duplicateUser = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
+
+    if (duplicateUser) {
+        return res.status(409).json({
+            message: `User with username: ${username} already exists.`,
+        });
     }
 
     const updateUser = await prisma.user.update({
@@ -77,9 +89,14 @@ router.put("/", async (req: Request, res: Response) => {
         data: {
             username: username,
         },
+        select: {
+            username: true,
+            email: true,
+            admin: true,
+        },
     });
 
-    res.json(updateUser);
+    res.status(200).json(updateUser);
 });
 
 router.delete("/", async (req: Request, res: Response) => {
@@ -106,9 +123,14 @@ router.delete("/", async (req: Request, res: Response) => {
         where: {
             email: email,
         },
+        select: {
+            username: true,
+            email: true,
+            admin: true,
+        },
     });
 
-    res.json(deletedUser);
+    res.status(200).json(deletedUser);
 });
 
 export default router;

@@ -14,6 +14,7 @@ interface AuthContextType {
     email: string | null;
     login: (email: string, password: string) => void;
     logout: () => void;
+    setUser: (username: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(userData.username);
                 setEmail(userData.email);
                 setAdmin(userData.admin);
+                setAdmin(false);
             } catch (error: any) {
                 localStorage.removeItem("accessToken");
                 alert("Please login again");
@@ -90,7 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, admin, email, login, logout }}>
+        <AuthContext.Provider
+            value={{ user, admin, email, login, logout, setUser }}
+        >
             {children}
         </AuthContext.Provider>
     );
