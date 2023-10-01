@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { NextPage } from 'next';
-import LoginPage from '../components/LoginPage/LoginPage';
-import { useRouter } from 'next/router';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useEffect } from "react";
+import { NextPage } from "next";
+import LoginPage from "../components/LoginPage/LoginPage";
+import { useRouter } from "next/router";
+import { useAuth } from "../contexts/AuthContext";
 
 const Login: NextPage = () => {
     const { user } = useAuth();
@@ -10,9 +10,9 @@ const Login: NextPage = () => {
 
     useEffect(() => {
         if (user) {
-            router.push('/');
+            router.push("/");
         }
-    }, [user]);
+    });
 
     if (user) {
         return (
@@ -20,12 +20,10 @@ const Login: NextPage = () => {
             <div className="flex justify-center items-center h-screen">
                 <h1 className="text-4xl font-bold">Loading...</h1>
             </div>
-        )
+        );
     }
 
-    return (
-        <LoginPage />
-    );
-}
+    return <LoginPage />;
+};
 
 export default Login;
