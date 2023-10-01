@@ -7,15 +7,14 @@ WORKDIR /app
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY ./backend/user-service/package*.json .
+COPY ./mongodb-database/package*.json .
 RUN npm install
+
 # If you are building your code for production
 # RUN npm ci --omit=dev
 
-COPY ./backend/user-service .
+COPY ./mongodb-database .
 
-EXPOSE 3001
-
-RUN npx prisma generate --schema /app/prisma/schema.prisma
+EXPOSE 3002
 
 CMD [ "npm", "start" ]
