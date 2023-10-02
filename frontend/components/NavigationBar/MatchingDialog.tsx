@@ -1,0 +1,265 @@
+import { useAuth } from "@/contexts/AuthContext";
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    FormControl,
+    FormHelperText,
+    InputLabel,
+    MenuItem,
+    Select,
+    Stack,
+    Typography,
+} from "@mui/material";
+import { useRouter } from "next/router";
+import React, { FC, useEffect, useState } from "react";
+import { Socket, io } from "socket.io-client";
+
+type Match = {
+    socketId: string;
+    userId: string;
+    difficulty: string;
+    language: string;
+    room: string;
+};
+
+const MatchingDialog = () => {
+    const { user } = useAuth();
+    const router = useRouter();
+    const [language, setLanguage] = useState("");
+    const [difficulty, setDifficulty] = useState("");
+    const [open, setOpen] = useState(false);
+    const [socket, setSocket] = useState<Socket>();
+    const [isTimeout, setTimeout] = useState(false);
+    const [isMatching, setMatching] = useState(false);
+    const [missingLanguage, setMissingLanguage] = useState(false);
+    const [missingDifficulty, setMissingDifficulty] = useState(false);
+    const difficultyOptions = ["Easy", "Medium", "Hard"];
+    const languageOptions = ["C", "C++", "Java", "JavaScript", "Python"];
+    const [progress, setProgress] = useState(0);
+    const waitTime = 30000;
+
+    const handleClose = (event: any, reason: string) => {
+        if (reason && reason == "backdropClick")
+            return; /* This prevents modal from closing on an external click */
+        // Reset variables
+        if (socket) socket.disconnect();
+        setMatching(false);
+        setOpen(false);
+        setLanguage("");
+        setDifficulty("");
+        setTimeout(false);
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const startMatching = () => {
+        setTimeout(false);
+        // Handle errors
+        if (difficulty === "" || language === "") {
+            setMissingDifficulty(difficulty === "");
+            setMissingLanguage(language === "");
+            return;
+        }
+        setMatching(true);
+
+        // Connect to the server
+        const socket = io("http://localhost:3004");
+
+        // Handle successful connection
+        socket.on("connect", () => {
+            console.log("Connected to the server");
+
+            // Emit the 'joinQueue' event to join the queue
+            socket.emit("joinQueue", {
+                userId: user,
+                difficulty: difficulty,
+                language: language,
+            });
+
+            // Display timer
+        });
+
+        // Handle 'match' event
+        socket.on("match", (matchingUser: Match) => {
+            console.log("Match found:", matchingUser);
+            router.push("/collab");
+            // socketId,
+            // userId
+            // difficulty
+            // language
+            // room
+        });
+
+        // Handle disconnection
+        socket.on("disconnect", () => {
+            console.log("Disconnected from the server");
+            setMatching(false);
+        });
+
+        setSocket(socket);
+
+        // Display timer
+        const timer = setInterval(() => {
+            setProgress((prevProgress) =>
+                prevProgress < 100 ? prevProgress + 0.1 : 100
+            );
+        }, waitTime / 1000);
+
+        return () => {
+            clearInterval(timer);
+        };
+    };
+
+    const handleTimerExpire = () => {
+        console.log("time expired!");
+        if (socket) socket.disconnect();
+        setMatching(false);
+        setTimeout(true);
+        setProgress(0);
+    };
+
+    useEffect(() => {
+        if (progress >= 100) {
+            handleTimerExpire();
+        }
+    }, [progress]);
+
+    return (
+        <div>
+            <Button variant="contained" onClick={handleClickOpen}>
+                Match
+            </Button>
+            <Dialog
+                open={open}
+                fullWidth
+                maxWidth="sm"
+                onClose={handleClose}
+                aria-labelledby="Matching-dialog-title"
+                aria-describedby="Matching-dialog-description"
+            >
+                <DialogTitle id="Matching-dialog-title">
+                    Start Prepping
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText
+                        id="Matching-dialog-description"
+                        className="mb-2"
+                    >
+                        {isMatching
+                            ? "Finding you a suitable match..."
+                            : "Select your desired difficulty and language"}
+                    </DialogContentText>
+                    {isMatching ? (
+                        <Stack className=" items-center">
+                            <CircularProgress size="4rem" thickness={4} />
+                        </Stack>
+                    ) : (
+                        <Stack>
+                            <FormControl
+                                className="m-2"
+                                error={missingDifficulty}
+                            >
+                                <InputLabel id="difficulty-label">
+                                    Difficulty
+                                </InputLabel>
+                                <Select
+                                    labelId="difficulty-label"
+                                    label="Difficulty"
+                                    className="w-full"
+                                    value={difficulty}
+                                    onChange={(e) =>
+                                        setDifficulty(e.target.value as string)
+                                    }
+                                >
+                                    {difficultyOptions.map((value) => {
+                                        return (
+                                            <MenuItem key={value} value={value}>
+                                                {value}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                                {missingDifficulty && (
+                                    <FormHelperText>
+                                        Please select a value
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+                            <FormControl
+                                className="m-2"
+                                error={missingLanguage}
+                            >
+                                <InputLabel id="language-label">
+                                    Language
+                                </InputLabel>
+                                <Select
+                                    labelId="language-label"
+                                    label="language"
+                                    className="w-full"
+                                    value={language}
+                                    onChange={(e) =>
+                                        setLanguage(e.target.value as string)
+                                    }
+                                >
+                                    {languageOptions.map((value) => {
+                                        return (
+                                            <MenuItem key={value} value={value}>
+                                                {value}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                                {missingLanguage && (
+                                    <FormHelperText>
+                                        Please select a value
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+                            {isTimeout && (
+                                <Typography
+                                    className="m-2"
+                                    variant="subtitle2"
+                                    color="error"
+                                >
+                                    We couldn't find you a match right now.
+                                    Please try again later!
+                                </Typography>
+                            )}
+                        </Stack>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    {!isMatching && (
+                        <Button
+                            variant="outlined"
+                            style={{ textTransform: "none" }}
+                            onClick={startMatching}
+                            className="m-2"
+                        >
+                            Begin Matchmaking
+                        </Button>
+                    )}
+                    {/* See https://stackoverflow.com/questions/57329278/how-to-handle-outside-click-on-dialog-modal */}
+                    {/* @ts-ignore */}
+                    <Button
+                        variant="outlined"
+                        style={{ textTransform: "none" }}
+                        onClick={handleClose}
+                        color="error"
+                    >
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
+};
+
+export default MatchingDialog;
