@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useMatching } from "@/contexts/MatchingContext";
 import {
     Button,
     CircularProgress,
@@ -15,25 +16,14 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import { useRouter } from "next/router";
-import React, { FC, useEffect, useState } from "react";
-import { Socket, io } from "socket.io-client";
+import React, { useEffect, useState } from "react";
 
-type Match = {
-    socketId: string;
-    userId: string;
-    difficulty: string;
-    language: string;
-    room: string;
-};
-
-const MatchingDialog = () => {
+const MatchingButton = () => {
     const { user } = useAuth();
-    const router = useRouter();
+    const { startMatching, cancelMatching, handleTimerExpire } = useMatching();
     const [language, setLanguage] = useState("");
     const [difficulty, setDifficulty] = useState("");
     const [open, setOpen] = useState(false);
-    const [socket, setSocket] = useState<Socket>();
     const [isTimeout, setTimeout] = useState(false);
     const [isMatching, setMatching] = useState(false);
     const [missingLanguage, setMissingLanguage] = useState(false);
@@ -42,12 +32,11 @@ const MatchingDialog = () => {
     const languageOptions = ["C", "C++", "Java", "JavaScript", "Python"];
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
-
     const handleClose = (event: any, reason: string) => {
         if (reason && reason == "backdropClick")
             return; /* This prevents modal from closing on an external click */
         // Reset variables
-        if (socket) socket.disconnect();
+        cancelMatching();
         setMatching(false);
         setOpen(false);
         setLanguage("");
@@ -59,7 +48,7 @@ const MatchingDialog = () => {
         setOpen(true);
     };
 
-    const startMatching = () => {
+    const handleMatching = () => {
         setTimeout(false);
         // Handle errors
         if (difficulty === "" || language === "") {
@@ -67,43 +56,11 @@ const MatchingDialog = () => {
             setMissingLanguage(language === "");
             return;
         }
+
         setMatching(true);
 
-        // Connect to the server
-        const socket = io("http://localhost:3004");
-
-        // Handle successful connection
-        socket.on("connect", () => {
-            console.log("Connected to the server");
-
-            // Emit the 'joinQueue' event to join the queue
-            socket.emit("joinQueue", {
-                userId: user,
-                difficulty: difficulty,
-                language: language,
-            });
-
-            // Display timer
-        });
-
-        // Handle 'match' event
-        socket.on("match", (matchingUser: Match) => {
-            console.log("Match found:", matchingUser);
-            router.push("/collab");
-            // socketId,
-            // userId
-            // difficulty
-            // language
-            // room
-        });
-
-        // Handle disconnection
-        socket.on("disconnect", () => {
-            console.log("Disconnected from the server");
-            setMatching(false);
-        });
-
-        setSocket(socket);
+        // Starts matching using MatchingContext
+        startMatching(user!);
 
         // Display timer
         const timer = setInterval(() => {
@@ -117,33 +74,26 @@ const MatchingDialog = () => {
         };
     };
 
-    const handleTimerExpire = () => {
-        console.log("time expired!");
-        if (socket) socket.disconnect();
-        setMatching(false);
-        setTimeout(true);
-        setProgress(0);
-    };
-
     useEffect(() => {
         if (progress >= 100) {
+            console.log("matching-dialog: time expired!");
             handleTimerExpire();
+            setMatching(false);
+            setTimeout(true);
+            setProgress(0);
         }
     }, [progress]);
 
     return (
         <div>
-            <Button variant="contained" onClick={handleClickOpen}>
+            <Button
+                variant="contained"
+                onClick={handleClickOpen}
+                className=" bg-blue-400"
+            >
                 Match
             </Button>
-            <Dialog
-                open={open}
-                fullWidth
-                maxWidth="sm"
-                onClose={handleClose}
-                aria-labelledby="Matching-dialog-title"
-                aria-describedby="Matching-dialog-description"
-            >
+            <Dialog open={open} fullWidth maxWidth="sm" onClose={handleClose}>
                 <DialogTitle id="Matching-dialog-title">
                     Start Prepping
                 </DialogTitle>
@@ -157,7 +107,7 @@ const MatchingDialog = () => {
                             : "Select your desired difficulty and language"}
                     </DialogContentText>
                     {isMatching ? (
-                        <Stack className=" items-center">
+                        <Stack className="items-center">
                             <CircularProgress size="4rem" thickness={4} />
                         </Stack>
                     ) : (
@@ -240,7 +190,7 @@ const MatchingDialog = () => {
                         <Button
                             variant="outlined"
                             style={{ textTransform: "none" }}
-                            onClick={startMatching}
+                            onClick={handleMatching}
                             className="m-2"
                         >
                             Begin Matchmaking
@@ -262,4 +212,4 @@ const MatchingDialog = () => {
     );
 };
 
-export default MatchingDialog;
+export default MatchingButton;
