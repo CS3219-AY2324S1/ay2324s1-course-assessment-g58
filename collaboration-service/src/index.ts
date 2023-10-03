@@ -9,12 +9,16 @@ app.use(cors());
 const PORT = process.env.PORT || 3005;
 
 const httpServer = http.createServer(app);
+
+// Protect our server by only allowing connections from our frontend
 const io = new Server(httpServer, {
     cors: {
         origin: "http://localhost:3000",
         methods: ["GET", "POST"],
     },
 });
+
+// TODO: protect our server against direct, maybe malicious socket.io connections
 
 // handle '/' route for testing
 app.get('/', (req, res) => {
