@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
+import { ExtendedSocket } from './models/ExtendedSocket';
 
 const app: Express = express();
 app.use(cors());
@@ -15,7 +16,7 @@ const io = new Server(httpServer, {
     },
 });
 
-// handle '/' route
+// handle '/' route for testing
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
@@ -23,4 +24,24 @@ app.get('/', (req, res) => {
 // Start the server
 httpServer.listen(PORT, () => {
     console.log("Server listening on port ", PORT);
+});
+
+// Middleware function for all incoming socket connections
+io.use((socket: Socket, next) => {
+    // Cast socket to ExtendedSocket
+    const extendedSocket = socket as ExtendedSocket;
+
+    // Get roomid from incoming frontend connection
+    const roomId = socket.handshake.auth.roomId;
+    if (!roomId) {
+        return;
+    }
+    extendedSocket.roomId = roomId;
+    next();
+});
+
+// Handle new connection
+io.on('connection', (socket: Socket) => {
+    const extendedSocket = socket as ExtendedSocket;
+    console.log('New connection with roomId:', extendedSocket.roomId);
 });
