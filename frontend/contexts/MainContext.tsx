@@ -1,10 +1,11 @@
-import { AuthProvider } from "./AuthContext"
-import { ReactNode } from "react"
+import { AuthProvider } from "./AuthContext";
+import { ReactNode } from "react";
+import { MatchingProvider } from "./MatchingContext";
 
 const MainContext = ({ children }: { children: ReactNode }) => {
     return (
         <AuthProvider>
-            {children}
+            <MatchingProvider>{children}</MatchingProvider>
         </AuthProvider>
     );
 };

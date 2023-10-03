@@ -18,11 +18,12 @@ import {
     DialogContent,
     DialogActions,
     DialogContentText,
+    Container,
 } from "@mui/material";
 import { AuthProvider, useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState, FormEvent } from "react";
 import { fetchPost, fetchGet, fetchPut, fetchDelete } from "@/utils/apiHelpers";
-// import ContributionTracker from './ContributionTracker';
+import ContributionTracker from "./ContributionTracker";
 import CloseIcon from "@mui/icons-material/Close";
 import { log } from "console";
 
@@ -39,17 +40,20 @@ const ProfilePage = () => {
     const [updatedUsername, setUpdatedUsername] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // useEffect(() => {
-    //     const squares = document.querySelector('.squares');
-    //     squares!.innerHTML = '';
-    //     let totalSubmissions = 0;
-    //     for (var i = 1; i < 365; i++) {
-    //         const level = Math.floor(Math.random() * 3);
-    //         squares!.insertAdjacentHTML('beforeend', `<li data-level="${level}"></li>`);
-    //         totalSubmissions += level;
-    //     }
-    //     setSubmissions(totalSubmissions);
-    // }, [])
+    useEffect(() => {
+        const squares = document.querySelector(".squares");
+        squares!.innerHTML = "";
+        let totalSubmissions = 0;
+        for (var i = 1; i < 365; i++) {
+            const level = Math.floor(Math.random() * 3);
+            squares!.insertAdjacentHTML(
+                "beforeend",
+                `<li data-level="${level}"></li>`
+            );
+            totalSubmissions += level;
+        }
+        setSubmissions(totalSubmissions);
+    }, []);
 
     // loads list of users upon entering profile page
     useEffect(() => {
@@ -96,8 +100,8 @@ const ProfilePage = () => {
     };
     return (
         <Box width="full" height="full">
-            <Stack direction="row">
-                <Grid container spacing={3} className="w-10/12">
+            <Container>
+                <Grid container spacing={3} className="w-full">
                     <Grid item className="w-1/3">
                         <Card
                             className="p-4"
@@ -210,49 +214,21 @@ const ProfilePage = () => {
                         </Card>
                     </Grid>
                     <Grid item className="w-2/3">
-                        {/* <Grid container spacing={3} className="w-full"> 
-                            <Grid item className="w-1/2">
-                                <Card>
-                                    Solved
-                                </Card>
-                            </Grid>
-                            <Grid item className="w-1/2">
-                                <Card>
-                                    Badges
-                                </Card>
-                            </Grid>
-                        </Grid> */}
-                        <Grid container spacing={3} className="w-2/3">
-                            <Grid item className="w-full">
-                                <Card className="p-4">
-                                    <Stack
-                                        direction="row"
-                                        className="items-center"
-                                    >
-                                        <Typography
-                                            variant="h6"
-                                            fontWeight="bold"
-                                        >
-                                            {submissions}
-                                        </Typography>
-                                        <Typography className="ml-2">
-                                            submissions in the last year
-                                        </Typography>
-                                    </Stack>
-                                    {/* <ContributionTracker /> */}
-                                </Card>
-                            </Grid>
-                        </Grid>
+                        <Card className="p-4">
+                            <Stack direction="row" className="items-center">
+                                <Typography variant="h6" fontWeight="bold">
+                                    {submissions}
+                                </Typography>
+                                <Typography className="ml-2">
+                                    submissions in the last year
+                                </Typography>
+                            </Stack>
+                            <ContributionTracker />
+                        </Card>
                     </Grid>
                 </Grid>
-                <Grid item className="w-2/12">
-                    <Card
-                        className="p-0"
-                        sx={{
-                            backgroundColor: "white", // Set the background color here
-                            // Other CSS properties can also be defined
-                        }}
-                    >
+                <Grid container className="w-full pr-6 mt-4">
+                    <Card className="p-0 w-full bg-white">
                         {/* Header */}
                         <Typography
                             variant="h6"
@@ -273,7 +249,7 @@ const ProfilePage = () => {
                                 <ListItem key={user.email}>
                                     <ListItemAvatar>
                                         <Avatar sx={{ width: 32, height: 32 }}>
-                                            {user.username}
+                                            {user.username[0]}
                                         </Avatar>
                                     </ListItemAvatar>
                                     <ListItemText primary={user.username} />
@@ -294,7 +270,7 @@ const ProfilePage = () => {
                         </Button>
                     </Card>
                 </Grid>
-            </Stack>
+            </Container>
         </Box>
     );
 };
