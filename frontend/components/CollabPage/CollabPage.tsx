@@ -10,19 +10,12 @@ const CollabPage = () => {
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
 
-    // Reject people with no roomId
     useEffect(() => {   
+        // Reject people with no roomId
         if (router.pathname == '/collab' && roomId === "") {
             router.push('/');
         }
     }, [roomId, router.pathname]);
-
-    // Cancel matching when user leaves the page
-    useEffect(() => {
-        if (router.pathname != '/collab') {
-            cancelMatching();
-        }
-    }, [router.pathname]);
 
     // Connect to collab service socket via roomId
     useEffect(() => {
@@ -34,12 +27,15 @@ const CollabPage = () => {
             }
         });
         setSocket(socket);
+    }, [roomId]);
 
+    // When unmounting this component i.e leaving page, cancel matching
+    useEffect(() => {
         return () => {
             cancelMatching();
         };
-    }, [roomId]);
-
+    }, []);
+    
     return (
         <div>
             <h1>Collab Page</h1>

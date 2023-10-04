@@ -16,7 +16,7 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 
 const MatchingButton = () => {
@@ -34,6 +34,7 @@ const MatchingButton = () => {
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
     const router = useRouter();
+    const timerRef = useRef<number | null>(null);
     const handleClose = (event: any, reason: string) => {
         if (reason && reason == "backdropClick")
             return; /* This prevents modal from closing on an external click */
@@ -64,15 +65,22 @@ const MatchingButton = () => {
         // Starts matching using MatchingContext
         startMatching(user!);
 
-        // Display timer
-        const timer = setInterval(() => {
+        // Start the matchmaking timer
+        if (timerRef.current) {
+            clearInterval(timerRef.current); // Clear any existing timer
+        }
+        setProgress(0);
+
+        timerRef.current = window.setInterval(() => {
             setProgress((prevProgress) =>
                 prevProgress < 100 ? prevProgress + 0.1 : 100
             );
         }, waitTime / 1000);
 
         return () => {
-            clearInterval(timer);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
         };
     };
 
@@ -83,12 +91,22 @@ const MatchingButton = () => {
             setMatching(false);
             setTimeout(true);
             setProgress(0);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
         }
     }, [progress]);
 
+    
     useEffect(() => {
+        // On successful match, redirect to collab page, stop timer, stop matching
         if (router.pathname === '/collab') {
             setOpen(false); // Close the dialog box
+            setMatching(false); // Stop matching
+            if (timerRef.current) {
+                clearInterval(timerRef.current); // Clear the timer
+            }
+            setProgress(0); // Reset progress
         }
     }, [router.pathname]);
 
