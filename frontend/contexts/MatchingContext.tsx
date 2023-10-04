@@ -66,7 +66,10 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
             console.log("Disconnected from the server");
         });
 
-    };
+        return () => {
+            cancelMatching();
+        }
+    }
 
     // Resets variables
     const cancelMatching = () => {

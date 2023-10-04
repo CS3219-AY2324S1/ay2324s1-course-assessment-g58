@@ -27,15 +27,19 @@ const CollabPage = () => {
     // Connect to collab service socket via roomId
     useEffect(() => {
         if (roomId === "") return;
-
-        const socket = io("http://localhost:3005");
+        //TODO: non hardcode url handling 
+        const socket = io("http://localhost:3005", {
+            auth: {
+                roomId: roomId,
+            }
+        });
         setSocket(socket);
 
         return () => {
-            socket.disconnect();
+            cancelMatching();
         };
-
     }, [roomId]);
+
     return (
         <div>
             <h1>Collab Page</h1>
