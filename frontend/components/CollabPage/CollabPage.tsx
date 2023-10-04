@@ -3,10 +3,11 @@ import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
+import QuestionPanel from "./QuestionPanel";
 
 const CollabPage = () => {
     const { user } = useAuth();
-    const { roomId, cancelMatching } = useMatching();
+    const { roomId, cancelMatching, questions } = useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
 
@@ -41,6 +42,7 @@ const CollabPage = () => {
             <h1>Collab Page</h1>
             <h2>Username: {user}</h2>
             <h2>Room ID: {roomId}</h2>
+            <QuestionPanel questions={questions}/>
         </div>
     )
 }
