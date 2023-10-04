@@ -1,14 +1,46 @@
-import { useState } from "react";
-import Editor from "@monaco-editor/react";
+// components
+import { useState, useRef } from "react";
+import Editor, { OnChange, OnMount } from "@monaco-editor/react";
+import { LANGUAGE } from "@/utils/enums";
+import { Socket } from "socket.io";
 
-const CodeEditor = () => {
+// types
+import { editor } from "monaco-editor/esm/vs/editor/editor.api";
+
+const CodeEditor = ({ language, questionId, editorContent, roomId }: Props) => {
+    const [socket, setSocket] = useState<Socket>();
+
+    const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+    // handle mounting of editor
+    const handleEditorDidMount: OnMount = (editor, monaco) => {
+        editorRef.current = editor;
+    };
+
+    // in the event that code is edited or cursor is moved
+    const handleChange: OnChange = (value = "", event) => {
+        socket?.emit("editEvent", event);
+    };
+
     return (
         <Editor
-            height="90vh"
-            defaultLanguage="javascript"
-            defaultValue="// some comment"
+            key={questionId}
+            height="50vh"
+            defaultLanguage={(language ?? LANGUAGE.PYTHON)
+                .toString()
+                .toLowerCase()}
+            defaultValue={editorContent}
+            onMount={handleEditorDidMount}
+            onChange={handleChange}
         />
     );
 };
 
 export default CodeEditor;
+
+interface Props {
+    language?: LANGUAGE;
+    questionId?: string;
+    editorContent: string;
+    roomId: number;
+}
