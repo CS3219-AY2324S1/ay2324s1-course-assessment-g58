@@ -48,4 +48,14 @@ io.use((socket: Socket, next) => {
 io.on('connection', (socket: Socket) => {
     const extendedSocket = socket as ExtendedSocket;
     console.log('New connection with roomId:', extendedSocket.roomId);
+    extendedSocket.join(extendedSocket.roomId);
+
+    // Listen for incoming event from this `extendedSocket` instance
+
+    // USED FOR TESTING- update test scripts before removing
+    extendedSocket.on('message', (message) => {
+        console.log('Message received from server:', message);
+        // Broadcast the message to all other clients in the room
+        extendedSocket.to(extendedSocket.roomId).emit('message', message);
+    });
 });
