@@ -7,7 +7,7 @@ import { Socket } from "socket.io";
 // types
 import { editor } from "monaco-editor/esm/vs/editor/editor.api";
 
-const CodeEditor = ({ language, questionId, editorContent, roomId }: Props) => {
+const CodeEditor = ({ language, editorContent, roomId }: Props) => {
     const [socket, setSocket] = useState<Socket>();
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -24,7 +24,7 @@ const CodeEditor = ({ language, questionId, editorContent, roomId }: Props) => {
 
     return (
         <Editor
-            key={questionId}
+            key={roomId}
             height="50vh"
             defaultLanguage={(language ?? LANGUAGE.PYTHON)
                 .toString()
@@ -39,8 +39,7 @@ const CodeEditor = ({ language, questionId, editorContent, roomId }: Props) => {
 export default CodeEditor;
 
 interface Props {
-    language?: LANGUAGE;
-    questionId?: string;
+    language: string;
     editorContent: string;
-    roomId: number;
+    roomId: string;
 }

@@ -1,9 +1,9 @@
 export enum LANGUAGE {
-    PYTHON = "PYTHON",
-    JAVA = "JAVA",
+    PYTHON = "Python",
+    JAVA = "Java",
     CPP = "C++",
     C = "C",
-    JAVASCRIPT = "JAVASCRIPT",
+    JAVASCRIPT = "Javascript",
 }
 
 export enum COMMENT {
@@ -15,7 +15,7 @@ export enum COMMENT {
 }
 
 export enum DIFFICULTY {
-    EASY = "EASY",
-    MEDIUM = "MEDIUM",
-    HARD = "HARD",
+    EASY = "Easy",
+    MEDIUM = "Medium",
+    HARD = "Hard",
 }

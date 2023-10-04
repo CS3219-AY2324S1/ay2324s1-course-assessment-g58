@@ -1,12 +1,13 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Socket, io } from "socket.io-client";
+import { DIFFICULTY, LANGUAGE } from "@/utils/enums";
 
 interface MatchingContextType {
-    roomId: string | null;
-    userId: string | null;
-    difficulty: string | null;
-    language: string | null;
+    roomId: string;
+    userId: string;
+    difficulty: string;
+    language: string;
     startMatching: (user: string, difficulty: string, language: string) => void;
     cancelMatching: () => void;
     handleTimerExpire: () => void;

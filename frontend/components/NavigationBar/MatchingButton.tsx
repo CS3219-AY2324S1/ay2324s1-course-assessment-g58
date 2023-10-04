@@ -30,7 +30,14 @@ const MatchingButton = () => {
     const [isMatching, setMatching] = useState(false);
     const [missingLanguage, setMissingLanguage] = useState(false);
     const [missingDifficulty, setMissingDifficulty] = useState(false);
-
+    const diffChoices = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD];
+    const langChoices = [
+        LANGUAGE.PYTHON,
+        LANGUAGE.JAVA,
+        LANGUAGE.CPP,
+        LANGUAGE.C,
+        LANGUAGE.JAVASCRIPT,
+    ];
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
     const router = useRouter();
@@ -54,9 +61,9 @@ const MatchingButton = () => {
     const handleMatching = () => {
         setTimeout(false);
         // Handle errors
-        if (difficulty === "" || language === "") {
-            setMissingDifficulty(difficulty === "");
-            setMissingLanguage(language === "");
+        if (difficulty === null || language === null) {
+            setMissingDifficulty(difficulty === null);
+            setMissingLanguage(language === null);
             return;
         }
 
@@ -150,10 +157,10 @@ const MatchingButton = () => {
                                     className="w-full"
                                     value={difficulty}
                                     onChange={(e) =>
-                                        setDifficulty(e.target.value as string)
+                                        setDifficulty(e.target.value)
                                     }
                                 >
-                                    {Object.keys(DIFFICULTY).map((value) => {
+                                    {Object.values(DIFFICULTY).map((value) => {
                                         return (
                                             <MenuItem key={value} value={value}>
                                                 {value}
@@ -183,7 +190,7 @@ const MatchingButton = () => {
                                         setLanguage(e.target.value as string)
                                     }
                                 >
-                                    {Object.keys(LANGUAGE).map((value) => {
+                                    {Object.values(LANGUAGE).map((value) => {
                                         return (
                                             <MenuItem key={value} value={value}>
                                                 {value}

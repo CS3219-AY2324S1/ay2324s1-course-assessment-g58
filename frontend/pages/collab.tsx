@@ -11,18 +11,21 @@ const Collab: NextPage = () => {
     const user = useAuth();
     const { roomId, language, difficulty, cancelMatching } = useMatching();
     return (
-        <>
-            <h1>Collab Room</h1>
-            <h1>room: {roomId}</h1>
-            <h1>language: {language}</h1>
-            <h1>difficulty: {difficulty}</h1>
-        </>
+        // <>
+        //     <h1>Collab Room</h1>
+        //     <h1>room: {roomId}</h1>
+        //     <h1>language: {language}</h1>
+        //     <h1>difficulty: {difficulty}</h1>
+        // </>
 
-        // <CodeEditor
-        //     language={language}
-        //     editorContent={`${comment} Type your solution here`}
-        //     roomId={roomId}
-        // />
+        <CodeEditor
+            language={language}
+            editorContent={
+                (language === "Python" ? "## " : "// ") +
+                "Type your solution here"
+            }
+            roomId={roomId}
+        />
     );
 };
 
