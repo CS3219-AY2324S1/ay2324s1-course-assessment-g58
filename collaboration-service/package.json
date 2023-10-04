@@ -8,7 +8,10 @@
     "dev": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc",
-    "test-client": "ts-node test/test-client.ts"
+    "test-client": "ts-node test/test-client.ts",
+    "test-client-2": "ts-node test/test-client-2.ts",
+    "test-client-3": "ts-node test/test-client-3.ts",
+    "start-all": "concurrently \"npm run dev\" \"npm run test-client\" \"npm run test-client-2\" \"npm run test-client-3\"" 
   },
   "keywords": [],
   "author": "",
@@ -24,6 +27,7 @@
     "@types/express": "^4.17.18",
     "@types/node": "^20.8.2",
     "@types/socket.io": "^3.0.2",
+    "concurrently": "^8.2.1",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
