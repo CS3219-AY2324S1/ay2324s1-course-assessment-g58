@@ -17,6 +17,7 @@ import {
     Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const MatchingButton = () => {
     const { user } = useAuth();
@@ -32,6 +33,7 @@ const MatchingButton = () => {
     const languageOptions = ["C", "C++", "Java", "JavaScript", "Python"];
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
+    const router = useRouter();
     const handleClose = (event: any, reason: string) => {
         if (reason && reason == "backdropClick")
             return; /* This prevents modal from closing on an external click */
@@ -83,6 +85,12 @@ const MatchingButton = () => {
             setProgress(0);
         }
     }, [progress]);
+
+    useEffect(() => {
+        if (router.pathname === '/collab') {
+            setOpen(false); // Close the dialog box
+        }
+    }, [router.pathname]);
 
     return (
         <div>
