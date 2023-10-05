@@ -10,6 +10,12 @@ const CollabPage = () => {
     const { roomId, cancelMatching, questions } = useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
+    const [questionNumber, setQuestionNumber] = useState(0);
+
+    const questionPanelProps = {
+        question_number: questionNumber + 1,
+        question: questions[questionNumber],
+    }; 
 
     useEffect(() => {   
         // Reject people with no roomId
@@ -42,7 +48,10 @@ const CollabPage = () => {
             <h1>Collab Page</h1>
             <h2>Username: {user}</h2>
             <h2>Room ID: {roomId}</h2>
-            <QuestionPanel questions={questions}/>
+            <QuestionPanel 
+                question_number={questionPanelProps.question_number}
+                question={questionPanelProps.question}
+            />
         </div>
     )
 }

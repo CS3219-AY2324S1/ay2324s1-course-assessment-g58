@@ -1,22 +1,16 @@
 import { Question } from "../../contexts/MatchingContext";
 
 interface QuestionPanelProps {
-    questions?: Question[];
+    question_number: number;
+    question: Question;
 }
 
-function QuestionPanel({ questions }: QuestionPanelProps) {
-    // TODO: dont just show all questions
+function QuestionPanel({ question_number, question }: QuestionPanelProps) {
     return (
         <div>
-            <h2>Questions</h2>
-            {questions?.map((question) => (
-                <div key={question._id}>
-                    <h3>{question.title}</h3>
-                    <p>{question.description}</p>
-                    <p>{question.category}</p>
-                    <p>{question.difficulty}</p>
-                </div>
-            ))}
+            <h2>Question {question_number}</h2>
+            <h3>{question.title}</h3>
+            <p>{question.description}</p>
         </div>
     );
 }
