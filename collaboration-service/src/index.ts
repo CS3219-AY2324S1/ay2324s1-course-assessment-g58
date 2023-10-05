@@ -57,6 +57,19 @@ io.on('connection', (socket: Socket) => {
         io.sockets.in(extendedSocket.roomId).emit('changeRole');
 
     });
+    extendedSocket.on('interviewer chosen', () => {
+
+        // Broadcast the message to all other clients in the room
+        io.sockets.in(extendedSocket.roomId).emit('interviewer-chosen');
+
+    });
+    extendedSocket.on('interviewee chosen', () => {
+
+        // Broadcast the message to all other clients in the room
+        io.sockets.in(extendedSocket.roomId).emit('interviewee-chosen');
+
+    });
+
 
     // USED FOR TESTING- update test scripts before removing
     extendedSocket.on('message', (message) => {

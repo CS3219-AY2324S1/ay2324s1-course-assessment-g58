@@ -12,6 +12,8 @@ const CollabPage = () => {
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
     const [isInterviewer, setInterviewer] = useState<boolean>();
+    const [isInterviewerChosen, setInterviewerChosen] = useState<boolean>(false);
+    const [isIntervieweeChosen, setIntervieweeChosen] = useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
 
@@ -46,11 +48,20 @@ const CollabPage = () => {
         setSocket(socket);
         socket.on('changeRole', () => {
             console.log("role changed");
-
             changeRole();
 
         })
-    }, [roomId, isInterviewer]);
+        socket.on('interviewer-chosen', () => {
+            console.log("interviewer chosen");
+            setInterviewerChosen(true);
+
+        })
+        socket.on('interviewee-chosen', () => {
+            console.log("interviewee chosen");
+            setIntervieweeChosen(true);
+
+        })
+    }, [roomId, isInterviewer, isInterviewerChosen, isIntervieweeChosen]);
 
     // When unmounting this component i.e leaving page, cancel matching
     useEffect(() => {
@@ -97,16 +108,22 @@ const CollabPage = () => {
             <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
             <DialogTitle>Pick a Role</DialogTitle>
             <DialogContent>
+                { !isInterviewerChosen &&
               <Button variant="contained" color="warning" style={{color: 'black'}} onClick={() => {setInterviewer(true);
 
-                                                                          setShowDialog(false); }}>
+                                                                          setShowDialog(false);
+                                                                          socket?.emit("interviewer chosen") }}>
                 Interviewer
               </Button>
+                }
+                { !isIntervieweeChosen &&
               <Button variant="contained" color="warning" style={{color: 'black'}} onClick={() => {setInterviewer(false);
 
-                                                                          setShowDialog(false);}}>
+                                                                          setShowDialog(false);
+                                                                          socket?.emit("interviewee chosen");}}>
                 Interviewee
               </Button>
+                }
             </DialogContent>
           </Dialog>
         </div>
