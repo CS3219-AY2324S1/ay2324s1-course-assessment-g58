@@ -78,7 +78,7 @@ export default async function handler(
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
-                process.env.USER_SERVICE_ENDPOINT) as string;
+                process.env.USER_SERIVCE_ENDPOINT) as string;
             const response = await fetchDelete(express_gateway as string, {
                 email: email,
             });

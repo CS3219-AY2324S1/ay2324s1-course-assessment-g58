@@ -143,6 +143,7 @@ router.delete("/", async (req: Request, res: Response) => {
             admin: true,
         },
     });
+
     res.status(200).json(deletedUser);
 });
 

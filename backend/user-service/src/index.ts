@@ -4,7 +4,8 @@ import loginRouter from "./routes/login";
 import logoutRouter from "./routes/logout";
 import tokenRouter from "./routes/tokenLogin";
 import { authenticate } from "./middleware/authorize";
-
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app: Application = express();
 

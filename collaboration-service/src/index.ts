@@ -51,12 +51,7 @@ io.on('connection', (socket: Socket) => {
     extendedSocket.join(extendedSocket.roomId);
 
     // Listen for incoming event from this `extendedSocket` instance
-    extendedSocket.on('roleSwitch', () => {
-        
-        // Broadcast the message to all other clients in the room
-        io.sockets.in(extendedSocket.roomId).emit('changeRole');
-        
-    });
+
     // USED FOR TESTING- update test scripts before removing
     extendedSocket.on('message', (message) => {
         console.log('Message received from server:', message);
