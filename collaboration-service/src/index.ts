@@ -55,7 +55,15 @@ io.on('connection', (socket: Socket) => {
     // USED FOR TESTING- update test scripts before removing
     extendedSocket.on('message', (message) => {
         console.log('Message received from server:', message);
-        // Broadcast the message to all other clients in the room
-        extendedSocket.to(extendedSocket.roomId).emit('message', message);
+        // Broadcast the message to all other clients in the room, exlcuding sender
+        extendedSocket.broadcast.to(extendedSocket.roomId).emit('message', message + " (excluding sender)");
+        // Broadcast the message to everyone in the room including sender
+        io.sockets.in(extendedSocket.roomId).emit('message', message + " (including sender)");
     });
+
+    // Broadcast intention to move to next question to a room (including sender)
+    extendedSocket.on('openNextQuestionPrompt', () => {
+        io.sockets.in(extendedSocket.roomId).emit('openNextQuestionPrompt');
+    })
+
 });

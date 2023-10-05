@@ -3,6 +3,7 @@ import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
+import CollabPageNavigation from "./CollabPageNavigation";
 import QuestionPanel from "./QuestionPanel";
 
 const CollabPage = () => {
@@ -17,6 +18,11 @@ const CollabPage = () => {
         question: questions[questionNumber],
     }; 
 
+    const collabPageNavigationProps = {
+        handleNextQuestion: () => {
+            socket?.emit('openNextQuestionPrompt');
+        },    
+    }
     useEffect(() => {   
         // Reject people with no roomId
         if (router.pathname == '/collab' && roomId === "") {
@@ -34,7 +40,11 @@ const CollabPage = () => {
             }
         });
         setSocket(socket);
-    }, [roomId]);
+
+        socket.on('openNextQuestionPrompt', () => {
+            setQuestionNumber(questionNumber + 1);
+        });
+    }, [roomId, questionNumber]);
 
     // When unmounting this component i.e leaving page, cancel matching
     useEffect(() => {
@@ -45,12 +55,14 @@ const CollabPage = () => {
     
     return (
         <div>
+            <CollabPageNavigation
+                {...collabPageNavigationProps}
+            />
             <h1>Collab Page</h1>
             <h2>Username: {user}</h2>
             <h2>Room ID: {roomId}</h2>
             <QuestionPanel 
-                question_number={questionPanelProps.question_number}
-                question={questionPanelProps.question}
+                {...questionPanelProps}
             />
         </div>
     )
