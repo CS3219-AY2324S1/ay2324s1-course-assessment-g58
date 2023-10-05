@@ -34,6 +34,7 @@ const MatchingButton = () => {
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
     const router = useRouter();
+
     const timerRef = useRef<number | null>(null);
     const handleClose = (event: any, reason: string) => {
         if (reason && reason == "backdropClick")
@@ -53,6 +54,7 @@ const MatchingButton = () => {
 
     const handleMatching = () => {
         setTimeout(false);
+        console.log(router.pathname);
         // Handle errors
         if (difficulty === "" || language === "") {
             setMissingDifficulty(difficulty === "");
@@ -76,7 +78,6 @@ const MatchingButton = () => {
                 prevProgress < 100 ? prevProgress + 0.1 : 100
             );
         }, waitTime / 1000);
-
         return () => {
             if (timerRef.current) {
                 clearInterval(timerRef.current);
@@ -99,8 +100,9 @@ const MatchingButton = () => {
 
     
     useEffect(() => {
+        
         // On successful match, redirect to collab page, stop timer, stop matching
-        if (router.pathname === '/collab') {
+        if (router.pathname === '/collab' ) {
             setOpen(false); // Close the dialog box
             setMatching(false); // Stop matching
             if (timerRef.current) {
@@ -108,7 +110,8 @@ const MatchingButton = () => {
             }
             setProgress(0); // Reset progress
         }
-    }, [router.pathname]);
+        
+    }, [router.pathname] );
 
     return (
         <div>

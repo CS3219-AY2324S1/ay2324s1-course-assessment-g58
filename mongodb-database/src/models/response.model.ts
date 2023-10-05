@@ -36,3 +36,6 @@ const ResponseSchema = new mongoose.Schema({
         required: true,
     },
 });
+const ResponseModel = mongoose.model<IResponse>("Question", ResponseSchema);
+
+export default ResponseModel;

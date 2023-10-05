@@ -97,3 +97,9 @@ input {
 textarea {
   color: black;
 }
+.collab-container {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
