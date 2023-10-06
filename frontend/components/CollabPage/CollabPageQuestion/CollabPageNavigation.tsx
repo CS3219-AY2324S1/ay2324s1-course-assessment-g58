@@ -1,5 +1,9 @@
 import React from "react";
 import NextQnHandshakeModal from "./NextQnHandshakeModal";
+import {
+    Button,
+    Stack,
+} from "@mui/material";
 
 interface CollabPageNavigationProps {
     handleNextQuestion: () => void;
@@ -7,6 +11,7 @@ interface CollabPageNavigationProps {
     setIsNextQnHandshakeOpen: (isOpen: boolean) => void;
     handleIPressedAccept: () => void;
     handleIPressedReject: () => void;
+    iHaveAcceptedNextQn: boolean;
 }
 
 function CollabPageNavigation(
@@ -14,25 +19,34 @@ function CollabPageNavigation(
         isNextQnHandshakeOpen,
         setIsNextQnHandshakeOpen,
         handleIPressedAccept,
-        handleIPressedReject }: CollabPageNavigationProps) {
+        handleIPressedReject,
+        iHaveAcceptedNextQn }: CollabPageNavigationProps) {
     
     const NextQnHandshakeModalProps = {
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
         setIsNextQnHandshakeOpen: setIsNextQnHandshakeOpen,
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
+        iHaveAcceptedNextQn: iHaveAcceptedNextQn,
     }        
     //Navigation bar with next question button
     return (
         <div>
             <NextQnHandshakeModal {...NextQnHandshakeModalProps} />
-            <button
-                type="submit"
-                onClick={handleNextQuestion}
-                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
-                Next Question
-            </button>
+            <Stack direction="row" spacing={2}>
+                <Button
+                    variant="outlined"
+                    onClick={handleNextQuestion}
+                >
+                    Next Question
+                </Button>
+                <Button
+                    variant="outlined"
+                    color="error"
+                >
+                    End Session
+                </Button>
+            </Stack>
         </div>
     );
 

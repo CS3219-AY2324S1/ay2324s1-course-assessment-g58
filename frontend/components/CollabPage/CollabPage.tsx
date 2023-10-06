@@ -13,19 +13,25 @@ const CollabPage = () => {
     const [socket, setSocket] = useState<Socket>();
     const [questionNumber, setQuestionNumber] = useState(0);
     const [isNextQnHandshakeOpen, setIsNextQnHandshakeOpen] = useState(false);
+    const [iHaveAcceptedNextQn, setIHaveAcceptedNextQn] = useState(false);
 
     const questionPanelProps = {
         question_number: questionNumber + 1,
         question: questions[questionNumber],
     }; 
 
+    // Called when Next question button is pressed by this user
     const handleNextQuestion = () => {
         socket?.emit('openNextQuestionPrompt');
     };
+    // Called when this user accepts next question prompt
     const handleIPressedAccept = () => {
+        setIHaveAcceptedNextQn(true);
         socket?.emit('aUserHasAcceptedNextQuestionPrompt');
     };
+    // Called when this user rejects next question prompt
     const handleIPressedReject = () => {
+        setIHaveAcceptedNextQn(false);
         socket?.emit('aUserHasRejectedNextQuestionPrompt');
     };
     const collabPageNavigationProps = {
@@ -34,6 +40,7 @@ const CollabPage = () => {
         setIsNextQnHandshakeOpen: setIsNextQnHandshakeOpen,
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
+        iHaveAcceptedNextQn: iHaveAcceptedNextQn,
     }
     useEffect(() => {   
         // Reject people with no roomId
@@ -58,17 +65,19 @@ const CollabPage = () => {
             setIsNextQnHandshakeOpen(true);
         });
 
-        // Server tells client this when all clients in room have accepted next question prompt
+        // Server tells clients this when all clients in room have accepted next question prompt
         socket.on('proceedWithNextQuestion', () => {
             console.log("proceedWithNextQuestion");
             setIsNextQnHandshakeOpen(false);
+            setIHaveAcceptedNextQn(false);
             setQuestionNumber((prev) => prev + 1);
         });
         
-        // Server tells client this when a client in room has rejected next question prompt
+        // Server tells clients this when a client in room has rejected next question prompt
         socket.on('dontProceedWithNextQuestion', () => {
             console.log("dontProceedWithNextQuestion");
             setIsNextQnHandshakeOpen(false);
+            setIHaveAcceptedNextQn(false);
             alert("Proposal to move on to next question has been rejected.");
         });
 
