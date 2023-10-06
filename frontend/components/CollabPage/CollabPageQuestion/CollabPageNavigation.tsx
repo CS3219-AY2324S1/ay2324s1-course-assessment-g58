@@ -6,18 +6,21 @@ interface CollabPageNavigationProps {
     isNextQnHandshakeOpen: boolean;
     setIsNextQnHandshakeOpen: (isOpen: boolean) => void;
     handleIPressedAccept: () => void;
+    handleIPressedReject: () => void;
 }
 
 function CollabPageNavigation(
         { handleNextQuestion,
         isNextQnHandshakeOpen,
         setIsNextQnHandshakeOpen,
-        handleIPressedAccept }: CollabPageNavigationProps) {
+        handleIPressedAccept,
+        handleIPressedReject }: CollabPageNavigationProps) {
     
     const NextQnHandshakeModalProps = {
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
         setIsNextQnHandshakeOpen: setIsNextQnHandshakeOpen,
         handleIPressedAccept: handleIPressedAccept,
+        handleIPressedReject: handleIPressedReject,
     }        
     //Navigation bar with next question button
     return (

@@ -21,14 +21,19 @@ interface NextQnHandshakeModalProps {
     isNextQnHandshakeOpen: boolean;
     setIsNextQnHandshakeOpen: (isOpen: boolean) => void;
     handleIPressedAccept: () => void;
+    handleIPressedReject: () => void;
 }
 
 export default function BasicModal(
     { isNextQnHandshakeOpen,
       setIsNextQnHandshakeOpen,
-      handleIPressedAccept }: NextQnHandshakeModalProps) {
-  const handleClose = () => setIsNextQnHandshakeOpen(false);
-
+      handleIPressedAccept,
+      handleIPressedReject }: NextQnHandshakeModalProps) {
+  const handleClose = (event: any, reason: string) => {
+    if (reason && reason == "backdropClick")
+      return; /* This prevents modal from closing on an external click */
+    setIsNextQnHandshakeOpen(false);
+  };
   return (
     <div>
       <Modal
@@ -48,7 +53,11 @@ export default function BasicModal(
           >
             Accept
           </Button>
-          <Button variant="outlined" color="error">
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleIPressedReject}
+          >
             Reject
           </Button>
         </Box>

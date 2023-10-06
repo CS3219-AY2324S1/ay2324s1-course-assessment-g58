@@ -13,7 +13,7 @@ const CollabPage = () => {
     const [socket, setSocket] = useState<Socket>();
     const [questionNumber, setQuestionNumber] = useState(0);
     const [isNextQnHandshakeOpen, setIsNextQnHandshakeOpen] = useState(false);
-    
+
     const questionPanelProps = {
         question_number: questionNumber + 1,
         question: questions[questionNumber],
@@ -25,11 +25,15 @@ const CollabPage = () => {
     const handleIPressedAccept = () => {
         socket?.emit('aUserHasAcceptedNextQuestionPrompt');
     };
+    const handleIPressedReject = () => {
+        socket?.emit('aUserHasRejectedNextQuestionPrompt');
+    };
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
         setIsNextQnHandshakeOpen: setIsNextQnHandshakeOpen,
         handleIPressedAccept: handleIPressedAccept,
+        handleIPressedReject: handleIPressedReject,
     }
     useEffect(() => {   
         // Reject people with no roomId
@@ -49,12 +53,31 @@ const CollabPage = () => {
         });
         setSocket(socket);
 
+        // Server tells clients this when any client clicks on 'Next qn` button
         socket.on('openNextQuestionPrompt', () => {
             setIsNextQnHandshakeOpen(true);
         });
+
+        // Server tells client this when all clients in room have accepted next question prompt
+        socket.on('proceedWithNextQuestion', () => {
+            console.log("proceedWithNextQuestion");
+            setIsNextQnHandshakeOpen(false);
+            setQuestionNumber((prev) => prev + 1);
+        });
+        
+        // Server tells client this when a client in room has rejected next question prompt
+        socket.on('dontProceedWithNextQuestion', () => {
+            console.log("dontProceedWithNextQuestion");
+            setIsNextQnHandshakeOpen(false);
+            alert("Proposal to move on to next question has been rejected.");
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, [roomId, questionNumber]);
 
-    // When unmounting this component i.e leaving page, cancel matching
+    // When unmounting this component i.e leaving page, cancel matching (leave mathcing service socket)
     useEffect(() => {
         return () => {
             cancelMatching();

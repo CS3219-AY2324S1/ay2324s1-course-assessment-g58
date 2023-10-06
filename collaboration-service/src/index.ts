@@ -18,6 +18,8 @@ const io = new Server(httpServer, {
     },
 });
 
+const acceptances: { [roomId: string]: Set<string> } = {};
+
 // TODO: protect our server against direct, maybe malicious socket.io connections
 
 // handle '/' route for testing
@@ -69,6 +71,35 @@ io.on('connection', (socket: Socket) => {
     // Recieve request by a user to move to next question, wait for all users to accept
     // before broadcasting to all users in the room
     extendedSocket.on('aUserHasAcceptedNextQuestionPrompt', () => {
-        console.log("someone accepted");        
+        console.log(extendedSocket.id, " accepted");
+
+        // Initialize the set for the room if it doesn't exist
+        if (!acceptances[extendedSocket.roomId]) {
+            acceptances[extendedSocket.roomId] = new Set();
+        }
+
+        // Add the user's socket ID to the set
+        acceptances[extendedSocket.roomId].add(extendedSocket.id);
+
+        // Check if all clients in the room have accepted
+        const numClientsInRoom = io.sockets.adapter.rooms.get(extendedSocket.roomId)?.size || 0;
+        console.log("clients in room:", numClientsInRoom);
+        console.log("total clients in room: ", io.sockets.adapter.rooms.get(extendedSocket.roomId));
+        if (acceptances[extendedSocket.roomId].size === numClientsInRoom) {
+            io.sockets.in(extendedSocket.roomId).emit('proceedWithNextQuestion');
+            // Delete as users have moved on to next qn, reset this
+            delete acceptances[extendedSocket.roomId];
+        }
+    });
+
+    // Recieve message that a user doesn't want to move on, reset all 'acceptances' for the room
+    extendedSocket.on('aUserHasRejectedNextQuestionPrompt', () => {
+        console.log(extendedSocket.id, " rejected");
+        delete acceptances[extendedSocket.roomId];
+        io.sockets.in(extendedSocket.roomId).emit('dontProceedWithNextQuestion');
+    });
+
+    extendedSocket.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', extendedSocket.id, "\nReason: ", reason);
     });
 });
