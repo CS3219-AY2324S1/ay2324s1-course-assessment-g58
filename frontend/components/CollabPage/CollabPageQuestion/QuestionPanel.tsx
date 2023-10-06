@@ -1,4 +1,9 @@
 import { Question } from "../../../contexts/MatchingContext";
+import {
+    Card,
+    CardContent,
+    Typography,
+} from "@mui/material";
 
 interface QuestionPanelProps {
     question_number: number;
@@ -7,11 +12,16 @@ interface QuestionPanelProps {
 
 function QuestionPanel({ question_number, question }: QuestionPanelProps) {
     return (
-        <div>
-            <h2>Question {question_number}</h2>
-            <h3>{question ? question.title : "No title found"}</h3>
-            <p>{question ? question.description: "No description found"}</p>
-        </div>
+        <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+                <Typography variant="h5" component="div">
+                    Question {question_number}: {question ? question.title : "No title found"}
+                </Typography>
+                <Typography variant="body2">
+                    {question ? question.description: "No description found"}
+                </Typography>
+            </CardContent>
+        </Card>
     );
 }
 
