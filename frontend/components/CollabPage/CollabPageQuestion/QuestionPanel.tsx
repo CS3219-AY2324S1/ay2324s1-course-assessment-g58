@@ -1,4 +1,4 @@
-import { Question } from "../../contexts/MatchingContext";
+import { Question } from "../../../contexts/MatchingContext";
 
 interface QuestionPanelProps {
     question_number: number;

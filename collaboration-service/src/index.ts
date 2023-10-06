@@ -66,4 +66,9 @@ io.on('connection', (socket: Socket) => {
         io.sockets.in(extendedSocket.roomId).emit('openNextQuestionPrompt');
     })
 
+    // Recieve request by a user to move to next question, wait for all users to accept
+    // before broadcasting to all users in the room
+    extendedSocket.on('aUserHasAcceptedNextQuestionPrompt', () => {
+        console.log("someone accepted");        
+    });
 });
