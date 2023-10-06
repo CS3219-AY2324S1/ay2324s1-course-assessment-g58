@@ -70,7 +70,14 @@ const CollabPage = () => {
             console.log("proceedWithNextQuestion");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
-            setQuestionNumber((prev) => prev + 1);
+
+            if (questionNumber >= questions.length - 1) {
+                alert("You have completed all the questions!");
+                router.push('/');
+            } else {
+                setQuestionNumber((prev) => prev + 1);
+            }
+
         });
         
         // Server tells clients this when a client in room has rejected next question prompt
@@ -101,9 +108,13 @@ const CollabPage = () => {
             <h1>Collab Page</h1>
             <h2>Username: {user}</h2>
             <h2>Room ID: {roomId}</h2>
-            <QuestionPanel 
-                {...questionPanelProps}
-            />
+            {questions[questionNumber] ? (
+                <QuestionPanel 
+                    {...questionPanelProps}
+                />
+            ) : (
+                <p>No more questions available.</p>
+            )}
         </div>
     )
 }
