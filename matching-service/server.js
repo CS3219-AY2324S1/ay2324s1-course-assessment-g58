@@ -72,11 +72,18 @@ async function findMatch(user, socket) {
         matchingUser.room = roomName;
 
         // Get questions for the room
-        const res = await fetch(
+        const response = await fetch(
             //TODO: change to the correct URL according to match settings
             `http://localhost:8080/get-all-questions`
         );
-        const questions = await res.json();
+        const res = await response.json();
+        var questions = [];
+        if (res.ok) {
+            questions = res.json();
+        } else { 
+            console.log("Error getting questions");
+        }
+        
         user.questions = questions;
         matchingUser.questions = questions;
 
