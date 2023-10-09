@@ -20,7 +20,6 @@ import { LANGUAGE } from "@/utils/enums";
 const CollabPage = () => {
     const { language, roomId, cancelMatching } = useMatching();
     const router = useRouter();
-    const [socket, setSocket] = useState<Socket>();
     const [isInterviewer, setInterviewer] = useState<boolean>();
     const [isInterviewerChosen, setInterviewerChosen] =
         useState<boolean>(false);
@@ -29,16 +28,16 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
 
-    const toggleInterviewerView = () => {
-        setShowInterviewerView(!showInterviewerView);
-    };
-    const startRoleChange = () => {
-        socket?.emit("roleSwitch");
-        console.log("role switch");
-    };
-    const changeRole = () => {
-        setInterviewer(!isInterviewer);
-    };
+    // const toggleInterviewerView = () => {
+    //     setShowInterviewerView(!showInterviewerView);
+    // };
+    // const startRoleChange = () => {
+    //     socket?.emit("roleSwitch");
+    //     console.log("role switch");
+    // };
+    // const changeRole = () => {
+    //     setInterviewer(!isInterviewer);
+    // };
 
     useEffect(() => {
         // Reject people with no roomId
@@ -47,40 +46,38 @@ const CollabPage = () => {
         }
     }, [roomId, router.pathname]);
 
-    // Connect to collab service socket via roomId
-    useEffect(() => {
-        if (roomId === "") return;
-        //TODO: non hardcode url handling
-        const socket = io("http://localhost:3005", {
-            auth: {
-                roomId: roomId,
-            },
-        });
-        setSocket(socket);
-        socket.on("changeRole", () => {
-            console.log("role changed");
-            changeRole();
-        });
-        socket.on("interviewer-chosen", () => {
-            console.log("interviewer chosen");
-            setInterviewerChosen(true);
-        });
-        socket.on("interviewee-chosen", () => {
-            console.log("interviewee chosen");
-            setIntervieweeChosen(true);
-        });
-    }, [roomId, isInterviewer, isInterviewerChosen, isIntervieweeChosen]);
+    // set up socket
+    // const socket = io("http://localhost:3005", {
+    //     auth: {
+    //         roomId: roomId + "role",
+    //     },
+    //     autoConnect: false,
+    // });
+    // socket.connect();
+
+    // socket?.on("changeRole", () => {
+    //     console.log("role changed");
+    //     changeRole();
+    // });
+    // socket?.on("interviewer-chosen", () => {
+    //     console.log("interviewer chosen");
+    //     setInterviewerChosen(true);
+    // });
+    // socket?.on("interviewee-chosen", () => {
+    //     console.log("interviewee chosen");
+    //     setIntervieweeChosen(true);
+    // });
 
     // When unmounting this component i.e leaving page, cancel matching
     useEffect(() => {
         return () => {
             cancelMatching();
         };
-    }, []);
+    }, [roomId]);
 
     return (
         <div>
-            <div className="button-container">
+            {/* <div className="button-container">
                 <Box display="flex" alignItems="center">
                     {isInterviewer && (
                         <Button
@@ -101,7 +98,7 @@ const CollabPage = () => {
                         Switch roles
                     </Button>
                 </Box>
-            </div>
+            </div> */}
             <div className="code-editor-and-interviewer">
                 <CodeEditor
                     language={language}
@@ -111,24 +108,14 @@ const CollabPage = () => {
                         "Type your solution here"
                     }
                 />
-                <div className="code-editor-container">
-                    <Paper elevation={3} className="code-editor">
-                        <TextareaAutosize
-                            minRows={20}
-                            className="code-input"
-                            style={{ width: "100%" }}
-                            placeholder="Enter your code here..."
-                        />
-                    </Paper>
-                </div>
                 {/*Until here*/}
-                {showInterviewerView && (
+                {/* {showInterviewerView && (
                     <div className="interviewer-view-container">
                         <InterviewerView />
                     </div>
-                )}
+                )} */}
             </div>
-            <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
+            {/* <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
                 <DialogTitle>Pick a Role</DialogTitle>
                 <DialogContent>
                     {!isInterviewerChosen && (
@@ -162,7 +149,7 @@ const CollabPage = () => {
                         </Button>
                     )}
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
         </div>
     );
 };
