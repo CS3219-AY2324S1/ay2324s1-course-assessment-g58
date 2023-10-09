@@ -50,3 +50,6 @@ export type Tests = Test[];
 
 ## Output: 
 res body contains `stdout`, `stderr`, `status_id`, `time`, `memory`
+
+# Testing
+Run `npm test`
