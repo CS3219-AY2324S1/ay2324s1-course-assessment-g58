@@ -1,8 +1,8 @@
-import express, { Express } from 'express';
-import http from 'http';
-import { Server, Socket } from 'socket.io';
-import cors from 'cors';
-import { ExtendedSocket } from './models/ExtendedSocket';
+import express, { Express } from "express";
+import http from "http";
+import { Server, Socket } from "socket.io";
+import cors from "cors";
+import { ExtendedSocket } from "./models/ExtendedSocket";
 
 const app: Express = express();
 app.use(cors());
@@ -21,8 +21,8 @@ const io = new Server(httpServer, {
 // TODO: protect our server against direct, maybe malicious socket.io connections
 
 // handle '/' route for testing
-app.get('/', (req, res) => {
-    res.send('Hello World');
+app.get("/", (req, res) => {
+    res.send("Hello World");
 });
 
 // Start the server
@@ -45,7 +45,23 @@ io.use((socket: Socket, next) => {
 });
 
 // Handle new connection
-io.on('connection', (socket: Socket) => {
+io.on("connection", (socket: Socket) => {
     const extendedSocket = socket as ExtendedSocket;
-    console.log('New connection with roomId:', extendedSocket.roomId);
+    console.log("New connection with roomId:", extendedSocket.roomId);
+    extendedSocket.join(extendedSocket.roomId);
+
+    // Handle text edit event
+    extendedSocket.on("editEvent", (event) => {
+        console.log(event.changes);
+        extendedSocket.broadcast.to(extendedSocket.roomId).emit("text", event);
+    });
+
+    // Handle selection event
+    extendedSocket.on("selection", (event) => {
+        console.log("selection received on backend");
+        console.log(event);
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("select", event);
+    });
 });
