@@ -16,6 +16,6 @@ Subsequently run `docker-compose up -d` to start
 1. Running on localhost:3005
 
 ## Input:
-`Post` to `localhost:3005` with body of `language` and `source_code`. `language` should be `c`, `c++`, `python` or `java`
+`Post` to `localhost:3005` with body of `language`, `source_code` and `tests`. `language` should be `c`, `c++`, `python` or `java`
 ## Output: 
 res body contains `stdout`, `stderr`, `status_id`, `time`, `memory`
