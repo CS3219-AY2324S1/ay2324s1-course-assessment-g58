@@ -70,7 +70,6 @@ const compilePythonCode = async (source_code: string,
         testFunction: string): Promise<CompileCodeResult> => {
     const language_id = 71; // (3.8.1)
     const source_with_driver_code = generatePythonFile(source_code, tests, testFunction);
-    console.log(source_with_driver_code);
     const rawData = {
         language_id: language_id,
         source_code: source_with_driver_code,

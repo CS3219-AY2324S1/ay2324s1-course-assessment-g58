@@ -5,7 +5,7 @@ export const generatePythonFile = (userCode: string, tests: Tests, testFunction:
     let testsCode = "";
     for (let test of tests) {
         testsCode += `\tresult = ${testFunction}(${test.input})\n`;
-        testsCode += `\tassert result == ${test.expectedOutput}, f"Expected ${test.expectedOutput}, but got {{result}}"\n\n`;
+        testsCode += `\tassert result == ${test.expectedOutput}, "Expected ${test.expectedOutput}, but got " + str(result)\n\n`;
     }
 
     let driverTemplate = `
