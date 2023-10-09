@@ -50,6 +50,28 @@ io.on("connection", (socket: Socket) => {
     console.log("New connection with roomId:", extendedSocket.roomId);
     extendedSocket.join(extendedSocket.roomId);
 
+    // Listen for incoming event from this `extendedSocket` instance
+    extendedSocket.on("roleSwitch", () => {
+        // Broadcast the message to all other clients in the room
+        io.sockets.in(extendedSocket.roomId).emit("changeRole");
+    });
+    extendedSocket.on("interviewer chosen", () => {
+        // Broadcast the message to all other clients in the room
+        io.sockets.in(extendedSocket.roomId).emit("interviewer-chosen");
+    });
+    extendedSocket.on("interviewee chosen", () => {
+        // Broadcast the message to all other clients in the room
+        io.sockets.in(extendedSocket.roomId).emit("interviewee-chosen");
+    });
+
+    // USED FOR TESTING- update test scripts before removing
+    extendedSocket.on("message", (message) => {
+        console.log("Message received from server:", message);
+        // Broadcast the message to all other clients in the room
+        extendedSocket.to(extendedSocket.roomId).emit("message", message);
+    });
+    extendedSocket.join(extendedSocket.roomId);
+
     // Handle text edit event
     extendedSocket.on("editEvent", (event) => {
         console.log(event.changes);
