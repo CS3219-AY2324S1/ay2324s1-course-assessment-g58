@@ -16,6 +16,37 @@ Subsequently run `docker-compose up -d` to start
 1. Running on localhost:3005
 
 ## Input:
-`Post` to `localhost:3005` with body of `language`, `source_code` and `tests`. `language` should be `c`, `c++`, `python` or `java`
+`Post` to `localhost:3005` with body of `language`, `source_code`, `testFunction: String` and `tests`. 
+
+`language`:
+Should be `c`, `c++`, `python` or `java`
+
+`testFunction`:
+For now we only handle single function leetcode qns. The value of `testFunction` is the name of the function the user has to fill up with their answer
+
+`tests`:
+```typescript
+export interface Test {
+    input: string;
+    expectedOutput: string;
+}
+
+export type Tests = Test[];
+
+/* eg:
+"tests": [
+        {
+            "input": "1, 2",
+            "expectedOutput": "3"
+        },
+        {
+            "input": "3, 4",
+            "expectedOutput": "7"
+        }
+    ]
+}
+*/
+```
+
 ## Output: 
 res body contains `stdout`, `stderr`, `status_id`, `time`, `memory`

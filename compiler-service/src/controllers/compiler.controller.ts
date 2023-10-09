@@ -3,8 +3,8 @@ import { compileCode } from '../services/compiler.service';
 
 export const compile = async (req: Request, res: Response) => {
     try {
-        const { language, source_code, tests } = req.body;
-        const result = await compileCode(language, source_code, tests);
+        const { language, source_code, tests, testFunction } = req.body;
+        const result = await compileCode(language, source_code, tests, testFunction);
         
         if (result.error) {
             res.status(result.statusCode || 500).json({ message: result.message });
@@ -13,6 +13,6 @@ export const compile = async (req: Request, res: Response) => {
         
         res.status(200).json(result.data);
     } catch (err: any) {
-        res.status(500).json({ message: "500 Internal Server Error: " + err.message });
+        res.status(500).json({ message: err.message });
     }
 };
