@@ -7,10 +7,12 @@ import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
 import  InterviewerView  from "./InterviewerView"
 import {Container, Box, Button, Paper, TextareaAutosize, Dialog, DialogTitle, DialogContent} from "@mui/material"
+import CodeEditor from "./CodeEditor";
+import { LANGUAGE } from "@/utils/enums";
 
 const CollabPage = () => {
     const { user } = useAuth();
-    const { roomId, cancelMatching, questions } = useMatching();
+    const { language, roomId, cancelMatching, questions } = useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
     const [questionNumber, setQuestionNumber] = useState(0);
@@ -165,16 +167,15 @@ const CollabPage = () => {
             </div>
             <div className="code-editor-and-interviewer">
                 {/*Enter Code editor component here*/}
-                <div className="code-editor-container">
-                <Paper elevation={3} className="code-editor">
-                    <TextareaAutosize
-                    minRows={20}
-                    className="code-input"
-                    style={{ width: '100%' }} 
-                    placeholder="Enter your code here..."
-                    />
-                </Paper>
-                </div>
+                <CodeEditor
+                    language={language}
+                    roomId={roomId}
+                    editorContent={
+                        (language == LANGUAGE.PYTHON ? "## " : "// ") +
+                        "Type your solution here"
+                    }
+                    socket={socket}
+                />
                 {/*Until here*/}
                 {showInterviewerView && (
                 <div className="interviewer-view-container">

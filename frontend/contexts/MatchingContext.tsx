@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Socket, io } from "socket.io-client";
+import { DIFFICULTY, LANGUAGE } from "@/utils/enums";
 
 export type Question = {
     _id: string;
@@ -11,11 +12,11 @@ export type Question = {
 };
 
 interface MatchingContextType {
-    roomId: string | null;
-    userId: string | null;
-    difficulty: string | null;
-    language: string | null;
-    startMatching: (user: string) => void;
+    roomId: string;
+    userId: string;
+    difficulty: string;
+    language: string;
+    startMatching: (user: string, difficulty: string, language: string) => void;
     cancelMatching: () => void;
     handleTimerExpire: () => void;
     questions: Question[];
@@ -45,7 +46,11 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
 
     const router = useRouter();
 
-    const startMatching = (user: string) => {
+    const startMatching = (
+        user: string,
+        difficulty: string,
+        language: string
+    ) => {
         // Connect to the server
         const socket = io("http://localhost:3004");
         setSocket(socket);
@@ -81,8 +86,8 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
 
         return () => {
             cancelMatching();
-        }
-    }
+        };
+    };
 
     // Resets variables
     const cancelMatching = () => {

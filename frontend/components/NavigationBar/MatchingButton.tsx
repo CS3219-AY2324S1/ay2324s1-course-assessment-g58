@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
+import { LANGUAGE, DIFFICULTY } from "@/utils/enums";
 
 const MatchingButton = () => {
     const { user } = useAuth();
@@ -29,8 +30,14 @@ const MatchingButton = () => {
     const [isMatching, setMatching] = useState(false);
     const [missingLanguage, setMissingLanguage] = useState(false);
     const [missingDifficulty, setMissingDifficulty] = useState(false);
-    const difficultyOptions = ["Easy", "Medium", "Hard"];
-    const languageOptions = ["C", "C++", "Java", "JavaScript", "Python"];
+    const diffChoices = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD];
+    const langChoices = [
+        LANGUAGE.PYTHON,
+        LANGUAGE.JAVA,
+        LANGUAGE.CPP,
+        LANGUAGE.C,
+        LANGUAGE.JAVASCRIPT,
+    ];
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
     const router = useRouter();
@@ -54,16 +61,16 @@ const MatchingButton = () => {
     const handleMatching = () => {
         setTimeout(false);
         // Handle errors
-        if (difficulty === "" || language === "") {
-            setMissingDifficulty(difficulty === "");
-            setMissingLanguage(language === "");
+        if (difficulty === null || language === null) {
+            setMissingDifficulty(difficulty === null);
+            setMissingLanguage(language === null);
             return;
         }
 
         setMatching(true);
 
         // Starts matching using MatchingContext
-        startMatching(user!);
+        startMatching(user!, difficulty!, language!);
 
         // Start the matchmaking timer
         if (timerRef.current) {
@@ -97,10 +104,9 @@ const MatchingButton = () => {
         }
     }, [progress]);
 
-    
     useEffect(() => {
         // On successful match, redirect to collab page, stop timer, stop matching
-        if (router.pathname === '/collab') {
+        if (router.pathname === "/collab") {
             setOpen(false); // Close the dialog box
             setMatching(false); // Stop matching
             if (timerRef.current) {
@@ -151,10 +157,10 @@ const MatchingButton = () => {
                                     className="w-full"
                                     value={difficulty}
                                     onChange={(e) =>
-                                        setDifficulty(e.target.value as string)
+                                        setDifficulty(e.target.value)
                                     }
                                 >
-                                    {difficultyOptions.map((value) => {
+                                    {Object.values(DIFFICULTY).map((value) => {
                                         return (
                                             <MenuItem key={value} value={value}>
                                                 {value}
@@ -184,7 +190,7 @@ const MatchingButton = () => {
                                         setLanguage(e.target.value as string)
                                     }
                                 >
-                                    {languageOptions.map((value) => {
+                                    {Object.values(LANGUAGE).map((value) => {
                                         return (
                                             <MenuItem key={value} value={value}>
                                                 {value}
@@ -204,7 +210,7 @@ const MatchingButton = () => {
                                     variant="subtitle2"
                                     color="error"
                                 >
-                                    We couldn't find you a match right now.
+                                    We could not find you a match right now.
                                     Please try again later!
                                 </Typography>
                             )}

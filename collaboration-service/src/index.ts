@@ -1,8 +1,8 @@
-import express, { Express } from 'express';
-import http from 'http';
-import { Server, Socket } from 'socket.io';
-import cors from 'cors';
-import { ExtendedSocket } from './models/ExtendedSocket';
+import express, { Express } from "express";
+import http from "http";
+import { Server, Socket } from "socket.io";
+import cors from "cors";
+import { ExtendedSocket } from "./models/ExtendedSocket";
 
 const app: Express = express();
 app.use(cors());
@@ -23,8 +23,8 @@ const acceptances: { [roomId: string]: Set<string> } = {};
 // TODO: protect our server against direct, maybe malicious socket.io connections
 
 // handle '/' route for testing
-app.get('/', (req, res) => {
-    res.send('Hello World');
+app.get("/", (req, res) => {
+    res.send("Hello World");
 });
 
 // Start the server
@@ -47,31 +47,31 @@ io.use((socket: Socket, next) => {
 });
 
 // Handle new connection
-io.on('connection', (socket: Socket) => {
+io.on("connection", (socket: Socket) => {
     const extendedSocket = socket as ExtendedSocket;
-    console.log('New connection with roomId:', extendedSocket.roomId);
+    console.log("New connection with roomId:", extendedSocket.roomId);
     extendedSocket.join(extendedSocket.roomId);
 
     // Listen for incoming event from this `extendedSocket` instance
-    extendedSocket.on('roleSwitch', () => {
-
+    extendedSocket.on("roleSwitch", () => {
         // Broadcast the message to all other clients in the room
-        io.sockets.in(extendedSocket.roomId).emit('changeRole');
-
+        // io.sockets.in(extendedSocket.roomId).emit("changeRole");
+        extendedSocket.broadcast.to(extendedSocket.roomId).emit("changeRole");
     });
-    extendedSocket.on('interviewer chosen', () => {
-
+    extendedSocket.on("interviewer chosen", () => {
         // Broadcast the message to all other clients in the room
-        io.sockets.in(extendedSocket.roomId).emit('interviewer-chosen');
-
+        // io.sockets.in(extendedSocket.roomId).emit("interviewer-chosen");
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("interviewer-chosen");
     });
-    extendedSocket.on('interviewee chosen', () => {
-
+    extendedSocket.on("interviewee chosen", () => {
         // Broadcast the message to all other clients in the room
-        io.sockets.in(extendedSocket.roomId).emit('interviewee-chosen');
-
+        // io.sockets.in(extendedSocket.roomId).emit("interviewee-chosen");
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("interviewee-chosen");
     });
-
 
     // USED FOR TESTING- update test scripts before removing
     extendedSocket.on('message', (message) => {
@@ -116,6 +116,21 @@ io.on('connection', (socket: Socket) => {
         console.log(extendedSocket.id, " rejected");
         delete acceptances[extendedSocket.roomId];
         io.sockets.in(extendedSocket.roomId).emit('dontProceedWithNextQuestion');
+    });
+
+    // Handle text edit event
+    extendedSocket.on("editEvent", (event) => {
+        console.log("edit");
+        console.log(extendedSocket.roomId);
+        extendedSocket.broadcast.to(extendedSocket.roomId).emit("text", event);
+    });
+
+    // Handle selection event
+    extendedSocket.on("selection", (event) => {
+        console.log("select");
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("select", event);
     });
 
     extendedSocket.on('disconnect', (reason) => {
