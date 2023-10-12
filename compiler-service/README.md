@@ -1,5 +1,5 @@
 # Starting judge0 server (dev)
-**First use**
+**Starting judge0 compiler server** (can omit sleep)
 ```
 cd judge0-v1.13.0
 docker-compose up -d db redis
@@ -8,7 +8,9 @@ docker-compose up -d
 sleep 5s
 ```
 Your instance of Judge0 CE v1.13.0 is now available at `localhost:2358`
-Subsequently run `docker-compose up -d` to start
+
+**Shutting down**
+`docker-compose down`
 
 # Compile service
 1. `npm install`
