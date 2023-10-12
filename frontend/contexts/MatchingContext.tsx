@@ -1,15 +1,25 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Socket, io } from "socket.io-client";
+import { DIFFICULTY, LANGUAGE } from "@/utils/enums";
+
+export type Question = {
+    _id: string;
+    title: string;
+    description: string;
+    difficulty: string;
+    category: string;
+};
 
 interface MatchingContextType {
-    roomId: string | null;
-    userId: string | null;
-    difficulty: string | null;
-    language: string | null;
-    startMatching: (user: string) => void;
+    roomId: string;
+    userId: string;
+    difficulty: string;
+    language: string;
+    startMatching: (user: string, difficulty: string, language: string) => void;
     cancelMatching: () => void;
     handleTimerExpire: () => void;
+    questions: Question[];
 }
 
 type MatchType = {
@@ -18,6 +28,7 @@ type MatchType = {
     difficulty: string;
     language: string;
     room: string;
+    questions: Question[];
 };
 
 const MatchingContext = createContext<MatchingContextType | undefined>(
@@ -25,15 +36,21 @@ const MatchingContext = createContext<MatchingContextType | undefined>(
 );
 
 export const MatchingProvider = ({ children }: { children: ReactNode }) => {
+    //TODO: memomize some of these eg questions with UseMemo
     const [roomId, setRoomId] = useState("");
     const [socket, setSocket] = useState<Socket>();
     const [userId, setUserId] = useState("");
     const [language, setLanguage] = useState("");
     const [difficulty, setDifficulty] = useState("");
+    const [questions, setQuestions] = useState<Question[]>([]);
 
     const router = useRouter();
 
-    const startMatching = (user: string) => {
+    const startMatching = (
+        user: string,
+        difficulty: string,
+        language: string
+    ) => {
         // Connect to the server
         const socket = io("http://localhost:3004");
         setSocket(socket);
@@ -58,6 +75,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
             setUserId(matchingUser.userId); // TODO: confirm is this is the local or matched user
             setDifficulty(matchingUser.difficulty);
             setLanguage(matchingUser.language);
+            setQuestions(matchingUser.questions);
             router.push("/collab");
         });
 
@@ -68,8 +86,8 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
 
         return () => {
             cancelMatching();
-        }
-    }
+        };
+    };
 
     // Resets variables
     const cancelMatching = () => {
@@ -96,6 +114,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
                 startMatching,
                 cancelMatching,
                 handleTimerExpire,
+                questions,
             }}
         >
             {children}

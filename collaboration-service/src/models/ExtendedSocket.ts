@@ -1,5 +1,5 @@
-import { Socket } from 'socket.io';
+import { Socket } from "socket.io";
 
 export class ExtendedSocket extends Socket {
-    roomId: string = '';
+    roomId: string = "";
 }

@@ -52,7 +52,7 @@ function removeFromQueue(socketId) {
 }
 
 // Find a match for the user
-function findMatch(user, socket) {
+async function findMatch(user, socket) {
     const matchingUser = queue.find((otherUser) => {
         return (
             otherUser.socketId !== user.socketId &&
@@ -70,6 +70,18 @@ function findMatch(user, socket) {
         const roomName = `${user.socketId}-${matchingUser.socketId}`;
         user.room = roomName;
         matchingUser.room = roomName;
+
+        // Get questions for the room
+        const response = await fetch(`http://localhost:8080/get-all-questions`);
+        var questions = [];
+        if (response.ok) {
+            questions = await response.json();
+        } else {
+            console.log("Error getting questions");
+        }
+
+        user.questions = questions;
+        matchingUser.questions = questions;
 
         // Join the room
         socket.join(roomName);

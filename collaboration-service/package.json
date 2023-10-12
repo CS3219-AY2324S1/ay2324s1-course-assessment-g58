@@ -11,7 +11,7 @@
     "test-client": "ts-node test/test-client.ts",
     "test-client-2": "ts-node test/test-client-2.ts",
     "test-client-3": "ts-node test/test-client-3.ts",
-    "start-all": "concurrently \"npm run dev\" \"npm run test-client\" \"npm run test-client-2\" \"npm run test-client-3\"" 
+    "start-all": "concurrently \"npm run dev\" \"npm run test-client\" \"npm run test-client-2\" \"npm run test-client-3\""
   },
   "keywords": [],
   "author": "",
