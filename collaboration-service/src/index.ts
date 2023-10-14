@@ -104,7 +104,8 @@ io.on("connection", (socket: Socket) => {
         const numClientsInRoom = io.sockets.adapter.rooms.get(extendedSocket.roomId)?.size || 0;
         console.log("clients in room:", numClientsInRoom);
         console.log("total clients in room: ", io.sockets.adapter.rooms.get(extendedSocket.roomId));
-        if (acceptances[extendedSocket.roomId].size === numClientsInRoom) {
+        // Need times 2 as each client has 2 sockets- general and for code editor
+        if (acceptances[extendedSocket.roomId].size * 2 === numClientsInRoom) {
             io.sockets.in(extendedSocket.roomId).emit('proceedWithNextQuestion');
             // Delete as users have moved on to next qn, reset this
             delete acceptances[extendedSocket.roomId];

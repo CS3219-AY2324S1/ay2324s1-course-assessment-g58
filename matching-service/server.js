@@ -88,7 +88,7 @@ async function findMatch(user, socket) {
         io.to(matchingUser.socketId).emit("match", user);
         io.to(user.socketId).emit("match", matchingUser);
 
-        console.log("Match found:", user, matchingUser);
+        console.log("Match found:", user.userId, matchingUser.userId, matchingUser.room);
         console.log("Room created:", roomName);
     } else {
         console.log("No match found for:", user);
