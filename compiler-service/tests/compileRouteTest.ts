@@ -8,19 +8,26 @@ describe('Compiler Service', () => {
         it('should compile Python code successfully', async () => {
             const language = 'python';
             const source_code = 'def foo(x):\n\treturn x+1';
-            const tests = [
+            const calls = [
                 {
-                    input: "1",
+                    functionName: "foo",
+                    arguments: ["1"],
                     expectedOutput: "2"
                 },
                 {
-                    input: "5",
+                    functionName: "foo",
+                    arguments: ["5"],
                     expectedOutput: "6"
                 }
             ];
-            const testFunction = 'foo';
+            const functions = [
+                {
+                    name: "foo",
+                    returnType: "int"
+                }
+            ];
             
-            const result = await compileCode(language, source_code, tests, testFunction);
+            const result = await compileCode(language, source_code, calls, functions);
 
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -31,19 +38,26 @@ describe('Compiler Service', () => {
         it('should compile with stderr when test cases fail', async () => {
             const language = 'python';
             const source_code = 'def foo(x):\n\treturn x+2';
-            const tests = [
+            const calls = [
                 {
-                    input: "1",
+                    functionName: "foo",
+                    arguments: ["1"],
                     expectedOutput: "2"
                 },
                 {
-                    input: "5",
+                    functionName: "foo",
+                    arguments: ["5"],
                     expectedOutput: "6"
                 }
             ];
-            const testFunction = 'foo';
+            const functions = [
+                {
+                    name: "foo",
+                    returnType: "int"
+                }
+            ];
             
-            const result = await compileCode(language, source_code, tests, testFunction);
+            const result = await compileCode(language, source_code, calls, functions);
 
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);

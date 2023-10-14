@@ -1,11 +1,20 @@
-import { Tests, Test } from "../types/tests";
+import { Calls } from "../types/calls";
+import { Functions } from "../types/functions";
 
-// This only handles single function python qns (not like https://leetcode.com/problems/lru-cache/)
-export const generatePythonFile = (userCode: string, tests: Tests, testFunction: string) => {
+export const generatePythonFile = (userCode: string, calls: Calls, functions: Functions) => {
     let testsCode = "";
-    for (let test of tests) {
-        testsCode += `\tresult = ${testFunction}(${test.input})\n`;
-        testsCode += `\tassert result == ${test.expectedOutput}, "Expected ${test.expectedOutput}, but got " + str(result)\n\n`;
+
+    for (let call of calls) {
+        let functionName = call.functionName;
+        let args = call.arguments.join(", ");
+
+        // Check if the function exists in the provided functions list
+        if (functions.some(func => func.name === functionName)) {
+            testsCode += `\tresult = ${functionName}(${args})\n`;
+            testsCode += `\tassert result == ${call.expectedOutput}, "Expected ${call.expectedOutput}, but got " + str(result)\n\n`;
+        } else {
+            throw new Error(`Function ${functionName} is not defined.`);
+        }
     }
 
     let driverTemplate = `
@@ -20,6 +29,6 @@ ${testsCode}
 
 if __name__ == "__main__":
 \trun_tests()`;
-
+    console.log(driverTemplate);
     return driverTemplate;
 }

@@ -1,5 +1,6 @@
 import { generatePythonFile } from "../utils/pythonDriverGenerator";
-import { Tests } from "../types/tests";
+import { Calls } from "../types/calls";
+import { Functions } from "../types/functions";
 import { CompilationData } from "../types/compilationData";
 import { AfterCompileData } from "../types/afterCompileData";
 import { CompileCodeResult } from "../types/compileCodeResult";
@@ -8,8 +9,8 @@ const JUDGE_0_URL = "http://localhost:2358/" // TODO: dont keep this so static a
 
 export const compileCode = async (language: string,
         source_code: string,
-        tests: Tests,
-        testFunction: string): Promise<CompileCodeResult> => {
+        calls: Calls,
+        functions: Functions): Promise<CompileCodeResult> => {
     
     const language_id = language == "c++" ? 54 : //(GCC 9.2.0)
             language == "c" ? 50 : //(GCC 9.2.0)
@@ -21,7 +22,7 @@ export const compileCode = async (language: string,
     }
 
     if (language == "python") {
-        return await compilePythonCode(source_code, tests, testFunction);
+        return await compilePythonCode(source_code, calls, functions);
     }
     // TODO: handle other languages
     return {data: null, error: true, message: "Only python supported now", statusCode: 400};
@@ -66,10 +67,10 @@ const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult
 };
 
 const compilePythonCode = async (source_code: string,
-        tests: Tests,
-        testFunction: string): Promise<CompileCodeResult> => {
+        calls: Calls,
+        functions: Functions): Promise<CompileCodeResult> => {
     const language_id = 71; // (3.8.1)
-    const source_with_driver_code = generatePythonFile(source_code, tests, testFunction);
+    const source_with_driver_code = generatePythonFile(source_code, calls, functions);
     const rawData = {
         language_id: language_id,
         source_code: source_with_driver_code,
