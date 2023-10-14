@@ -2,6 +2,10 @@
 import { ObjectId } from "mongodb";
 import mongoose, { Types } from "mongoose";
 
+function arrayLimit(val: Array<any>) {
+    return val.length > 0;
+}
+
 // Class Implementation
 export interface IQuestion extends mongoose.Document {
     _id: Types.ObjectId;
@@ -61,35 +65,46 @@ const QuestionSchema = new mongoose.Schema({
             },
           },
         ],
+        required: true
     },
-    functions: [
-        {
-            name: {
-                type: String,
-                required: true,
-            },
-            returnType: {
-                type: String,
-                required: true,
-            },
-        }
-    ],
-    calls: [
-        {
-            functionName: {
-                type: String,
-                required: true,
-            },
-            arguments: {
-                type: [String],
-                required: true,
-            },
-            expectedOutput: {
-                type: String,
-                required: true,
+    functions: {
+        type: [
+            {
+                name: {
+                    type: String,
+                    required: true,
+                },
+                returnType: {
+                    type: String,
+                    required: true,
+                },
             }
-        }
-    ]
+        ],
+        // TODO: validate this
+        // validate: [arrayLimit, 'Functions array cannot be empty'],
+        // required: true,
+    },    
+    calls: {
+        type: [
+            {
+                functionName: {
+                    type: String,
+                    required: true,
+                },
+                arguments: {
+                    type: [String],
+                    required: true,
+                },
+                expectedOutput: {
+                    type: String,
+                    required: true,
+                }
+            }
+        ],
+        // TODO: validate this
+        // validate: [arrayLimit, 'Calls array cannot be empty'],
+        // required: true,
+    },    
 });
 
 const QuestionModel = mongoose.model<IQuestion>("Question", QuestionSchema);

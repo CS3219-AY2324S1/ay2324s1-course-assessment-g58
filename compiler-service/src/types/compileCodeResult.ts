@@ -5,4 +5,5 @@ export interface CompileCodeResult {
     error: boolean;
     message: string;
     statusCode: number;
+    firstFailedTestCaseNumber: number | null;
 }
