@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "start": "node server.js",
+    "test-client": "node test/test-client.test.js",
+    "test-client-2": "node test/test-client-2.test.js",
+    "test": "concurrently \"npm start && wait-on http://localhost:3004\" \"npm run test-client\" \"npm run test-client-2\""
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.1",
+    "wait-on": "^7.0.1"
+  }
+}
