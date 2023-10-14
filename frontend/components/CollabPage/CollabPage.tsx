@@ -174,7 +174,6 @@ const CollabPage = () => {
                         (language == LANGUAGE.PYTHON ? "## " : "// ") +
                         "Type your solution here"
                     }
-                    socket={socket}
                 />
                 {/*Until here*/}
                 {showInterviewerView && (
