@@ -26,7 +26,7 @@ type MatchType = {
     userId: string;
     difficulty: string;
     language: string;
-    room: string;
+    roomId: string;
     questions: Question[];
 };
 
@@ -70,12 +70,11 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
         socket.on("match", (matchingUser: MatchType) => {
             console.log("Match found:", matchingUser);
             // TODO: do we need socketId ?
-            setRoomId(matchingUser.room);
+            setRoomId(matchingUser.roomId);
             setUserId(matchingUser.userId); // TODO: confirm is this is the local or matched user
             setDifficulty(matchingUser.difficulty);
             setLanguage(matchingUser.language);
             setQuestions(matchingUser.questions);
-            console.log(matchingUser.questions);
             router.push("/collab");
         });
 

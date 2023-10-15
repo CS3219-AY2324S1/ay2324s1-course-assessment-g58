@@ -134,13 +134,7 @@ const CollabPage = () => {
         return () => {
             socket.disconnect();
         };
-    }, [
-        roomId,
-        questionNumber,
-        isInterviewer,
-        isInterviewerChosen,
-        isIntervieweeChosen,
-    ]);
+    }, [roomId]);
 
     // When unmounting this component i.e leaving page, cancel matching (leave mathcing service socket)
     useEffect(() => {
@@ -183,7 +177,6 @@ const CollabPage = () => {
                 </Box>
             </div>
             <div className="code-editor-and-interviewer">
-                {/*Enter Code editor component here*/}
                 <CodeEditor
                     language={language}
                     roomId={roomId}
@@ -192,7 +185,6 @@ const CollabPage = () => {
                         "Type your solution here"
                     }
                 />
-                {/*Until here*/}
                 {showInterviewerView && (
                     <div className="interviewer-view-container">
                         <InterviewerView />

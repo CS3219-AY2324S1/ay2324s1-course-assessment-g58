@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 
 // Start the server
 httpServer.listen(PORT, () => {
-    console.log("Server listening on port ", PORT);
+    console.log("Server listening on port", PORT);
 });
 
 // Middleware function for all incoming socket connections
@@ -74,22 +74,26 @@ io.on("connection", (socket: Socket) => {
     });
 
     // USED FOR TESTING- update test scripts before removing
-    extendedSocket.on('message', (message) => {
-        console.log('Message received from server:', message);
+    extendedSocket.on("message", (message) => {
+        console.log("Message received from server:", message);
         // Broadcast the message to all other clients in the room, exlcuding sender
-        extendedSocket.broadcast.to(extendedSocket.roomId).emit('message', message + " (excluding sender)");
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("message", message + " (excluding sender)");
         // Broadcast the message to everyone in the room including sender
-        io.sockets.in(extendedSocket.roomId).emit('message', message + " (including sender)");
+        io.sockets
+            .in(extendedSocket.roomId)
+            .emit("message", message + " (including sender)");
     });
 
     // Broadcast intention to move to next question to a room (including sender)
-    extendedSocket.on('openNextQuestionPrompt', () => {
-        io.sockets.in(extendedSocket.roomId).emit('openNextQuestionPrompt');
-    })
+    extendedSocket.on("openNextQuestionPrompt", () => {
+        io.sockets.in(extendedSocket.roomId).emit("openNextQuestionPrompt");
+    });
 
     // Recieve request by a user to move to next question, wait for all users to accept
     // before broadcasting to all users in the room
-    extendedSocket.on('aUserHasAcceptedNextQuestionPrompt', () => {
+    extendedSocket.on("aUserHasAcceptedNextQuestionPrompt", () => {
         console.log(extendedSocket.id, " accepted");
 
         // Initialize the set for the room if it doesn't exist
@@ -101,22 +105,30 @@ io.on("connection", (socket: Socket) => {
         acceptances[extendedSocket.roomId].add(extendedSocket.id);
 
         // Check if all clients in the room have accepted
-        const numClientsInRoom = io.sockets.adapter.rooms.get(extendedSocket.roomId)?.size || 0;
+        const numClientsInRoom =
+            io.sockets.adapter.rooms.get(extendedSocket.roomId)?.size || 0;
         console.log("clients in room:", numClientsInRoom);
-        console.log("total clients in room: ", io.sockets.adapter.rooms.get(extendedSocket.roomId));
+        console.log(
+            "total clients in room: ",
+            io.sockets.adapter.rooms.get(extendedSocket.roomId)
+        );
         // Need times 2 as each client has 2 sockets- general and for code editor
         if (acceptances[extendedSocket.roomId].size * 2 === numClientsInRoom) {
-            io.sockets.in(extendedSocket.roomId).emit('proceedWithNextQuestion');
+            io.sockets
+                .in(extendedSocket.roomId)
+                .emit("proceedWithNextQuestion");
             // Delete as users have moved on to next qn, reset this
             delete acceptances[extendedSocket.roomId];
         }
     });
 
     // Recieve message that a user doesn't want to move on, reset all 'acceptances' for the room
-    extendedSocket.on('aUserHasRejectedNextQuestionPrompt', () => {
+    extendedSocket.on("aUserHasRejectedNextQuestionPrompt", () => {
         console.log(extendedSocket.id, " rejected");
         delete acceptances[extendedSocket.roomId];
-        io.sockets.in(extendedSocket.roomId).emit('dontProceedWithNextQuestion');
+        io.sockets
+            .in(extendedSocket.roomId)
+            .emit("dontProceedWithNextQuestion");
     });
 
     // Handle text edit event
@@ -134,7 +146,12 @@ io.on("connection", (socket: Socket) => {
             .emit("select", event);
     });
 
-    extendedSocket.on('disconnect', (reason) => {
-        console.log('Socket disconnected:', extendedSocket.id, "\nReason: ", reason);
+    extendedSocket.on("disconnect", (reason) => {
+        console.log(
+            "Socket disconnected:",
+            extendedSocket.id,
+            "\nReason: ",
+            reason
+        );
     });
 });
