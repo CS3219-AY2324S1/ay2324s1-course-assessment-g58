@@ -13,7 +13,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
         null
     );
     const incomingRef = useRef(false);
-    // const [socket, setSocket] = useState<Socket>();
     const socketRef = useRef<Socket | null>(null);
 
     // Connect to collab service socket via roomId
@@ -27,7 +26,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
             autoConnect: false,
         });
         socket.connect();
-        //setSocket(socket);
         socketRef.current = socket;
 
         socket?.on("text", (event: editor.IModelContentChangedEvent) => {
@@ -36,7 +34,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
         });
 
         socket?.on("select", (event: editor.ICursorSelectionChangedEvent) => {
-            console.log(event);
             const selectionArray = [];
 
             if (
@@ -74,7 +71,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
 
     // handle mounting of editor
     const handleEditorDidMount: OnMount = (editor, monaco) => {
-        console.log("Editor has mounted, with socket ", socketRef.current);
         editorRef.current = editor;
 
         // handle all required event listeners
@@ -83,8 +79,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
 
     // when user makes a text edit
     const handleEditEvent: OnChange = (value, event) => {
-        console.log("handle edit event: " + incomingRef.current);
-
         if (incomingRef.current) {
             incomingRef.current = false;
             return;
@@ -97,11 +91,9 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
     function handleSelectionEventListeners() {
         editorRef.current!.onDidChangeCursorSelection(
             (event: editor.ICursorSelectionChangedEvent) => {
-                console.log(socketRef.current);
                 socketRef.current?.emit("selection", event);
             }
         );
-        console.log("selection event listener launched");
     }
 
     return (
