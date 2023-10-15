@@ -73,7 +73,6 @@ const CollabPage = () => {
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
     };
-
     useEffect(() => {
         // Reject people with no roomId
         if (router.pathname == "/collab" && roomId === "") {
@@ -134,7 +133,13 @@ const CollabPage = () => {
         return () => {
             socket.disconnect();
         };
-    }, [roomId]);
+    }, [
+        roomId,
+        questionNumber,
+        isInterviewer,
+        isInterviewerChosen,
+        isIntervieweeChosen,
+    ]);
 
     // When unmounting this component i.e leaving page, cancel matching (leave mathcing service socket)
     useEffect(() => {
@@ -161,6 +166,12 @@ const CollabPage = () => {
                             variant="contained"
                             color="primary"
                             onClick={toggleInterviewerView}
+                            style={{
+                                backgroundColor: "#0073e6",
+                                color: "white",
+                                border: "2px solid #0051a5",
+                                marginRight: "10px",
+                            }}
                         >
                             {showInterviewerView
                                 ? "Hide Interviewer View"
@@ -171,12 +182,18 @@ const CollabPage = () => {
                         variant="contained"
                         color="secondary"
                         onClick={startRoleChange}
+                        style={{
+                            backgroundColor: "#0073e6",
+                            color: "white",
+                            border: "2px solid #0051a5",
+                        }}
                     >
                         Switch roles
                     </Button>
                 </Box>
             </div>
             <div className="code-editor-and-interviewer">
+                {/*Enter Code editor component here*/}
                 <CodeEditor
                     language={language}
                     roomId={roomId}
@@ -185,6 +202,7 @@ const CollabPage = () => {
                         "Type your solution here"
                     }
                 />
+                {/*Until here*/}
                 {showInterviewerView && (
                     <div className="interviewer-view-container">
                         <InterviewerView />
