@@ -21,6 +21,12 @@ apiEndpoints:
             - "/edit-question"
     matching:
         host: "*"
+        paths:
+            - "/start-match"
+    collaboration:
+        host: "*"
+        paths:
+            - "/start-collab"
 
 serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
@@ -30,6 +36,8 @@ serviceEndpoints:
         url: "http://localhost:3002"
     matchingService:
         url: "http://localhost:3004"
+    collabService:
+        url: "http://localhost:3005"
 
 policies:
     - basic-auth
@@ -64,3 +72,10 @@ pipelines:
             - proxy:
                   - action:
                         serviceEndpoint: matchingService
+    collaborationPipeline:
+        apiEndpoints:
+            - collaboration
+        policies:
+            - proxy:
+                  - action:
+                        serviceEndpoint: collaborationService
