@@ -5,8 +5,17 @@ import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
-import  InterviewerView  from "./InterviewerView"
-import {Container, Box, Button, Paper, TextareaAutosize, Dialog, DialogTitle, DialogContent} from "@mui/material"
+import InterviewerView from "./InterviewerView";
+import {
+    Container,
+    Box,
+    Button,
+    Paper,
+    TextareaAutosize,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+} from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 
@@ -19,8 +28,10 @@ const CollabPage = () => {
     const [isNextQnHandshakeOpen, setIsNextQnHandshakeOpen] = useState(false);
     const [iHaveAcceptedNextQn, setIHaveAcceptedNextQn] = useState(false);
     const [isInterviewer, setInterviewer] = useState<boolean>();
-    const [isInterviewerChosen, setInterviewerChosen] = useState<boolean>(false);
-    const [isIntervieweeChosen, setIntervieweeChosen] = useState<boolean>(false);
+    const [isInterviewerChosen, setInterviewerChosen] =
+        useState<boolean>(false);
+    const [isIntervieweeChosen, setIntervieweeChosen] =
+        useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
 
@@ -28,32 +39,31 @@ const CollabPage = () => {
         setShowInterviewerView(!showInterviewerView);
     };
     const startRoleChange = () => {
-        socket?.emit('roleSwitch');
+        socket?.emit("roleSwitch");
         console.log("role switch");
     };
     const changeRole = () => {
         setInterviewer(!isInterviewer);
     };
 
-
     const questionPanelProps = {
         question_number: questionNumber + 1,
         question: questions[questionNumber],
-    }; 
+    };
 
     // Called when Next question button is pressed by this user
     const handleNextQuestion = () => {
-        socket?.emit('openNextQuestionPrompt');
+        socket?.emit("openNextQuestionPrompt");
     };
     // Called when this user accepts next question prompt
     const handleIPressedAccept = () => {
         setIHaveAcceptedNextQn(true);
-        socket?.emit('aUserHasAcceptedNextQuestionPrompt');
+        socket?.emit("aUserHasAcceptedNextQuestionPrompt");
     };
     // Called when this user rejects next question prompt
     const handleIPressedReject = () => {
         setIHaveAcceptedNextQn(false);
-        socket?.emit('aUserHasRejectedNextQuestionPrompt');
+        socket?.emit("aUserHasRejectedNextQuestionPrompt");
     };
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
@@ -62,62 +72,59 @@ const CollabPage = () => {
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
-    }
-    useEffect(() => {   
+    };
+
+    useEffect(() => {
         // Reject people with no roomId
-        if (router.pathname == '/collab' && roomId === "") {
-            router.push('/');
+        if (router.pathname == "/collab" && roomId === "") {
+            router.push("/");
         }
     }, [roomId, router.pathname]);
 
     // Connect to collab service socket via roomId
     useEffect(() => {
         if (roomId === "") return;
-        //TODO: non hardcode url handling 
+        //TODO: non hardcode url handling
         const socket = io("http://localhost:3005", {
             auth: {
                 roomId: roomId,
-            }
+            },
         });
         setSocket(socket);
-        socket.on('changeRole', () => {
+        socket.on("changeRole", () => {
             console.log("role changed");
             changeRole();
-
-        })
-        socket.on('interviewer-chosen', () => {
+        });
+        socket.on("interviewer-chosen", () => {
             console.log("interviewer chosen");
             setInterviewerChosen(true);
-
-        })
-        socket.on('interviewee-chosen', () => {
+        });
+        socket.on("interviewee-chosen", () => {
             console.log("interviewee chosen");
             setIntervieweeChosen(true);
-
-        })
+        });
 
         // Server tells clients this when any client clicks on 'Next qn` button
-        socket.on('openNextQuestionPrompt', () => {
+        socket.on("openNextQuestionPrompt", () => {
             setIsNextQnHandshakeOpen(true);
         });
 
         // Server tells clients this when all clients in room have accepted next question prompt
-        socket.on('proceedWithNextQuestion', () => {
+        socket.on("proceedWithNextQuestion", () => {
             console.log("proceedWithNextQuestion");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
 
             if (questionNumber >= questions.length - 1) {
                 alert("You have completed all the questions!");
-                router.push('/');
+                router.push("/");
             } else {
                 setQuestionNumber((prev) => prev + 1);
             }
-
         });
-        
+
         // Server tells clients this when a client in room has rejected next question prompt
-        socket.on('dontProceedWithNextQuestion', () => {
+        socket.on("dontProceedWithNextQuestion", () => {
             console.log("dontProceedWithNextQuestion");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
@@ -127,7 +134,13 @@ const CollabPage = () => {
         return () => {
             socket.disconnect();
         };
-    }, [roomId, questionNumber, isInterviewer, isInterviewerChosen, isIntervieweeChosen]);
+    }, [
+        roomId,
+        questionNumber,
+        isInterviewer,
+        isInterviewerChosen,
+        isIntervieweeChosen,
+    ]);
 
     // When unmounting this component i.e leaving page, cancel matching (leave mathcing service socket)
     useEffect(() => {
@@ -135,33 +148,37 @@ const CollabPage = () => {
             cancelMatching();
         };
     }, []);
-    
+
     return (
         <div>
-            <CollabPageNavigation
-                {...collabPageNavigationProps}
-            />
+            <CollabPageNavigation {...collabPageNavigationProps} />
             <h1>Collab Page</h1>
             <h2>Username: {user}</h2>
             <h2>Room ID: {roomId}</h2>
             {questions[questionNumber] ? (
-                <QuestionPanel 
-                    {...questionPanelProps}
-                />
+                <QuestionPanel {...questionPanelProps} />
             ) : (
                 <p>No more questions available.</p>
             )}
             <div className="button-container">
                 <Box display="flex" alignItems="center">
-                    { isInterviewer &&   
-                    (
-                    <Button variant="contained" color="primary" onClick={toggleInterviewerView}>
-                        {showInterviewerView ? 'Hide Interviewer View' : 'Show Interviewer View'}
-                    </Button>
-
+                    {isInterviewer && (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={toggleInterviewerView}
+                        >
+                            {showInterviewerView
+                                ? "Hide Interviewer View"
+                                : "Show Interviewer View"}
+                        </Button>
                     )}
-                    <Button variant="contained" color="secondary" onClick={startRoleChange}>
-                    Switch roles
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={startRoleChange}
+                    >
+                        Switch roles
                     </Button>
                 </Box>
             </div>
@@ -177,34 +194,46 @@ const CollabPage = () => {
                 />
                 {/*Until here*/}
                 {showInterviewerView && (
-                <div className="interviewer-view-container">
-                    <InterviewerView />
-                </div>
+                    <div className="interviewer-view-container">
+                        <InterviewerView />
+                    </div>
                 )}
             </div>
             <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
-            <DialogTitle>Pick a Role</DialogTitle>
-            <DialogContent>
-                { !isInterviewerChosen &&
-              <Button variant="contained" color="warning" style={{color: 'black'}} onClick={() => {setInterviewer(true);
-                setShowDialog(false);
-                socket?.emit("interviewer chosen")
-              }}>
-                Interviewer
-              </Button>
-                }
-                { !isIntervieweeChosen &&
-              <Button variant="contained" color="warning" style={{color: 'black'}} onClick={() => {setInterviewer(false);
-                setShowDialog(false);
-                socket?.emit("interviewee chosen");
-              }}>
-                Interviewee
-              </Button>
-                }
-            </DialogContent>
-          </Dialog>
+                <DialogTitle>Pick a Role</DialogTitle>
+                <DialogContent>
+                    {!isInterviewerChosen && (
+                        <Button
+                            variant="contained"
+                            color="warning"
+                            style={{ color: "black" }}
+                            onClick={() => {
+                                setInterviewer(true);
+                                setShowDialog(false);
+                                socket?.emit("interviewer chosen");
+                            }}
+                        >
+                            Interviewer
+                        </Button>
+                    )}
+                    {!isIntervieweeChosen && (
+                        <Button
+                            variant="contained"
+                            color="warning"
+                            style={{ color: "black" }}
+                            onClick={() => {
+                                setInterviewer(false);
+                                setShowDialog(false);
+                                socket?.emit("interviewee chosen");
+                            }}
+                        >
+                            Interviewee
+                        </Button>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
-    )
-}
+    );
+};
 
 export default CollabPage;

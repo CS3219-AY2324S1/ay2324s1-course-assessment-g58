@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Socket, io } from "socket.io-client";
-import { DIFFICULTY, LANGUAGE } from "@/utils/enums";
 
 export type Question = {
     _id: string;
@@ -76,6 +75,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
             setDifficulty(matchingUser.difficulty);
             setLanguage(matchingUser.language);
             setQuestions(matchingUser.questions);
+            console.log(matchingUser.questions);
             router.push("/collab");
         });
 
