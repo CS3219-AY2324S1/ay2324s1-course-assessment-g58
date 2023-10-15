@@ -155,12 +155,13 @@ const CollabPage = () => {
                 <Box display="flex" alignItems="center">
                     { isInterviewer &&   
                     (
-                    <Button variant="contained" color="primary" onClick={toggleInterviewerView}>
+                    <Button variant="contained" color="primary" onClick={toggleInterviewerView} style={{backgroundColor: '#0073e6', color: 'white', border: '2px solid #0051a5', marginRight: '10px'}}>
+                        
                         {showInterviewerView ? 'Hide Interviewer View' : 'Show Interviewer View'}
                     </Button>
 
                     )}
-                    <Button variant="contained" color="secondary" onClick={startRoleChange}>
+                    <Button variant="contained" color="secondary" onClick={startRoleChange} style={{backgroundColor: '#0073e6', color: 'white', border: '2px solid #0051a5'}}>
                     Switch roles
                     </Button>
                 </Box>
