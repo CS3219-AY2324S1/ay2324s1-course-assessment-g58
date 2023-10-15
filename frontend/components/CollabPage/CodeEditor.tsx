@@ -29,19 +29,20 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
         socket.connect();
         //setSocket(socket);
         socketRef.current = socket;
-    
+
         socket?.on("text", (event: editor.IModelContentChangedEvent) => {
             incomingRef.current = true;
             editorRef.current?.getModel()?.applyEdits(event.changes);
         });
-    
+
         socket?.on("select", (event: editor.ICursorSelectionChangedEvent) => {
             console.log(event);
             const selectionArray = [];
-    
+
             if (
                 event.selection.startColumn === event.selection.endColumn &&
-                event.selection.startLineNumber === event.selection.endLineNumber
+                event.selection.startLineNumber ===
+                    event.selection.endLineNumber
             ) {
                 selectionArray.push({
                     range: event.selection,
@@ -53,18 +54,23 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
                     options: { className: "otherUserSelection" },
                 });
             }
-    
+
             decorationRef.current?.clear();
             decorationRef.current =
-                editorRef.current?.createDecorationsCollection(selectionArray) ??
-                null;
+                editorRef.current?.createDecorationsCollection(
+                    selectionArray
+                ) ?? null;
+        });
+
+        // reset text in model on next question
+        socket?.on("proceedWithNextQuestion", () => {
+            editorRef.current?.getModel()?.setValue("");
         });
 
         return () => {
             socket.disconnect();
         };
     }, [roomId]);
-        
 
     // handle mounting of editor
     const handleEditorDidMount: OnMount = (editor, monaco) => {
