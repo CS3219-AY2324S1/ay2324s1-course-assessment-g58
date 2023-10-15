@@ -19,7 +19,7 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
     //TODO: non hardcode url handling
     useEffect(() => {
         if (roomId === "") return;
-        const socket = io("http://localhost:3005", {
+        const socket = io(process.env.NEXT_PUBLIC_COLLAB_SERVER_URL as string, {
             auth: {
                 roomId: roomId,
             },

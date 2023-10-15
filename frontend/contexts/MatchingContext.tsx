@@ -51,7 +51,9 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
         language: string
     ) => {
         // Connect to the server
-        const socket = io("http://localhost:3004");
+        const socket = io(
+            process.env.NEXT_PUBLIC_MATCHING_SERVER_URL as string
+        );
         setSocket(socket);
 
         // Handle successful connection

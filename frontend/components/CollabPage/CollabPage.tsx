@@ -84,7 +84,7 @@ const CollabPage = () => {
     useEffect(() => {
         if (roomId === "") return;
         //TODO: non hardcode url handling
-        const socket = io("http://localhost:3005", {
+        const socket = io(process.env.NEXT_PUBLIC_COLLAB_SERVER_URL as string, {
             auth: {
                 roomId: roomId,
             },
