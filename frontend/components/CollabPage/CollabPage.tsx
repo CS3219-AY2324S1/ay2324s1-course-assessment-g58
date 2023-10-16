@@ -46,6 +46,15 @@ const CollabPage = () => {
         setInterviewer(!isInterviewer);
     };
 
+    const handleClosePickRole = (event: any, reason: string) => {
+        if (reason && reason == "backdropClick")
+            return; /* This prevents modal from closing on an external click */
+        
+        if (reason && reason == "escapeKeyDown") 
+            return; //prevent user from closing dialog using esacpe button
+        setShowDialog(false);
+    };
+
     const questionPanelProps = {
         question_number: questionNumber + 1,
         question: questions[questionNumber],
@@ -125,9 +134,9 @@ const CollabPage = () => {
         // Server tells clients this when a client in room has rejected next question prompt
         socket.on("dontProceedWithNextQuestion", () => {
             console.log("dontProceedWithNextQuestion");
+            alert("Proposal to move on to next question has been rejected.");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
-            alert("Proposal to move on to next question has been rejected.");
         });
 
         return () => {
@@ -209,7 +218,7 @@ const CollabPage = () => {
                     </div>
                 )}
             </div>
-            <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
+            <Dialog open={showDialog} onClose={handleClosePickRole} >
                 <DialogTitle>Pick a Role</DialogTitle>
                 <DialogContent>
                     {!isInterviewerChosen && (
