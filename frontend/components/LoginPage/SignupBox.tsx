@@ -140,7 +140,7 @@ export default function SignUpBox() {
                   id="adminSelect"
                   value={admin? "admin" : "user"}
                   label="role"
-                  onChange={(e) => {
+                  onChange={(e: SelectChangeEvent) => {
                     e.target.value === "admin"
                       ? setAdmin(true)
                       : setAdmin(false);
