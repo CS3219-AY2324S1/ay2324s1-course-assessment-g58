@@ -13,35 +13,33 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
         null
     );
     const incomingRef = useRef(false);
-    // const [socket, setSocket] = useState<Socket>();
     const socketRef = useRef<Socket | null>(null);
 
     // Connect to collab service socket via roomId
     //TODO: non hardcode url handling
     useEffect(() => {
         if (roomId === "") return;
-        const socket = io("http://localhost:3005", {
+        const socket = io(process.env.NEXT_PUBLIC_COLLAB_SERVER_URL as string, {
             auth: {
                 roomId: roomId,
             },
             autoConnect: false,
         });
         socket.connect();
-        //setSocket(socket);
         socketRef.current = socket;
-    
+
         socket?.on("text", (event: editor.IModelContentChangedEvent) => {
             incomingRef.current = true;
             editorRef.current?.getModel()?.applyEdits(event.changes);
         });
-    
+
         socket?.on("select", (event: editor.ICursorSelectionChangedEvent) => {
-            console.log(event);
             const selectionArray = [];
-    
+
             if (
                 event.selection.startColumn === event.selection.endColumn &&
-                event.selection.startLineNumber === event.selection.endLineNumber
+                event.selection.startLineNumber ===
+                    event.selection.endLineNumber
             ) {
                 selectionArray.push({
                     range: event.selection,
@@ -53,22 +51,26 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
                     options: { className: "otherUserSelection" },
                 });
             }
-    
+
             decorationRef.current?.clear();
             decorationRef.current =
-                editorRef.current?.createDecorationsCollection(selectionArray) ??
-                null;
+                editorRef.current?.createDecorationsCollection(
+                    selectionArray
+                ) ?? null;
+        });
+
+        // reset text in model on next question
+        socket?.on("proceedWithNextQuestion", () => {
+            editorRef.current?.getModel()?.setValue("");
         });
 
         return () => {
             socket.disconnect();
         };
     }, [roomId]);
-        
 
     // handle mounting of editor
     const handleEditorDidMount: OnMount = (editor, monaco) => {
-        console.log("Editor has mounted, with socket ", socketRef.current);
         editorRef.current = editor;
 
         // handle all required event listeners
@@ -77,8 +79,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
 
     // when user makes a text edit
     const handleEditEvent: OnChange = (value, event) => {
-        console.log("handle edit event: " + incomingRef.current);
-
         if (incomingRef.current) {
             incomingRef.current = false;
             return;
@@ -91,11 +91,9 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
     function handleSelectionEventListeners() {
         editorRef.current!.onDidChangeCursorSelection(
             (event: editor.ICursorSelectionChangedEvent) => {
-                console.log(socketRef.current);
                 socketRef.current?.emit("selection", event);
             }
         );
-        console.log("selection event listener launched");
     }
 
     return (

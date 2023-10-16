@@ -53,3 +53,5 @@ pipelines:
             - proxy:
                   - action:
                         serviceEndpoint: questionService
+
+routes:
