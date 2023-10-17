@@ -1,5 +1,8 @@
 import { generatePythonFile } from "../utils/pythonDriverGenerator";
 import { generateCFile } from "../utils/cDriverGenerator";
+import { generateCppFile } from "../utils/cppDriverGenerator";
+import { generateJavaFile } from "../utils/javaDriverGenerator";
+import { generateJavaScriptFile } from "../utils/javascriptDriverGenerator";
 import { Calls } from "../types/calls";
 import { Functions } from "../types/functions";
 import { CompilationData } from "../types/compilationData";
@@ -45,6 +48,18 @@ export const compileCode = async (language: string,
 
     if (language == LANGUAGE.C) {
         return await compileCCode(source_code, calls, functions);
+    }
+
+    if (language == LANGUAGE.CPP) {
+        return await compileCppCode(source_code, calls, functions);
+    }
+
+    if (language == LANGUAGE.JAVA) {
+        return await compileJavaCode(source_code, calls, functions);
+    }
+
+    if (language == LANGUAGE.JAVASCRIPT) {
+        return await compileJavascriptCode(source_code, calls, functions);
     }
 
     // TODO: handle other languages
@@ -126,50 +141,50 @@ const compileCCode = async (source_code: string,
     return { data, error, message, statusCode, firstFailedTestCaseNumber };
 };
 
-// const compileCppCode = async (source_code: string,
-//     calls: Calls,
-//     functions: Functions): Promise<CompileCodeResult> => {
-//     const language_id = JUDGE_0_CPP_LANG_ID;
-//     const source_with_driver_code = generateCppFile(source_code, calls, functions);
-//     const rawData = {
-//         language_id: language_id,
-//         source_code: source_with_driver_code,
-//         stdin: "",
-//         expected_output: "",
-//     };
+const compileCppCode = async (source_code: string,
+    calls: Calls,
+    functions: Functions): Promise<CompileCodeResult> => {
+    const language_id = JUDGE_0_CPP_LANG_ID;
+    const source_with_driver_code = generateCppFile(source_code, calls, functions);
+    const rawData = {
+        language_id: language_id,
+        source_code: source_with_driver_code,
+        stdin: "",
+        expected_output: "",
+    };
 
-//     const { data, error, message, statusCode } = await getJudge0Output(rawData);
-//     return { data, error, message, statusCode };
-// };
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+};
 
-// const compileJavaCode = async (source_code: string,
-//     calls: Calls,
-//     functions: Functions): Promise<CompileCodeResult> => {
-//     const language_id = JUDGE_0_JAVA_LANG_ID;
-//     const source_with_driver_code = generateJavaFile(source_code, calls, functions);
-//     const rawData = {
-//         language_id: language_id,
-//         source_code: source_with_driver_code,
-//         stdin: "",
-//         expected_output: "",
-//     };
+const compileJavaCode = async (source_code: string,
+    calls: Calls,
+    functions: Functions): Promise<CompileCodeResult> => {
+    const language_id = JUDGE_0_JAVA_LANG_ID;
+    const source_with_driver_code = generateJavaFile(source_code, calls, functions);
+    const rawData = {
+        language_id: language_id,
+        source_code: source_with_driver_code,
+        stdin: "",
+        expected_output: "",
+    };
 
-//     const { data, error, message, statusCode } = await getJudge0Output(rawData);
-//     return { data, error, message, statusCode };
-// };
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+};
 
-// const compileJavascriptCode = async (source_code: string,
-//     calls: Calls,
-//     functions: Functions): Promise<CompileCodeResult> => {
-//     const language_id = JUDGE_0_JAVASCRIPT_LANG_ID;
-//     const source_with_driver_code = generateJavascriptFile(source_code, calls, functions);
-//     const rawData = {
-//         language_id: language_id,
-//         source_code: source_with_driver_code,
-//         stdin: "",
-//         expected_output: "",
-//     };
+const compileJavascriptCode = async (source_code: string,
+    calls: Calls,
+    functions: Functions): Promise<CompileCodeResult> => {
+    const language_id = JUDGE_0_JAVASCRIPT_LANG_ID;
+    const source_with_driver_code = generateJavaScriptFile(source_code, calls, functions);
+    const rawData = {
+        language_id: language_id,
+        source_code: source_with_driver_code,
+        stdin: "",
+        expected_output: "",
+    };
 
-//     const { data, error, message, statusCode } = await getJudge0Output(rawData);
-//     return { data, error, message, statusCode };
-// };
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+};

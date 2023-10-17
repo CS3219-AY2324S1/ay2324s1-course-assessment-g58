@@ -37,4 +37,17 @@ export const formatErrorMessageC = (template: String, testNum: string, expected:
         .replace("{actual}", actual);
 };
 
+export const formatErrorMessageJava = (template: string, testNum: string, expected: string) => {
+    return template
+        .replace("{testNum}", testNum)
+        .replace("{expected}", expected)
+        .replace("{actual}", "");
+};
+
+export const formatErrorMessageJavaScript = (template: string, testNum: string, expected: string) => {
+    return template
+        .replace("{testNum}", testNum)
+        .replace("{expected}", expected)
+        .replace("{actual}", "");
+};
 export const ASSERTION_ERROR_PATTERN = /AssertionError: Test (\d+): Expected .+, but got .+/;

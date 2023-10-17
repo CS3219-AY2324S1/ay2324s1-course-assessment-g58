@@ -1,8 +1,8 @@
 import { Calls } from "../types/calls";
 import { Functions } from "../types/functions";
 import { ASSERTION_ERROR_MESSAGE_TEMPLATE, formatErrorMessageC } from "./assertionErrorMessage";
-//TODO: handle arrays
-export const generateCFile = (userCode: string, calls: Calls, functions: Functions) => {
+
+export const generateCppFile = (userCode: string, calls: Calls, functions: Functions) => {
     let testsCode = "";
     let testCounter = 1;
 
@@ -22,8 +22,8 @@ export const generateCFile = (userCode: string, calls: Calls, functions: Functio
             testsCode += `\t${returnType} result${testCounter} = ${functionName}(${args});\n`;
             testsCode += `\tif (result${testCounter} != ${call.expectedOutput}) {\n`; 
             const errorMessage = formatErrorMessageC(ASSERTION_ERROR_MESSAGE_TEMPLATE, String(testCounter), call.expectedOutput, returnType);
-            testsCode += `\t\tfprintf(stderr, "${errorMessage}", result${testCounter});\n`;
-            testsCode += `\t\texit(1); // Exit on failure\n`;
+            testsCode += `\t\tstd::fprintf(stderr, "${errorMessage}", result${testCounter});\n`;
+            testsCode += `\t\tstd::exit(1); // Exit on failure\n`;
             testsCode += `\t}\n\n`;
             testCounter++;
         } else {
@@ -32,8 +32,8 @@ export const generateCFile = (userCode: string, calls: Calls, functions: Functio
     }
 
     let driverTemplate = `
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 // --- USER CODE START ---
 ${userCode}
