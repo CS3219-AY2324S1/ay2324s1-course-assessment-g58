@@ -95,6 +95,10 @@ const QuestionSchema = new mongoose.Schema({
                     type: [String],
                     required: true,
                 },
+                argumentTypes: {
+                    type: [String],
+                    required: true,
+                },
                 expectedOutput: {
                     type: String,
                     required: true,

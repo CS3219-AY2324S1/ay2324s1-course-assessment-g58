@@ -13,11 +13,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -43,11 +45,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -78,11 +82,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -108,11 +114,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "3"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -146,11 +154,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -179,16 +189,19 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "3"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "7"
                 },
                 {
                     functionName: "foo",
                     arguments: ["7"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "8" // This is intentionally wrong
                 }
             ];
@@ -222,11 +235,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -255,21 +270,25 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "3"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "7"
                 },
                 {
                     functionName: "foo",
                     arguments: ["7"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "9"
                 },
                 {
                     functionName: "foo",
                     arguments: ["10"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "11"
                 }
             ];
@@ -303,11 +322,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
@@ -336,11 +357,13 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
+                    argumentsTypes: ["int"],
                     expectedOutput: "6"
                 }
             ];
