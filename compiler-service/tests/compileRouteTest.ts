@@ -585,5 +585,86 @@ describe('Compiler Service', () => {
             expect(result.firstFailedTestCaseNumber).to.equal(1);
         });
         
+        it('should compile Python code involving 1d arrays successfully', async () => {
+            const language = LANGUAGE.PYTHON;
+            const source_code = `def foo(x):\n\tfor i in range(len(x)):\n\t\tx[i] += 1\n\treturn x`;
+            const calls = [
+                {
+                    functionName: "foo",
+                    arguments: ["[1,2,3]"],
+                    argumentsTypes: [{
+                        python: "List[int]",
+                        c: "int*",
+                        cpp: "std::vector<int>",
+                        java: "int[]",
+                        javascript: "number[]"
+                    }],
+                    expectedOutput: "[2,3,4]"
+                }
+            ];
+            const functions = [
+                {
+                    name: "foo",
+                    returnType: {
+                        python: "List[int]",
+                        c: "int*",
+                        cpp: "std::vector<int>",
+                        java: "int[]",
+                        javascript: "number[]"
+                    }
+                }
+            ];
+            
+            const result = await compileCode(language, source_code, calls, functions);
+            console.log(result);
+            expect(result.error).to.be.false;
+            expect(result.statusCode).to.equal(200);
+            expect(result.data).to.not.be.null;
+            expect(result.data?.time).to.not.be.null;
+            expect(result.data?.stderr).to.be.null;
+        });
+
+        it('should compile with stderr when test cases involving arrays fail (python)', async () => {
+            const language = LANGUAGE.PYTHON;
+            const source_code = `def foo(x):\n\tfor i in range(len(x)):\n\t\tx[i] += 2\n\treturn x`;
+            const calls = [
+                {
+                    functionName: "foo",
+                    arguments: ["[1,2,3]"],
+                    argumentsTypes: [{
+                        python: "List[int]",
+                        c: "int*",
+                        cpp: "std::vector<int>",
+                        java: "int[]",
+                        javascript: "number[]"
+                    }],
+                    expectedOutput: "[2,3,4]"
+                }
+            ];
+            const functions = [
+                {
+                    name: "foo",
+                    returnType: {
+                        python: "List[int]",
+                        c: "int*",
+                        cpp: "std::vector<int>",
+                        java: "int[]",
+                        javascript: "number[]"
+                    }
+                }
+            ];
+            
+            const result = await compileCode(language, source_code, calls, functions);
+            console.log(result);
+            expect(result.error).to.be.false;
+            expect(result.statusCode).to.equal(200);
+            expect(result.data).to.not.be.null;
+            if (result.data) {
+                expect(result.data.stderr).to.not.be.empty;
+            } else {
+                expect.fail('result.data is null');
+            }
+            expect(result.firstFailedTestCaseNumber).to.equal(1);
+        });
     });
 });
