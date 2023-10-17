@@ -13,20 +13,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -45,20 +63,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -82,20 +118,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -114,20 +168,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "3"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -154,20 +226,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -189,26 +279,50 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "3"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "7"
                 },
                 {
                     functionName: "foo",
                     arguments: ["7"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "8" // This is intentionally wrong
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -235,20 +349,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -270,32 +402,62 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "3"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "7"
                 },
                 {
                     functionName: "foo",
                     arguments: ["7"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "9"
                 },
                 {
                     functionName: "foo",
                     arguments: ["10"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "11"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "int"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -322,20 +484,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "number"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             
@@ -357,20 +537,38 @@ describe('Compiler Service', () => {
                 {
                     functionName: "foo",
                     arguments: ["1"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "2"
                 },
                 {
                     functionName: "foo",
                     arguments: ["5"],
-                    argumentsTypes: ["int"],
+                    argumentsTypes: [{
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }],
                     expectedOutput: "6"
                 }
             ];
             const functions = [
                 {
                     name: "foo",
-                    returnType: "number"
+                    returnType: {
+                        python: "int",
+                        c: "int",
+                        cpp: "int",
+                        java: "int",
+                        javascript: "number"
+                    }
                 }
             ];
             

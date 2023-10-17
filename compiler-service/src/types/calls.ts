@@ -1,7 +1,9 @@
+import { ArgumentsTypes } from "./testCaseType";
+
 export interface Call {
     functionName: string;
     arguments: string[];
-    argumentsTypes: string[];
+    argumentsTypes: ArgumentsTypes;
     expectedOutput: string;
 
 }

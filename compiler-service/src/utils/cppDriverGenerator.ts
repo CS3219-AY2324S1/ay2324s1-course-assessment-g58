@@ -9,7 +9,7 @@ export const generateCppFile = (userCode: string, calls: Calls, functions: Funct
     // Create a dictionary to store return types for each function
     const returnTypeForFunction: { [key: string]: string } = {};
     functions.forEach(func => {
-        returnTypeForFunction[func.name as string] = func.returnType as string;
+        returnTypeForFunction[func.name as string] = func.returnType.cpp as string;
     });
 
     for (let call of calls) {

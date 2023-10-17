@@ -10,7 +10,7 @@ export const generateJavaFile = (userCode: string, calls: Calls, functions: Func
     // Create a dictionary to store return types for each function
     const returnTypeForFunction: { [key: string]: string } = {};
     functions.forEach(func => {
-        returnTypeForFunction[func.name as string] = func.returnType as string;
+        returnTypeForFunction[func.name as string] = func.returnType.java as string;
     });
 
     for (let call of calls) {

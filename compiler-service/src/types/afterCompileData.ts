@@ -4,4 +4,5 @@ export interface AfterCompileData {
     time: string;
     memory: number;
     stderr: string;
+    compile_output: string;
 }

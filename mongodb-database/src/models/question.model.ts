@@ -75,8 +75,26 @@ const QuestionSchema = new mongoose.Schema({
                     required: true,
                 },
                 returnType: {
-                    type: String,
-                    required: true,
+                    python: {
+                        type: String,
+                        required: true,
+                    },
+                    cpp: {
+                        type: String,
+                        required: true,
+                    },
+                    c: {
+                        type: String,
+                        required: true,
+                    },
+                    java: {
+                        type: String,
+                        required: true,
+                    },
+                    javascript: {
+                        type: String,
+                        required: true,
+                    },
                 },
             }
         ],
@@ -95,8 +113,31 @@ const QuestionSchema = new mongoose.Schema({
                     type: [String],
                     required: true,
                 },
-                argumentTypes: {
-                    type: [String],
+                argumentsTypes: {
+                    type: [
+                        {
+                            python: {
+                                type: String,
+                                required: true,
+                            },
+                            cpp: {
+                                type: String,
+                                required: true,
+                            },
+                            c: {
+                                type: String,
+                                required: true,
+                            },
+                            java: {
+                                type: String,
+                                required: true,
+                            },
+                            javascript: {
+                                type: String,
+                                required: true,
+                            },
+                        }
+                    ],
                     required: true,
                 },
                 expectedOutput: {

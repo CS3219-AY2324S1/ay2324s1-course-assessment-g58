@@ -84,7 +84,7 @@ const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult
 
         while (retries > 0) {
             const responseSubmission = await fetch(JUDGE_0_URL + "submissions/" + token
-                    + "?base64_encoded=True&fields=stdout,stderr,status_id,time,memory", {
+                    + "?base64_encoded=True&fields=stdout,stderr,status_id,time,memory,compile_output", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
