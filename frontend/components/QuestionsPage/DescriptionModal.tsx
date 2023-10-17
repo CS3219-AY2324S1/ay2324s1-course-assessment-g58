@@ -1,11 +1,13 @@
 // src: https://mui.com/material-ui/react-modal/
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import Question from "@/types/Question";
-import Button from '@mui/material/Button';
 import { useAuth } from "@/contexts/AuthContext";
+import {
+    Box,
+    Button,
+    Modal,
+    Typography
+} from "@mui/material";
 
 interface DescriptionModalProps {
     question: Question | null;
