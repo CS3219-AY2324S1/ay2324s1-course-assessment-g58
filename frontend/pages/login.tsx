@@ -17,8 +17,8 @@ const Login: NextPage = () => {
     if (user) {
         return (
             //loading text
-            <div className="flex justify-center items-center h-screen">
-                <h1 className="text-4xl font-bold">Loading...</h1>
+            <div>
+                <h1>Loading...</h1>
             </div>
         );
     }
