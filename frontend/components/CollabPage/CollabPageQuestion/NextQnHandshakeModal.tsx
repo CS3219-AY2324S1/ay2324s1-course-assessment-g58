@@ -38,6 +38,9 @@ export default function BasicModal(
   const handleClose = (event: any, reason: string) => {
     if (reason && reason == "backdropClick")
       return; /* This prevents modal from closing on an external click */
+
+      if (reason && reason == "escapeKeyDown") 
+            return; //prevent user from closing dialog using esacpe button
     setIsNextQnHandshakeOpen(false);
   };
   return (
