@@ -5,6 +5,8 @@ import logoutRouter from "./routes/logout";
 import tokenRouter from "./routes/tokenLogin";
 import { authenticate } from "./middleware/authorize";
 
+require('dotenv').config();
+
 const app: Application = express();
 
 const port = parseInt(process.env.NEXT_PUBLIC_PORT_NUMBER as string);

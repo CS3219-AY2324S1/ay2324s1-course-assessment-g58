@@ -1,10 +1,13 @@
 // src: https://mui.com/material-ui/react-modal/
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import Question from "@/types/Question";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+    Box,
+    Button,
+    Modal,
+    Typography
+} from "@mui/material";
 
 interface DescriptionModalProps {
     question: Question | null;
@@ -122,14 +125,12 @@ function DescriptionModal({
             >
                 <Box sx={style}>
                     {admin && (
-                        <button
-                            id="editButton"
-                            type="button"
-                            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                        <Button
+                            variant="contained"
                             onClick={() => setEditMode(!editMode)}
                         >
                             Edit
-                        </button>
+                        </Button>
                     )}
                     {editMode ? (
                         <>
@@ -199,12 +200,12 @@ function DescriptionModal({
                                 placeholder="Description"
                                 style={textareaStyle}
                             />
-                            <button
+                            <Button
+                                variant="contained"
                                 onClick={handleConfirmEdit}
-                                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
                             >
                                 Confirm
-                            </button>
+                            </Button>
                         </>
                     ) : (
                         <>
