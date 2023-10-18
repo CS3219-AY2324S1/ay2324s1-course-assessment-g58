@@ -6,10 +6,10 @@ import NavigationBar from '@/components/NavigationBar/NavigationBar';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <MainContext>
-      <div className="app-container h-[100vh]">
+      <div>
         <NavigationBar /> 
         {/* NavBar 6vh */}
-        <main className='p-4 h-[calc(100vh-50px)]'>
+        <main>
           <Component {...pageProps} />
         </main>
       </div>
