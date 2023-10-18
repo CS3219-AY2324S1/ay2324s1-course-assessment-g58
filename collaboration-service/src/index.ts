@@ -56,21 +56,14 @@ io.on("connection", (socket: Socket) => {
     extendedSocket.on("roleSwitch", () => {
         // Broadcast the message to all other clients in the room
         io.sockets.in(extendedSocket.roomId).emit("changeRole");
-        // extendedSocket.broadcast.to(extendedSocket.roomId).emit("changeRole");
     });
     extendedSocket.on("interviewer chosen", () => {
         // Broadcast the message to all other clients in the room
         io.sockets.in(extendedSocket.roomId).emit("interviewer-chosen");
-        // extendedSocket.broadcast
-        //     .to(extendedSocket.roomId)
-        //     .emit("interviewer-chosen");
     });
     extendedSocket.on("interviewee chosen", () => {
         // Broadcast the message to all other clients in the room
         io.sockets.in(extendedSocket.roomId).emit("interviewee-chosen");
-        // extendedSocket.broadcast
-        //     .to(extendedSocket.roomId)
-        //     .emit("interviewee-chosen");
     });
 
     // USED FOR TESTING- update test scripts before removing
@@ -91,7 +84,7 @@ io.on("connection", (socket: Socket) => {
         io.sockets.in(extendedSocket.roomId).emit("openNextQuestionPrompt");
     });
 
-    // Recieve request by a user to move to next question, wait for all users to accept
+    // Receive request by a user to move to next question, wait for all users to accept
     // before broadcasting to all users in the room
     extendedSocket.on("aUserHasAcceptedNextQuestionPrompt", () => {
         console.log(extendedSocket.id, " accepted");
@@ -122,7 +115,7 @@ io.on("connection", (socket: Socket) => {
         }
     });
 
-    // Recieve message that a user doesn't want to move on, reset all 'acceptances' for the room
+    // Receive message that a user doesn't want to move on, reset all 'acceptances' for the room
     extendedSocket.on("aUserHasRejectedNextQuestionPrompt", () => {
         console.log(extendedSocket.id, " rejected");
         delete acceptances[extendedSocket.roomId];
