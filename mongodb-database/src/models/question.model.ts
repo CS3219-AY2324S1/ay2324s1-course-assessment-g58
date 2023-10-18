@@ -143,6 +143,10 @@ const QuestionSchema = new mongoose.Schema({
                 expectedOutput: {
                     type: String,
                     required: true,
+                },
+                lengthOfArray: {
+                    type: [Number],
+                    required: false,
                 }
             }
         ],
