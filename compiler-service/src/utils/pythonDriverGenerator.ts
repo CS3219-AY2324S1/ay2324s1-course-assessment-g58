@@ -32,5 +32,6 @@ ${testsCode}
 
 if __name__ == "__main__":
 \trun_tests()`;
+    console.log(driverTemplate);
     return driverTemplate;
 };

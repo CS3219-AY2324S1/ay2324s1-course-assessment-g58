@@ -43,6 +43,6 @@ function run_tests() {
 
 run_tests();
 `;
-
+    console.log(driverTemplate);
     return driverTemplate;
 };

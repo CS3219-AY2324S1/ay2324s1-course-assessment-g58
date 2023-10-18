@@ -65,5 +65,6 @@ public class Main {
 \t\trun_tests();
 \t}
 }`;
+    console.log(driverTemplate);
     return driverTemplate;
 };

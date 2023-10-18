@@ -50,6 +50,6 @@ int main() {
 \trun_tests();
 \treturn 0;
 }`;
-
+    console.log(driverTemplate);
     return driverTemplate;
 };
