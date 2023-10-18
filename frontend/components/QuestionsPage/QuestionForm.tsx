@@ -1,5 +1,12 @@
 import React, { FormEvent, useState } from "react";
 import Question from "@/types/Question";
+import { 
+    Typography, 
+    Button, 
+    TextField,
+    Container,
+    Grid
+} from "@mui/material";
 
 interface QuestionFormProps {
     addQuestion: (newQuestion: Question) => Promise<number>;
@@ -51,90 +58,88 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
             setQuestionComplexity("");
         }
     };
-
     return (
-        <form id="questionForm" onSubmit={handleSubmit}>
-            <label htmlFor="questionTitle" style={labelStyle}>
-                Enter Question Title:
-            </label>
-            <input
-                type="text"
-                id="questionTitle"
-                name="questionTitle"
-                placeholder="Question Title"
-                value={questionTitle}
-                onChange={(e) => {
-                    setQuestionTitle(e.target.value);
-                }}
-            />
-            <br />
-            <br />
+        <Container maxWidth="sm">
+            <form id="questionForm" onSubmit={handleSubmit}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" display="block" gutterBottom>
+                            Enter Question Title:
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            id="questionTitle"
+                            name="questionTitle"
+                            placeholder="Question Title"
+                            value={questionTitle}
+                            onChange={(e) => {
+                                setQuestionTitle(e.target.value);
+                            }}
+                            variant="standard"
+                        />
+                    </Grid>
 
-            <label htmlFor="questionDescription" className="block">
-                Enter Question Description:
-            </label>
-            <textarea
-                id="questionDescription"
-                name="questionDescription"
-                placeholder="Question Description..."
-                value={questionDescription}
-                onChange={(e) => {
-                    setQuestionDescription(e.target.value);
-                }}
-                rows={10}
-                cols={50}
-                className="whitespace-pre-wrap break-words resize-y"
-            ></textarea>
-            <br />
-            <br />
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" display="block" gutterBottom>
+                            Enter Question Description:
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            id="questionDescription"
+                            name="questionDescription"
+                            placeholder="Question Description..."
+                            value={questionDescription}
+                            onChange={(e) => {
+                                setQuestionDescription(e.target.value);
+                            }}
+                            multiline
+                            rows={4}
+                            variant="standard"
+                        />
+                    </Grid>
 
-            <label htmlFor="questionCategory" style={labelStyle}>
-                Enter Question Category:
-            </label>
-            <input
-                type="text"
-                id="questionCategory"
-                name="questionCategory"
-                placeholder="Question Category"
-                value={questionCategory}
-                onChange={(e) => {
-                    setQuestionCategory(e.target.value);
-                }}
-            />
-            <br />
-            <br />
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" display="block" gutterBottom>
+                            Enter Question Category:
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            id="questionCategory"
+                            name="questionCategory"
+                            placeholder="Question Category"
+                            value={questionCategory}
+                            onChange={(e) => {
+                                setQuestionCategory(e.target.value);
+                            }}
+                            variant="standard"
+                        />
+                    </Grid>
 
-            <label htmlFor="questionComplexity" style={labelStyle}>
-                Enter Question Complexity:
-            </label>
-            <input
-                type="text"
-                id="questionComplexity"
-                name="questionComplexity"
-                placeholder="Question Complexity"
-                value={questionComplexity}
-                onChange={(e) => {
-                    setQuestionComplexity(e.target.value);
-                }}
-            />
-            <br />
-            <br />
+                    <Grid item xs={12} sm={6}>
+                        <Typography variant="caption" display="block" gutterBottom>
+                            Enter Question Complexity:
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            id="questionComplexity"
+                            name="questionComplexity"
+                            placeholder="Question Complexity"
+                            value={questionComplexity}
+                            onChange={(e) => {
+                                setQuestionComplexity(e.target.value);
+                            }}
+                            variant="standard"
+                        />
+                    </Grid>
 
-            <button
-                type="submit"
-                onClick={handleSubmit}
-                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
-                Add
-            </button>
-            <button
-                id="clearAllButton"
-                type="button"
-                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
-                Clear All
-            </button>
-        </form>
+                    <Grid item xs={12}>
+                        <Button variant="contained" onClick={handleSubmit}>
+                            Add
+                        </Button>
+                    </Grid>
+                </Grid>
+            </form>
+        </Container>
     );
 }
 

@@ -1,5 +1,8 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 interface HeaderProps {}
 
@@ -9,19 +12,25 @@ function Header(props: HeaderProps) {
         marginLeft: '10px',
     }
     return (
-        <header>
-            {<h1 className="text-4xl font-bold">Welcome to PeerPrep</h1>}
+        <Box sx={{ width: '100%', maxWidth: 500 }}>
+            <Typography variant="h4" gutterBottom>
+                Welcome to PeerPrep
+            </Typography>
             {user && (
                 <>
-                    <span className='text-3x1'>Welcome, {user}</span>
-                    <button
+                    <Typography variant="subtitle1" gutterBottom>
+                        Welcome, {user}
+                    </Typography>
+                    <Button
                         style={labelStyle}
                         onClick={logout}
-                        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-                    >Logout</button>
+                        variant="contained"
+                    >
+                        Logout
+                    </Button>
                 </>
             )}
-        </header>
+        </Box>
     );
 }
 
