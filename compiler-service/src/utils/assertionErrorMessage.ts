@@ -7,6 +7,7 @@ export const formatErrorMessagePython = (template: String, testNum: string, expe
         .replace("{actual}", actual);
 };
 
+//TODO: handle arrays
 export const formatErrorMessageC = (template: String, testNum: string, expected: string, actualType: string) => {
     let actual: string;
 
@@ -26,8 +27,11 @@ export const formatErrorMessageC = (template: String, testNum: string, expected:
         case 'char*':
             actual = "%s";
             break;
+        case 'bool':
+            actual = "%d";
+            break;
         default:
-            actual = "void"; // Handle other types or throw an error if unsupported type is passed
+            actual = "a different result"; // Handle other types or throw an error if unsupported type is passed
             break;
     }
 

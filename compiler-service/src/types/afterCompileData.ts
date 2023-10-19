@@ -1,8 +1,8 @@
 export interface AfterCompileData {
-    stdout: string;
+    stdout: string | null;
     status_id: number;
-    time: string;
-    memory: number;
-    stderr: string;
-    compile_output: string;
+    time: string | null;
+    memory: number | null;
+    stderr: string | null;
+    compile_output: string | null;
 }
