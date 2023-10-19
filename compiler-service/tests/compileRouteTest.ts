@@ -732,7 +732,7 @@ describe('Compiler Service', () => {
             const source_code = `
 #include <stddef.h>
 
-int** foo(int rows, int cols, int x[rows][cols]) {
+int** foo(int** x, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; i++) {
         for (size_t j = 0; j < cols; j++) {
             x[i][j] += 1; // This will increment each element in the 2D array.
