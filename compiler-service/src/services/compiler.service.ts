@@ -124,9 +124,9 @@ const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult
 const compileWithDriverCode = async (source_code: string, driverCode: string, language_id: number): Promise<CompileCodeResult> => {
     const rawData = {
         language_id: language_id,
-        source_code: source_code + "\n" + driverCode,
-        stdin: "",
-        expected_output: "",
+        source_code: Buffer.from(source_code + "\n" + driverCode).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
     };
 
     const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);

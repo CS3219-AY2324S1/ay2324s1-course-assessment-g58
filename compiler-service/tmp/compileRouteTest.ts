@@ -48,7 +48,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -98,7 +98,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -153,7 +153,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -203,7 +203,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -261,7 +261,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -326,7 +326,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -384,7 +384,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -461,7 +461,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -519,7 +519,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -572,7 +572,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -616,7 +616,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -656,7 +656,7 @@ describe('Compiler Service', () => {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -718,7 +718,7 @@ int* foo(int* x, size_t size) {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -766,7 +766,7 @@ def increment_matrix(matrix):
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -818,7 +818,7 @@ std::vector<int> foo(std::vector<int>& x) {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -872,7 +872,7 @@ std::vector<int> foo(std::vector<int>& x) {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -921,7 +921,7 @@ std::vector<int> foo(std::vector<int>& x) {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -972,7 +972,7 @@ std::vector<int> foo(std::vector<int>& x) {
                 }
             ];
             
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -1021,7 +1021,7 @@ function foo(x) {
                 }
             ];
                 
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
@@ -1072,7 +1072,7 @@ function foo2D(x) {
                 }
             ];
                 
-            const result = await compileCode(language, source_code, calls, functions);
+            const result = await compileCode(language, source_code, calls, functions, null);
             console.log(result);
             expect(result.error).to.be.false;
             expect(result.statusCode).to.equal(200);
