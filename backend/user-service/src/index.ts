@@ -24,3 +24,8 @@ app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/users", userRouter);
 app.use("/api/token-login", authenticate, tokenRouter);
+
+// Health Check
+app.get("/", (req, res) => {
+    res.send("Hello from user-service!")
+})

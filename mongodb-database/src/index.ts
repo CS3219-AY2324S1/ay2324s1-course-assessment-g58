@@ -36,6 +36,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     res.status(500).send('Something went wrong!');
 });
 
+// Health Check
+app.get("/", (req, res) => {
+    res.send("Hello from question-service!")
+})
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
