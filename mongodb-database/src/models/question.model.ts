@@ -56,13 +56,17 @@ const QuestionSchema = new mongoose.Schema({
         type: [
           {
             language: {
-              type: String,
-              required: true,
+                type: String,
+                required: true,
             },
             starterCode: {
-              type: String,
-              required: true,
+                type: String,
+                required: true,
             },
+            driverCode: {
+                type: String,
+                required: false,
+            }
           },
         ],
         required: true

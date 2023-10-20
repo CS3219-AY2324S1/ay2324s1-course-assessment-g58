@@ -40,41 +40,46 @@ function decodeAfterCompileData(data: AfterCompileData): AfterCompileData {
 
 export const compileCode = async (language: string,
         source_code: string,
-        calls: Calls,
-        functions: Functions): Promise<CompileCodeResult> => {
+        calls: Calls | null,
+        functions: Functions | null,
+        driverCode: string | null): Promise<CompileCodeResult> => {
     
     const language_id = language ==  LANGUAGE.CPP ? JUDGE_0_CPP_LANG_ID :
             language == LANGUAGE.C ? JUDGE_0_C_LANG_ID :
             language == LANGUAGE.JAVA ? JUDGE_0_JAVA_LANG_ID :
             language == LANGUAGE.PYTHON ? JUDGE_0_PYTHON_LANG_ID :
             language == LANGUAGE.JAVASCRIPT ? JUDGE_0_JAVASCRIPT_LANG_ID : undefined;
-
+    
     if (language_id == undefined) {
         return { data: null, error: true, message: "Invalid language", statusCode: 400, firstFailedTestCaseNumber: null };
     }
 
-    if (language == LANGUAGE.PYTHON) {
+    if (driverCode != null) {
+        return await compileWithDriverCode(source_code, driverCode, language_id);
+    }
+
+    if (language == LANGUAGE.PYTHON && calls != null && functions != null) {
         return await compilePythonCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.C) {
+    if (language == LANGUAGE.C && calls != null && functions != null) {
         return await compileCCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.CPP) {
+    if (language == LANGUAGE.CPP && calls != null && functions != null) {
         return await compileCppCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.JAVA) {
+    if (language == LANGUAGE.JAVA && calls != null && functions != null) {
         return await compileJavaCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.JAVASCRIPT) {
+    if (language == LANGUAGE.JAVASCRIPT && calls != null && functions != null) {
         return await compileJavascriptCode(source_code, calls, functions);
     }
 
-    // TODO: handle other languages
-    return {data: null, error: true, message: "Only python supported now", statusCode: 400, firstFailedTestCaseNumber: null };
+    // TODO: alllow compile without test cases
+    return {data: null, error: true, message: "No test cases recieved", statusCode: 400, firstFailedTestCaseNumber: null };
     
 };
 
@@ -115,6 +120,18 @@ const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult
         return {data: null, error: true, message: "Error in compilation: " + err.message, statusCode: 500, firstFailedTestCaseNumber: null };
     }
 };
+
+const compileWithDriverCode = async (source_code: string, driverCode: string, language_id: number): Promise<CompileCodeResult> => {
+    const rawData = {
+        language_id: language_id,
+        source_code: source_code + "\n" + driverCode,
+        stdin: "",
+        expected_output: "",
+    };
+
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+}
 
 const compilePythonCode = async (source_code: string,
         calls: Calls,
