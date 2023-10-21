@@ -10,7 +10,7 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
     // Allow connections from localhost:3000
     cors: {
-        origin: "http://localhost:3000",
+        origin: ["http://localhost:3000", "https://ay2324s1-course-assessment-g58.vercel.app"],
         methods: ["GET", "POST"],
     },
 });
