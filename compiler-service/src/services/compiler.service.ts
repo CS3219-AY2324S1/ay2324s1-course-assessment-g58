@@ -78,8 +78,7 @@ export const compileCode = async (language: string,
         return await compileJavascriptCode(source_code, calls, functions);
     }
 
-    // TODO: alllow compile without test cases
-    return {data: null, error: true, message: "No test cases recieved", statusCode: 400, firstFailedTestCaseNumber: null };
+    return await compileWithoutTests(source_code, language_id);
     
 };
 
@@ -120,6 +119,18 @@ const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult
         return {data: null, error: true, message: "Error in compilation: " + err.message, statusCode: 500, firstFailedTestCaseNumber: null };
     }
 };
+
+const compileWithoutTests = async (source_code: string, language_id: number): Promise<CompileCodeResult> => {
+    const rawData = {
+        language_id: language_id,
+        source_code: Buffer.from(source_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };
+
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+}
 
 const compileWithDriverCode = async (source_code: string, driverCode: string, language_id: number): Promise<CompileCodeResult> => {
     const rawData = {

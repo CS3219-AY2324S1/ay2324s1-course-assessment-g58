@@ -214,9 +214,9 @@ const CollabPage = () => {
                     language={language}
                     roomId={roomId}
                     editorContent={
-                        (language == LANGUAGE.PYTHON ? "## " : "// ") +
-                        "Type your solution here"
+                        questions[questionNumber]?.templates?.find(template => template.language === language)?.starterCode ?? ""
                     }
+                    question={questions[questionNumber]}
                 />
                 {/*Until here*/}
                 {showInterviewerView && (

@@ -86,7 +86,7 @@ const QuestionSchema = new mongoose.Schema({
             }
           },
         ],
-        required: true
+        required: false
     },
     functions: {
         type: [

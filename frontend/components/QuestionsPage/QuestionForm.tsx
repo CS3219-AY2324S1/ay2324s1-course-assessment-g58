@@ -47,6 +47,10 @@ function QuestionForm({ addQuestion }: QuestionFormProps) {
             description: questionDescription,
             difficulty: questionComplexity,
             category: questionCategory,
+            //TODO: add advanced qn fields for compilation
+            templates: null,
+            functions: null,
+            calls: null,
         };
         const status = await addQuestion(newQuestion);
 

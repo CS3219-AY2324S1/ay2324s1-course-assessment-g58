@@ -65,7 +65,7 @@ router.delete('/delete-question', async (req, res) => {
 router.put('/edit-question', async (req, res) => {
     try {
         console.log(req.body)
-        const questionData = {
+        const updatedQuestion = {
             title: req.body.title,
             description: req.body.description,
             difficulty: req.body.difficulty,

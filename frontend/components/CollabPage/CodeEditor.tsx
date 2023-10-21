@@ -3,17 +3,40 @@ import { useRef, useEffect, useState } from "react";
 import Editor, { OnChange, OnMount } from "@monaco-editor/react";
 import { LANGUAGE } from "@/utils/enums";
 import { Socket, io } from "socket.io-client";
+import { fetchPost } from "@/utils/apiHelpers";
+import { Button } from "@mui/material";
 
 // types
 import { editor } from "monaco-editor/esm/vs/editor/editor.api";
+import Question from "@/types/Question";
+import DataForCompilerService from "@/types/DataForCompilerService";
 
-const CodeEditor = ({ language, editorContent, roomId }: Props) => {
+const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const decorationRef = useRef<editor.IEditorDecorationsCollection | null>(
         null
     );
     const incomingRef = useRef(false);
     const socketRef = useRef<Socket | null>(null);
+
+    const runTests = async () => {
+        // get source code from editor, if undefined, it is empty string
+        const source_code = editorRef.current?.getValue() ?? "";
+        const dataForCompilerService: DataForCompilerService = {
+            language: language,
+            source_code: source_code,
+            calls: question.calls,
+            functions: question.functions,
+            // get driver code for language
+            driverCode: question?.templates?.find(template => template.language === language)?.driverCode ?? null,
+        };
+        const response = await fetchPost("/api/compiler", dataForCompilerService);
+        if (response.status == 200) {
+            alert("Success! " + response.data);
+        } else {
+            alert(response.message);
+        }
+    };
 
     // Connect to collab service socket via roomId
     //TODO: non hardcode url handling
@@ -97,16 +120,21 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
     }
 
     return (
-        <Editor
-            key={roomId}
-            height="50vh"
-            defaultLanguage={(language ?? LANGUAGE.PYTHON)
-                .toString()
-                .toLowerCase()}
-            defaultValue={editorContent}
-            onMount={handleEditorDidMount}
-            onChange={handleEditEvent}
-        />
+        <div>
+            <Editor
+                key={roomId}
+                height="50vh"
+                defaultLanguage={(language ?? LANGUAGE.PYTHON)
+                    .toString()
+                    .toLowerCase()}
+                defaultValue={editorContent}
+                onMount={handleEditorDidMount}
+                onChange={handleEditEvent}
+            />
+            <Button variant="contained" onClick={runTests}>
+                Run Tests
+            </Button>
+        </div>
     );
 };
 
@@ -116,4 +144,5 @@ interface Props {
     language: string;
     editorContent: string;
     roomId: string;
+    question: Question;
 }
