@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { generateToken, getUserData, hashPassword } from "../utils/authHelpers";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { generateToken, hashPassword } from "../utils/authHelpers";
 
 const prisma = new PrismaClient();
 const router = express.Router();
+const INVITATION_EXPIRY = 7; // An invitation expires in a week
 
 router.get("/", async (req: Request, res: Response) => {
     const users = await prisma.user.findMany({
@@ -145,6 +145,48 @@ router.delete("/", async (req: Request, res: Response) => {
     });
 
     res.status(200).json(deletedUser);
+});
+
+/** The "/verify-invitation" endpoint verifies if the user is qualified to be at the admin signup page
+ *  based on their invitation presence and validity.
+ *  Validity period is set by above constant. It is verified against invitation createdAt time.
+ *
+ *  @returns status 200 OK if user is verified to sign-up as admin
+ *  @returns status 404 Not Found if user email doesn't exist in invitation table
+ *  @returns status 410 Gone if link has already expired.
+ */
+router.get("/verify-invitation", async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const invitedUser = await prisma.invitation.findUnique({
+        where: {
+            email: email,
+        },
+        select: {
+            email: true,
+            createdAt: true,
+        },
+    });
+
+    if (!invitedUser) {
+        res.status(404).json({
+            message: `Email: ${email} not found in invitations`,
+        });
+        return;
+    }
+
+    const millisecondsToDays = 1000 * 60 * 60 * 24;
+    const timeDifference =
+        new Date().getTime() - invitedUser.createdAt.getTime();
+    const differenceInDays = timeDifference / millisecondsToDays;
+
+    if (differenceInDays > INVITATION_EXPIRY) {
+        res.status(403).json({
+            message: `Invitation expired`,
+        });
+        return;
+    }
+
+    res.status(200).json(`${email} has an invitation`);
 });
 
 export default router;
