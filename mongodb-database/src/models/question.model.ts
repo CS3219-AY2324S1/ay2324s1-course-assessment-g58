@@ -15,21 +15,38 @@ export interface IQuestion extends mongoose.Document {
     category: string;
     templates: [
         {
-          language: string;
-          starterCode: string;
+            language: string;
+            starterCode: string;
+            driverCode: string;
         }
     ];
     functions: [
         {
             name: string;
-            returnType: string;
+            returnType: {
+                python: string;
+                cpp: string;
+                c: string;
+                java: string;
+                javascript: string;
+            };
         }
     ];
     calls: [
         {
             functionName: string;
             arguments: [string];
+            argumentsTypes: [
+                {
+                    python: string;
+                    cpp: string;
+                    c: string;
+                    java: string;
+                    javascript: string;
+                }
+            ];
             expectedOutput: string;
+            lengthOfArray: [number];
         }
     ];
 }
