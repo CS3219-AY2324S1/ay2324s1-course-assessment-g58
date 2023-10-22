@@ -1,3 +1,5 @@
+import { LANGUAGE } from "../utils/enums";
+
 export type questionTemplate = {
     language: string;
     starterCode: string;
@@ -17,7 +19,7 @@ export type questionFunction = {
 
 export type questionCall = {
     functionName: string;
-    arguments: [string];
+    arguments: string[];
     argumentsTypes: [
         {
             python: string;
@@ -28,7 +30,7 @@ export type questionCall = {
         }
     ];
     expectedOutput: string;
-    lengthOfArray: [number];
+    lengthOfArray: number[];
 };
 
 type Question = {
@@ -37,10 +39,64 @@ type Question = {
     description: string;
     difficulty: string;
     category: string;
-    templates: questionTemplate[] | null;
-    functions: questionFunction[] | null;
-    calls: questionCall[] | null;
+    templates: questionTemplate[];
+    functions: questionFunction[];
+    calls: questionCall[];
 
 };
 
 export default Question;
+
+// Default question template
+export const defaultQuestionTemplates: questionTemplate[] = [
+    {
+        language: LANGUAGE.PYTHON,
+        starterCode: `# Write your code here`,
+        driverCode: null
+    },
+    {
+        language: LANGUAGE.CPP,
+        starterCode: `// Write your code here`,
+        driverCode: null
+    },
+    {
+        language: LANGUAGE.C,
+        starterCode: `// Write your code here`,
+        driverCode: null
+    },
+    {
+        language: LANGUAGE.JAVA,
+        starterCode: `// Write your code here`,
+        driverCode: null
+    },
+    {
+        language: LANGUAGE.JAVASCRIPT,
+        starterCode: `// Write your code here`,
+        driverCode: null
+    }
+];
+
+// Default question call
+export const defaultQuestionCall: questionCall = 
+{
+    functionName: "function1",
+    arguments: ["arg1", "arg2"],
+    argumentsTypes: [
+        {
+            python: "int",
+            cpp: "int",
+            c: "int",
+            java: "int",
+            javascript: "int"
+        },
+        {
+            python: "int",
+            cpp: "int",
+            c: "int",
+            java: "int",
+            javascript: "int"
+        }
+    ],
+    expectedOutput: "expectedOutput",
+    lengthOfArray: [2]
+};

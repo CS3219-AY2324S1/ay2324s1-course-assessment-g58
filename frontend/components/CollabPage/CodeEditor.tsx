@@ -5,11 +5,13 @@ import { LANGUAGE } from "@/utils/enums";
 import { Socket, io } from "socket.io-client";
 import { fetchPost } from "@/utils/apiHelpers";
 import { Button } from "@mui/material";
+import RunCode from "@/components/CollabPage/RunCode/RunCode";
 
 // types
 import { editor } from "monaco-editor/esm/vs/editor/editor.api";
 import Question from "@/types/Question";
 import DataForCompilerService from "@/types/DataForCompilerService";
+import CompilerServiceResult, {defaultRunCodeResults} from "@/types/CompilerServiceResult";
 
 const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -18,10 +20,10 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     );
     const incomingRef = useRef(false);
     const socketRef = useRef<Socket | null>(null);
-
+    const [RunCodeResults, setRunCodeResults] = useState<CompilerServiceResult>(defaultRunCodeResults);
     const runTests = async () => {
         // get source code from editor, if undefined, it is empty string
-        const source_code = editorRef.current?.getValue() ?? "";
+        const source_code = (editorRef.current?.getValue() ?? "").replace(/\t/g, "    ");
         const dataForCompilerService: DataForCompilerService = {
             language: language,
             source_code: source_code,
@@ -31,13 +33,22 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             driverCode: question?.templates?.find(template => template.language === language)?.driverCode ?? null,
         };
         const response = await fetchPost("/api/compiler", dataForCompilerService);
-        if (response.status == 200) {
-            alert("Success! " + response.data);
+        if (response.status == 201) {
+            const compileResult: CompilerServiceResult = response;
+            console.log(compileResult);
+            setRunCodeResults(compileResult);
         } else {
-            alert(response.message);
+            console.log(response.data.message)
+            alert(response.data.message);
         }
     };
 
+    useEffect(() => {
+        if (!question) return;
+        // reset compile results on new question
+        setRunCodeResults(defaultRunCodeResults);
+    }, [question]);
+    
     // Connect to collab service socket via roomId
     //TODO: non hardcode url handling
     useEffect(() => {
@@ -119,6 +130,8 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         );
     }
 
+    //change editor tab size to 4
+    editorRef.current?.getModel()?.updateOptions({ tabSize: 4 });
     return (
         <div>
             <Editor
@@ -128,12 +141,14 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
                     .toString()
                     .toLowerCase()}
                 defaultValue={editorContent}
+                value={editorContent}
                 onMount={handleEditorDidMount}
                 onChange={handleEditEvent}
             />
             <Button variant="contained" onClick={runTests}>
                 Run Tests
             </Button>
+            <RunCode runResults={RunCodeResults}/>
         </div>
     );
 };

@@ -5,7 +5,7 @@ export const compile = async (req: Request, res: Response) => {
     try {
         const { language, source_code, calls, functions, driverCode } = req.body;
         const result = await compileCode(language, source_code, calls, functions, driverCode);
-        
+        console.log(result)
         if (result.error) {
             res.status(result.statusCode || 500).json({ message: result.message });
             return;

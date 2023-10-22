@@ -19,6 +19,10 @@ apiEndpoints:
             - "/get-all-questions"
             - "/delete-question"
             - "/edit-question"
+    compiler:
+        host: "*"
+        paths:
+            - "/compile"
 
 serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
@@ -26,6 +30,8 @@ serviceEndpoints:
         url: "http://localhost:3001"
     questionService:
         url: "http://localhost:3002"
+    compilerService:
+        url: "http://localhost:3006"
 
 policies:
     - basic-auth
@@ -53,5 +59,12 @@ pipelines:
             - proxy:
                   - action:
                         serviceEndpoint: questionService
+    compilerPipeline:
+        apiEndpoints:
+            - compiler
+        policies:
+            - proxy:
+                  - action:
+                        serviceEndpoint: compilerService
 
 routes:

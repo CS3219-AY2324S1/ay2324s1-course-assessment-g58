@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import router from './routes/index';
 
 const app = express();
-const PORT = 3005;
+const PORT = 3006;
 
 app.use(express.json());
 

@@ -40,10 +40,10 @@ function decodeAfterCompileData(data: AfterCompileData): AfterCompileData {
 
 export const compileCode = async (language: string,
         source_code: string,
-        calls: Calls | null,
-        functions: Functions | null,
+        calls: Calls,
+        functions: Functions,
         driverCode: string | null): Promise<CompileCodeResult> => {
-    
+    console.log("source_code:\n", source_code, "language: ", language, "calls: ", calls, "functions: ", functions, "driverCode: ", driverCode, "language: ", language)
     const language_id = language ==  LANGUAGE.CPP ? JUDGE_0_CPP_LANG_ID :
             language == LANGUAGE.C ? JUDGE_0_C_LANG_ID :
             language == LANGUAGE.JAVA ? JUDGE_0_JAVA_LANG_ID :
@@ -58,23 +58,23 @@ export const compileCode = async (language: string,
         return await compileWithDriverCode(source_code, driverCode, language_id);
     }
 
-    if (language == LANGUAGE.PYTHON && calls != null && functions != null) {
+    if (language == LANGUAGE.PYTHON && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compilePythonCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.C && calls != null && functions != null) {
+    if (language == LANGUAGE.C && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compileCCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.CPP && calls != null && functions != null) {
+    if (language == LANGUAGE.CPP && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compileCppCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.JAVA && calls != null && functions != null) {
+    if (language == LANGUAGE.JAVA && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compileJavaCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.JAVASCRIPT && calls != null && functions != null) {
+    if (language == LANGUAGE.JAVASCRIPT && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compileJavascriptCode(source_code, calls, functions);
     }
 
@@ -133,6 +133,7 @@ const compileWithoutTests = async (source_code: string, language_id: number): Pr
 }
 
 const compileWithDriverCode = async (source_code: string, driverCode: string, language_id: number): Promise<CompileCodeResult> => {
+    //driverCode = driverCode.replace(/\t/g, '    ');
     const rawData = {
         language_id: language_id,
         source_code: Buffer.from(source_code + "\n" + driverCode).toString('base64'),
