@@ -6,31 +6,25 @@ export type questionTemplate = {
     driverCode: string | null;
 };
 
+export type variableTypes = {
+    python: string;
+    cpp: string;
+    c: string;
+    java: string;
+    javascript: string;
+};
+
 export type questionFunction = {
     name: string;
-    returnType: {
-        python: string;
-        cpp: string;
-        c: string;
-        java: string;
-        javascript: string;
-    };
+    returnType: variableTypes;
 };
 
 export type questionCall = {
     functionName: string;
     arguments: string[];
-    argumentsTypes: [
-        {
-            python: string;
-            cpp: string;
-            c: string;
-            java: string;
-            javascript: string;
-        }
-    ];
+    argumentsTypes: variableTypes[];
     expectedOutput: string;
-    lengthOfArray: number[];
+    lengthOfArray: number[] | null;
 };
 
 type Question = {
@@ -79,16 +73,9 @@ export const defaultQuestionTemplates: questionTemplate[] = [
 // Default question call
 export const defaultQuestionCall: questionCall = 
 {
-    functionName: "function1",
-    arguments: ["arg1", "arg2"],
+    functionName: "foo",
+    arguments: ["1"],
     argumentsTypes: [
-        {
-            python: "int",
-            cpp: "int",
-            c: "int",
-            java: "int",
-            javascript: "int"
-        },
         {
             python: "int",
             cpp: "int",
@@ -97,6 +84,6 @@ export const defaultQuestionCall: questionCall =
             javascript: "int"
         }
     ],
-    expectedOutput: "expectedOutput",
-    lengthOfArray: [2]
+    expectedOutput: "1",
+    lengthOfArray: []
 };

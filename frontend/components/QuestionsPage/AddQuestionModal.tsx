@@ -14,7 +14,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Question, { questionTemplate,
     questionFunction,
     questionCall,
-    defaultQuestionTemplates
+    defaultQuestionTemplates,
+    defaultQuestionCall
 } from "@/types/Question";
 
 interface AddQuestionModalProps {
@@ -56,6 +57,23 @@ function AddQuestionModal({ handleClose, addQuestion }: AddQuestionModalProps) {
       return updatedTemplates;
     });
   };
+  
+  const handleAddCall = () => {
+    // append defaultQuestionCall to calls
+    setCalls(prevCalls => {
+      const updatedCalls = [...prevCalls];
+      updatedCalls.push(defaultQuestionCall);
+      return updatedCalls;
+    });
+  }
+  const deleteCall = (index: number) => {
+    // delete call at index
+    setCalls(prevCalls => {
+      const updatedCalls = [...prevCalls];
+      updatedCalls.splice(index, 1);
+      return updatedCalls;
+    });
+  }
 
   const handleAddQuestion = async () => {
     if (!title || !description || !difficulty || !category) {
@@ -77,7 +95,7 @@ function AddQuestionModal({ handleClose, addQuestion }: AddQuestionModalProps) {
     await addQuestion(newQuestion);
     handleClose();
   };
-
+  
   return (
     <Modal
       open={true}
@@ -175,6 +193,88 @@ function AddQuestionModal({ handleClose, addQuestion }: AddQuestionModalProps) {
             </Grid>
         </Grid>
         ))}
+        </AccordionDetails>
+        </Accordion>
+        <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Calls</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {calls.map((call, index) => (
+            <Grid container spacing={2} key={index}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Function Name"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={call.functionName}
+                  onChange={(e) => setCalls(prevCalls => {
+                    const updatedCalls = [...prevCalls];
+                    updatedCalls[index].functionName = e.target.value;
+                    return updatedCalls;
+                  })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Arguments"
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={call.arguments}
+                  onChange={(e) => setCalls(prevCalls => {
+                    // split by comma, trim whitespace, create array
+                    const updatedCalls = [...prevCalls];
+                    //change e.target.value to array
+                    updatedCalls[index].arguments = e.target.value.split(',').map((arg) => arg.trim());
+                    return updatedCalls;
+                  })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                label="Expected Output"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={call.expectedOutput}
+                onChange={(e) => setCalls(prevCalls => {
+                  const updatedCalls = [...prevCalls];
+                  updatedCalls[index].expectedOutput = e.target.value;
+                  return updatedCalls;
+                })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                label="length of array (for n-dimension arrays of expected output)"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={call.lengthOfArray}
+                onChange={(e) => setCalls(prevCalls => {
+                  const updatedCalls = [...prevCalls];
+                  // alert if non number is entered
+                    if (e.target.value.split(',').some((arg) => isNaN(arg.trim() as unknown as number))) {
+                        alert("Please enter a number for each dimension of the array");
+                        return updatedCalls;
+                    }
+                  updatedCalls[index].lengthOfArray = e.target.value.split(',').map((arg) => arg.trim() as unknown as number);
+                  return updatedCalls;
+                })}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button variant="contained" color="error" onClick={() => deleteCall(index)}>
+                  Delete Call
+                </Button>
+              </Grid>
+            </Grid>
+          ))}
+          <Button variant="contained" onClick={handleAddCall}>
+            Add New Call
+          </Button>
         </AccordionDetails>
         </Accordion>
         <Button variant="contained" onClick={handleAddQuestion} sx={{ mt: 2 }}>

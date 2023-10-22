@@ -6,6 +6,33 @@ function arrayLimit(val: Array<any>) {
     return val.length > 0;
 }
 
+type questionTemplate = {
+    language: string;
+    starterCode: string;
+    driverCode: string | null;
+};
+
+type variableTypes = {
+    python: string;
+    cpp: string;
+    c: string;
+    java: string;
+    javascript: string;
+};
+
+type questionFunction = {
+    name: string;
+    returnType: variableTypes;
+};
+
+type questionCall = {
+    functionName: string;
+    arguments: string[];
+    argumentsTypes: variableTypes[];
+    expectedOutput: string;
+    lengthOfArray: number[] | null;
+};
+
 // Class Implementation
 export interface IQuestion extends mongoose.Document {
     _id: Types.ObjectId;
@@ -13,42 +40,9 @@ export interface IQuestion extends mongoose.Document {
     description: string;
     difficulty: string;
     category: string;
-    templates: [
-        {
-            language: string;
-            starterCode: string;
-            driverCode: string;
-        }
-    ];
-    functions: [
-        {
-            name: string;
-            returnType: {
-                python: string;
-                cpp: string;
-                c: string;
-                java: string;
-                javascript: string;
-            };
-        }
-    ];
-    calls: [
-        {
-            functionName: string;
-            arguments: [string];
-            argumentsTypes: [
-                {
-                    python: string;
-                    cpp: string;
-                    c: string;
-                    java: string;
-                    javascript: string;
-                }
-            ];
-            expectedOutput: string;
-            lengthOfArray: [number];
-        }
-    ];
+    templates: questionTemplate[];
+    functions: questionFunction[];
+    calls: questionCall[];
 }
 
 // Mongoose Schema and Model
