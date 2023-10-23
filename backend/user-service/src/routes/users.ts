@@ -155,7 +155,7 @@ router.delete("/", async (req: Request, res: Response) => {
  *  @returns status 404 Not Found if user email doesn't exist in invitation table
  *  @returns status 410 Gone if link has already expired.
  */
-router.get("/verify-invitation", async (req: Request, res: Response) => {
+router.post("/verify-invitation", async (req: Request, res: Response) => {
     const { email } = req.body;
     const invitedUser = await prisma.invitation.findUnique({
         where: {
