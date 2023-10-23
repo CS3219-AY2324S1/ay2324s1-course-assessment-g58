@@ -146,6 +146,16 @@ io.on("connection", (socket: Socket) => {
             .emit("select", event);
     });
 
+    extendedSocket.on("runCode", () => {
+        console.log("runCode");
+        extendedSocket.broadcast.to(extendedSocket.roomId).emit("runCode");
+    });
+
+    extendedSocket.on("runCodeDone", (results) => {
+        console.log("runCodeDone");
+        extendedSocket.broadcast.to(extendedSocket.roomId).emit("runCodeDone", results);
+    });
+
     extendedSocket.on("disconnect", (reason) => {
         console.log(
             "Socket disconnected:",

@@ -4,7 +4,12 @@ import Editor, { OnChange, OnMount } from "@monaco-editor/react";
 import { LANGUAGE } from "@/utils/enums";
 import { Socket, io } from "socket.io-client";
 import { fetchPost } from "@/utils/apiHelpers";
-import { Button } from "@mui/material";
+import { 
+    Button,
+    CircularProgress,
+    Stack,
+    Typography    
+} from "@mui/material";
 import RunCode from "@/components/CollabPage/RunCode/RunCode";
 
 // types
@@ -21,17 +26,18 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const incomingRef = useRef(false);
     const socketRef = useRef<Socket | null>(null);
     const [RunCodeResults, setRunCodeResults] = useState<CompilerServiceResult>(defaultRunCodeResults);
+    const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
+
     const runTests = async () => {
         // get source code from editor, if undefined, it is empty string
         const source_code = (editorRef.current?.getValue() ?? "").replace(/\t/g, "    ");
         const dataForCompilerService: DataForCompilerService = {
             language: language,
             source_code: source_code,
-            calls: question.calls,
-            functions: question.functions,
-            // get driver code for language
             driverCode: question?.templates?.find(template => template.language === language)?.driverCode ?? null,
         };
+        setIsRunningCode(true);
+        socketRef.current?.emit("runCode");
         const response = await fetchPost("/api/compiler", dataForCompilerService);
         if (response.status == 201) {
             const compileResult: CompilerServiceResult = response;
@@ -41,6 +47,8 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             console.log(response.data.message)
             alert(response.data.message);
         }
+        setIsRunningCode(false);
+        socketRef.current?.emit("runCodeDone", response);
     };
 
     useEffect(() => {
@@ -97,6 +105,15 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         socket?.on("proceedWithNextQuestion", () => {
             editorRef.current?.getModel()?.setValue("");
         });
+        
+        socket?.on("runCode", () => {
+            setIsRunningCode(true);
+        });
+
+        socket?.on("runCodeDone", (response: CompilerServiceResult) => {
+            setIsRunningCode(false);
+            setRunCodeResults(response);
+        });
 
         return () => {
             socket.disconnect();
@@ -145,10 +162,22 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
                 onMount={handleEditorDidMount}
                 onChange={handleEditEvent}
             />
-            <Button variant="contained" onClick={runTests}>
+            {/* change button to unclickable when isRunningCode */}
+            <Button variant="contained" onClick={runTests} disabled={isRunningCode}>
                 Run Tests
-            </Button>
-            <RunCode runResults={RunCodeResults}/>
+            </Button>      
+            {/* <Button variant="contained" onClick={runTests}>
+                Run Tests
+            </Button> */}
+            {/* If isRunningCode is false, render RunCode, else render a loading interface */}
+            {isRunningCode ? 
+              <Stack className="items-center">
+                <CircularProgress size="2rem" thickness={3} />
+                  <Typography>
+                    Running code...
+                  </Typography>
+              </Stack>
+            : <RunCode runResults={RunCodeResults} />}
         </div>
     );
 };
