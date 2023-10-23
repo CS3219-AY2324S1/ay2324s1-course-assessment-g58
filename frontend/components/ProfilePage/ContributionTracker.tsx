@@ -1,33 +1,34 @@
+import { Box, List, ListItem } from "@mui/material";
+
 /* Referenced from https://bitsofco.de/github-contribution-graph-css-grid/ */
 const ContributionTracker = () => {
     return (
-        <div className="graph">
-            <ul className="months">
-                <li>Jan</li>
-                <li>Feb</li>
-                <li>Mar</li>
-                <li>Apr</li>
-                <li>May</li>
-                <li>Jun</li>
-                <li>Jul</li>
-                <li>Aug</li>
-                <li>Sep</li>
-                <li>Oct</li>
-                <li>Nov</li>
-                <li>Dec</li>
-            </ul>
-            <ul className="days relative top-[-7px]">
-                <li>Sun</li>
-                <li>Mon</li>
-                <li>Tue</li>
-                <li>Wed</li>
-                <li>Thu</li>
-                <li>Fri</li>
-                <li>Sat</li>
-            </ul>
-            <ul className="squares w-[625px]">
-            </ul>
-        </div>
+        <Box className="graph">
+            <List className="months">
+                <ListItem>Jan</ListItem>
+                <ListItem>Feb</ListItem>
+                <ListItem>Mar</ListItem>
+                <ListItem>Apr</ListItem>
+                <ListItem>May</ListItem>
+                <ListItem>Jun</ListItem>
+                <ListItem>Jul</ListItem>
+                <ListItem>Aug</ListItem>
+                <ListItem>Sep</ListItem>
+                <ListItem>Oct</ListItem>
+                <ListItem>Nov</ListItem>
+                <ListItem>Dec</ListItem>
+            </List>
+            <List className="days relative top-[-7px]">
+                <ListItem>Sun</ListItem>
+                <ListItem>Mon</ListItem>
+                <ListItem>Tue</ListItem>
+                <ListItem>Wed</ListItem>
+                <ListItem>Thu</ListItem>
+                <ListItem>Fri</ListItem>
+                <ListItem>Sat</ListItem>
+            </List>
+            <List className="squares w-[625px]"></List>
+        </Box>
     );
 };
 
