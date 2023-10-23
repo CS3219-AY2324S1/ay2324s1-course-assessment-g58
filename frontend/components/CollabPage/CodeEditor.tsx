@@ -39,16 +39,15 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         setIsRunningCode(true);
         socketRef.current?.emit("runCode");
         const response = await fetchPost("/api/compiler", dataForCompilerService);
-        if (response.status == 201) {
-            const compileResult: CompilerServiceResult = response;
-            console.log(compileResult);
-            setRunCodeResults(compileResult);
-        } else {
-            console.log(response.data.message)
-            alert(response.data.message);
-        }
         setIsRunningCode(false);
-        socketRef.current?.emit("runCodeDone", response);
+        if (response.status == 201) {
+            const compileResult: CompilerServiceResult = response.data;
+            setRunCodeResults(compileResult);
+            socketRef.current?.emit("runCodeDone", compileResult);
+            console.log(compileResult);
+        } else {
+            alert(response.message);
+        }
     };
 
     useEffect(() => {

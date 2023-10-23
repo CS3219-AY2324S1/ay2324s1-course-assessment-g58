@@ -43,7 +43,6 @@ export const compileCode = async (language: string,
         calls: Calls,
         functions: Functions,
         driverCode: string | null): Promise<CompileCodeResult> => {
-    console.log("source_code:\n", source_code, "language: ", language, "calls: ", calls, "functions: ", functions, "driverCode: ", driverCode, "language: ", language)
     const language_id = language ==  LANGUAGE.CPP ? JUDGE_0_CPP_LANG_ID :
             language == LANGUAGE.C ? JUDGE_0_C_LANG_ID :
             language == LANGUAGE.JAVA ? JUDGE_0_JAVA_LANG_ID :
