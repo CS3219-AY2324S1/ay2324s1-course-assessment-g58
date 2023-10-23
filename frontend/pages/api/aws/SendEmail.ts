@@ -10,8 +10,8 @@ export default async function handler(
     const client = new SESv2Client({
         region: "ap-southeast-1",
         credentials: {
-            accessKeyId: "AKIATXQ5QFOZFWRS76WK",
-            secretAccessKey: "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",
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         },
     });
 
