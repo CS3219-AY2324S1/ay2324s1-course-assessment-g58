@@ -6,27 +6,6 @@ export type questionTemplate = {
     driverCode: string | null;
 };
 
-export type variableTypes = {
-    python: string;
-    cpp: string;
-    c: string;
-    java: string;
-    javascript: string;
-};
-
-export type questionFunction = {
-    name: string;
-    returnType: variableTypes;
-};
-
-export type questionCall = {
-    functionName: string;
-    arguments: string[];
-    argumentsTypes: variableTypes[];
-    expectedOutput: string;
-    lengthOfArray: number[] | null;
-};
-
 type Question = {
     _id: string;
     title: string;
@@ -34,9 +13,6 @@ type Question = {
     difficulty: string;
     category: string;
     templates: questionTemplate[];
-    functions: questionFunction[];
-    calls: questionCall[];
-
 };
 
 export default Question;
@@ -69,21 +45,3 @@ export const defaultQuestionTemplates: questionTemplate[] = [
         driverCode: null
     }
 ];
-
-// Default question call
-export const defaultQuestionCall: questionCall = 
-{
-    functionName: "foo",
-    arguments: ["1"],
-    argumentsTypes: [
-        {
-            python: "int",
-            cpp: "int",
-            c: "int",
-            java: "int",
-            javascript: "int"
-        }
-    ],
-    expectedOutput: "1",
-    lengthOfArray: []
-};
