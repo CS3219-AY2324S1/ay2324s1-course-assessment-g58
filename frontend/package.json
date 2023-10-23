@@ -10,6 +10,7 @@
     "test": "echo \"Frontend: No tests yet, add tests\" && exit 0"
   },
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.433.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@monaco-editor/react": "^4.5.2",
