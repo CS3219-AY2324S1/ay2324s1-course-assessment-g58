@@ -10,7 +10,7 @@ export interface IResponse extends mongoose.Document {
     language: string;
 }
 
-const ResponseSchema = new mongoose.Schema({
+export const ResponseSchema = new mongoose.Schema({
     questionId: {
         type: Types.ObjectId,
         required: true,
