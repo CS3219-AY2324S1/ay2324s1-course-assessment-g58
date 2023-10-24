@@ -13,13 +13,13 @@ module.exports = {
             // Execute body parsing middleware functions, then proceed to your custom middleware.
             bodyParser.json()(req, res, () => {
                 bodyParser.urlencoded({ extended: true })(req, res, async () => {
+                  //TODO: make secure
                   const RABBITMQ_URL = 'amqp://user:password@localhost:5672';
                   const QUEUE = 'messages';
                   const message = req.body;
                   console.log(message);
                   const connection = await amqp.connect(RABBITMQ_URL);
                   const channel = await connection.createChannel();
-                  const replyQueue = await channel.assertQueue('', { exclusive: true });
 
                   const correlationId = generateUuid();
 
@@ -41,7 +41,7 @@ module.exports = {
                   channel.consume(replyQueue.queue, responseHandler, { noAck: false });
 
                   const messageBuffer = Buffer.from(JSON.stringify(message));
-                  channel.sendToQueue(QUEUE, messageBuffer, { correlationId, replyTo: replyQueue.queue });
+                  channel.sendToQueue(QUEUE, messageBuffer, { correlationId, replyTo: 'amq.rabbitmq.reply-to' });
                   console.log(" [x] Sent %s", message);
                 });
             });
