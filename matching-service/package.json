@@ -3,7 +3,7 @@
         "start": "nodemon src/index.ts",
         "test-client": "node test/test-client.test.js",
         "test-client-2": "node test/test-client-2.test.js",
-        "test": "echo \"No tests yet, add tests\" && exit 0",
+        "test": "echo \"Matching service: No tests yet, add tests\" && exit 0",
         "build": "tsc -p ."
     },
     "dependencies": {
