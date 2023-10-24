@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "echo \"Frontend: No tests yet, add tests\" && exit 0"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
