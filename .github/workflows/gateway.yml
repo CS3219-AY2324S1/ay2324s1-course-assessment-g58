@@ -32,9 +32,6 @@ jobs:
     - name: Install dependencies
       run: npm ci
       working-directory: ./gateway
-    - name: Build
-      run: npm run build --if-present
-      working-directory: ./gateway
     - name: Test
       run: npm test
       working-directory: ./gateway
