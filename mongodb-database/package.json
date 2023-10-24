@@ -5,7 +5,7 @@
     "main": "index.ts",
     "scripts": {
         "start": "nodemon src/index.ts",
-        "test": "echo \"No tests yet, add tests\" && exit 0",
+        "test": "echo \"Question service: No tests yet, add tests\" && exit 0",
         "test:watch": "jest --watch",
         "build": "tsc -p ."
     },
