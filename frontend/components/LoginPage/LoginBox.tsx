@@ -103,7 +103,7 @@ export default function LoginBox() {
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="#" variant="body2" onClick={() => router.push("/login?mode=register")}>
-                  Don't have an account? Sign up
+                  No account yet? Sign up
                 </Link>
               </Grid>
             </Grid>
