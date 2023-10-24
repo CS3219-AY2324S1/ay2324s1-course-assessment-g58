@@ -46,7 +46,7 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello, World!');
 });
 
-app.use(router)
+//app.use(router)
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

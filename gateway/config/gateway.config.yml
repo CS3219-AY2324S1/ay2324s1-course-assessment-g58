@@ -43,6 +43,7 @@ policies:
     - oauth2
     - proxy
     - rate-limit
+    - rabbitmq-middleware-policy
 
 pipelines:
     # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
@@ -64,8 +65,10 @@ pipelines:
         apiEndpoints:
             - compiler
         policies:
-            - proxy:
-                  - action:
-                        serviceEndpoint: compilerService
+            - rabbitmq-middleware-policy:
+        # policies:
+        #     - proxy:
+        #           - action:
+        #                 serviceEndpoint: compilerService
 
 routes:
