@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "Collaboration service: echo \"No tests yet, add tests\" && exit 0",
+    "test": "echo \"Collaboration service: No tests yet, add tests\" && exit 0",
     "dev": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc -p .",

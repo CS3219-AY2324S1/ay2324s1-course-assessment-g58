@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "User service: echo \"No tests yet, add tests\" && exit 0",
+        "test": "echo \"User service: No tests yet, add tests\" && exit 0",
         "start": "nodemon src/index.ts",
         "build": "tsc -p ."
     },
