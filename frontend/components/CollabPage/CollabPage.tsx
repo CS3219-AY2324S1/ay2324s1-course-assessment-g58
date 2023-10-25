@@ -15,14 +15,15 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    Stack,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 import SimpleSnackbar from "./RejectQuestionSnackBar";
 
 const CollabPage = () => {
-    const { user } = useAuth();
-    const { language, roomId, cancelMatching, questions } = useMatching();
+    const { userId, language, roomId, cancelMatching, questions } =
+        useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
     const [questionNumber, setQuestionNumber] = useState(0);
@@ -51,9 +52,8 @@ const CollabPage = () => {
     const handleClosePickRole = (event: any, reason: string) => {
         if (reason && reason == "backdropClick")
             return; /* This prevents modal from closing on an external click */
-        
-        if (reason && reason == "escapeKeyDown") 
-            return; //prevent user from closing dialog using esacpe button
+
+        if (reason && reason == "escapeKeyDown") return; //prevent user from closing dialog using esacpe button
         setShowDialog(false);
     };
 
@@ -157,7 +157,7 @@ const CollabPage = () => {
         isIntervieweeChosen,
     ]);
 
-    // When unmounting this component i.e leaving page, cancel matching (leave mathcing service socket)
+    // When unmounting this component i.e leaving page, cancel matching (leave matching service socket)
     useEffect(() => {
         return () => {
             cancelMatching();
@@ -166,9 +166,8 @@ const CollabPage = () => {
 
     return (
         <div>
-            <CollabPageNavigation {...collabPageNavigationProps} />
             <h1>Collab Page</h1>
-            <h2>Username: {user}</h2>
+            <h2>Matched User: {userId}</h2>
             <h2>Room ID: {roomId}</h2>
             {questions[questionNumber] ? (
                 <QuestionPanel {...questionPanelProps} />
@@ -176,40 +175,30 @@ const CollabPage = () => {
                 <p>No more questions available.</p>
             )}
             <div className="button-container">
-                <Box display="flex" alignItems="center">
-                    {isInterviewer && (
+                <Box display="flex" justifyContent="space-between">
+                    <Stack direction="row" spacing={2}>
                         <Button
                             variant="contained"
                             color="primary"
                             onClick={toggleInterviewerView}
-                            style={{
-                                backgroundColor: "#0073e6",
-                                color: "white",
-                                border: "2px solid #0051a5",
-                                marginRight: "10px",
-                            }}
+                            disabled={!isInterviewer}
                         >
                             {showInterviewerView
                                 ? "Hide Interviewer View"
                                 : "Show Interviewer View"}
                         </Button>
-                    )}
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={startRoleChange}
-                        style={{
-                            backgroundColor: "#0073e6",
-                            color: "white",
-                            border: "2px solid #0051a5",
-                        }}
-                    >
-                        Switch roles
-                    </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={startRoleChange}
+                        >
+                            Switch roles
+                        </Button>
+                    </Stack>
+                    <CollabPageNavigation {...collabPageNavigationProps} />
                 </Box>
             </div>
             <div className="code-editor-and-interviewer">
-                {/*Enter Code editor component here*/}
                 <CodeEditor
                     language={language}
                     roomId={roomId}
@@ -218,14 +207,13 @@ const CollabPage = () => {
                     }
                     question={questions[questionNumber]}
                 />
-                {/*Until here*/}
                 {showInterviewerView && (
                     <div className="interviewer-view-container">
                         <InterviewerView />
                     </div>
                 )}
             </div>
-            <Dialog open={showDialog} onClose={handleClosePickRole} >
+            <Dialog open={showDialog} onClose={handleClosePickRole}>
                 <DialogTitle>Pick a Role</DialogTitle>
                 <DialogContent>
                     {!isInterviewerChosen && (

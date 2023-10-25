@@ -57,9 +57,9 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     }, [question]);
     
     // Connect to collab service socket via roomId
-    //TODO: non hardcode url handling
     useEffect(() => {
         if (roomId === "") return;
+
         const socket = io(process.env.NEXT_PUBLIC_COLLAB_SERVER_URL as string, {
             auth: {
                 roomId: roomId,

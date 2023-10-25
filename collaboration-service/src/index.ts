@@ -56,21 +56,14 @@ io.on("connection", (socket: Socket) => {
     extendedSocket.on("roleSwitch", () => {
         // Broadcast the message to all other clients in the room
         io.sockets.in(extendedSocket.roomId).emit("changeRole");
-        // extendedSocket.broadcast.to(extendedSocket.roomId).emit("changeRole");
     });
     extendedSocket.on("interviewer chosen", () => {
         // Broadcast the message to all other clients in the room
         io.sockets.in(extendedSocket.roomId).emit("interviewer-chosen");
-        // extendedSocket.broadcast
-        //     .to(extendedSocket.roomId)
-        //     .emit("interviewer-chosen");
     });
     extendedSocket.on("interviewee chosen", () => {
         // Broadcast the message to all other clients in the room
         io.sockets.in(extendedSocket.roomId).emit("interviewee-chosen");
-        // extendedSocket.broadcast
-        //     .to(extendedSocket.roomId)
-        //     .emit("interviewee-chosen");
     });
 
     // USED FOR TESTING- update test scripts before removing
@@ -131,16 +124,13 @@ io.on("connection", (socket: Socket) => {
             .emit("dontProceedWithNextQuestion");
     });
 
-    // Handle text edit event
+    // Handle text edit event in CodeEditor
     extendedSocket.on("editEvent", (event) => {
-        console.log("edit");
-        console.log(extendedSocket.roomId);
         extendedSocket.broadcast.to(extendedSocket.roomId).emit("text", event);
     });
 
-    // Handle selection event
+    // Handle selection event in CodeEditor
     extendedSocket.on("selection", (event) => {
-        console.log("select");
         extendedSocket.broadcast
             .to(extendedSocket.roomId)
             .emit("select", event);
@@ -153,9 +143,12 @@ io.on("connection", (socket: Socket) => {
 
     extendedSocket.on("runCodeDone", (results) => {
         console.log("runCodeDone");
-        extendedSocket.broadcast.to(extendedSocket.roomId).emit("runCodeDone", results);
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("runCodeDone", results);
     });
 
+    // Handle socket disconnection
     extendedSocket.on("disconnect", (reason) => {
         console.log(
             "Socket disconnected:",
@@ -163,5 +156,8 @@ io.on("connection", (socket: Socket) => {
             "\nReason: ",
             reason
         );
+        extendedSocket.broadcast
+            .to(extendedSocket.roomId)
+            .emit("user-disconnected");
     });
 });
