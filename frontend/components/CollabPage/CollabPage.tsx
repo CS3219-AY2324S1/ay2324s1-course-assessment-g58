@@ -71,16 +71,19 @@ const CollabPage = () => {
     const handleNextQuestion = () => {
         socket?.emit("openNextQuestionPrompt");
     };
+
     // Called when this user accepts next question prompt
     const handleIPressedAccept = () => {
         setIHaveAcceptedNextQn(true);
         socket?.emit("aUserHasAcceptedNextQuestionPrompt");
     };
+
     // Called when this user rejects next question prompt
     const handleIPressedReject = () => {
         setIHaveAcceptedNextQn(false);
         socket?.emit("aUserHasRejectedNextQuestionPrompt");
     };
+
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
@@ -93,12 +96,13 @@ const CollabPage = () => {
         isInterviewer: isInterviewer,
         startRoleChange: startRoleChange,
     };
-    // useEffect(() => {
-    //     // Reject people with no roomId
-    //     if (router.pathname == "/collab" && roomId === "") {
-    //         router.push("/");
-    //     }
-    // }, [roomId, router.pathname]);
+
+    useEffect(() => {
+        // Reject people with no roomId
+        if (router.pathname == "/collab" && roomId === "") {
+            router.push("/");
+        }
+    }, [roomId, router.pathname]);
 
     // Connect to collab service socket via roomId
     useEffect(() => {
