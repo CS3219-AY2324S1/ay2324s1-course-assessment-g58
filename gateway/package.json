@@ -5,6 +5,9 @@
   "license": "UNLICENSED",
   "version": "1.0.0",
   "main": "server.js",
+  "scripts": {
+    "test": "echo \"Question service: No tests yet, add tests\" && exit 0"
+},
   "dependencies": {
     "express-gateway": "^1.16.11"
   }

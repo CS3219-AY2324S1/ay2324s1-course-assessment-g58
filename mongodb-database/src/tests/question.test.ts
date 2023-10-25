@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(QuestionRouter);
 
-describe('POST /api/new-question', () => {
+describe('POST /add-new-question', () => {
     it('should create a new question and return it', async () => {
         const questionData = {
             title: "What is the capital of France?",
@@ -17,9 +17,8 @@ describe('POST /api/new-question', () => {
         };
 
         const response = await request(app)
-            .post('/api/new-question')
+            .post('/add-new-question')
             .send(questionData);
-
         expect(response.status).toBe(201);
         expect(response.body.title).toEqual(questionData.title);
         // add more assertions as needed
