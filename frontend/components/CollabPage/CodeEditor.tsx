@@ -4,19 +4,16 @@ import Editor, { OnChange, OnMount } from "@monaco-editor/react";
 import { LANGUAGE } from "@/utils/enums";
 import { Socket, io } from "socket.io-client";
 import { fetchPost } from "@/utils/apiHelpers";
-import { 
-    Button,
-    CircularProgress,
-    Stack,
-    Typography    
-} from "@mui/material";
+import { Button, CircularProgress, Stack, Typography } from "@mui/material";
 import RunCode from "@/components/CollabPage/RunCode/RunCode";
 
 // types
 import { editor } from "monaco-editor/esm/vs/editor/editor.api";
 import Question from "@/types/Question";
 import DataForCompilerService from "@/types/DataForCompilerService";
-import CompilerServiceResult, {defaultRunCodeResults} from "@/types/CompilerServiceResult";
+import CompilerServiceResult, {
+    defaultRunCodeResults,
+} from "@/types/CompilerServiceResult";
 
 const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -25,20 +22,39 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     );
     const incomingRef = useRef(false);
     const socketRef = useRef<Socket | null>(null);
-    const [RunCodeResults, setRunCodeResults] = useState<CompilerServiceResult>(defaultRunCodeResults);
+    const [RunCodeResults, setRunCodeResults] = useState<CompilerServiceResult>(
+        defaultRunCodeResults
+    );
     const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
+
+    // options for monaco editor
+    const options: editor.IStandaloneEditorConstructionOptions = {
+        readOnly: false,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        tabSize: 4,
+    };
 
     const runTests = async () => {
         // get source code from editor, if undefined, it is empty string
-        const source_code = (editorRef.current?.getValue() ?? "").replace(/\t/g, "    ");
+        const source_code = (editorRef.current?.getValue() ?? "").replace(
+            /\t/g,
+            "    "
+        );
         const dataForCompilerService: DataForCompilerService = {
             language: language,
             source_code: source_code,
-            driverCode: question?.templates?.find(template => template.language === language)?.driverCode ?? null,
+            driverCode:
+                question?.templates?.find(
+                    (template) => template.language === language
+                )?.driverCode ?? null,
         };
         setIsRunningCode(true);
         socketRef.current?.emit("runCode");
-        const response = await fetchPost("/api/compiler", dataForCompilerService);
+        const response = await fetchPost(
+            "/api/compiler",
+            dataForCompilerService
+        );
         setIsRunningCode(false);
         if (response.status == 201) {
             const compileResult: CompilerServiceResult = response.data;
@@ -55,7 +71,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         // reset compile results on new question
         setRunCodeResults(defaultRunCodeResults);
     }, [question]);
-    
+
     // Connect to collab service socket via roomId
     useEffect(() => {
         if (roomId === "") return;
@@ -104,7 +120,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         socket?.on("proceedWithNextQuestion", () => {
             editorRef.current?.getModel()?.setValue("");
         });
-        
+
         socket?.on("runCode", () => {
             setIsRunningCode(true);
         });
@@ -147,7 +163,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     }
 
     //change editor tab size to 4
-    editorRef.current?.getModel()?.updateOptions({ tabSize: 4 });
+    // editorRef.current?.getModel()?.updateOptions({ tabSize: 4 });
     return (
         <div>
             <Editor
@@ -160,23 +176,28 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
                 value={editorContent}
                 onMount={handleEditorDidMount}
                 onChange={handleEditEvent}
+                options={options}
             />
             {/* change button to unclickable when isRunningCode */}
-            <Button variant="contained" onClick={runTests} disabled={isRunningCode}>
+            <Button
+                variant="contained"
+                onClick={runTests}
+                disabled={isRunningCode}
+            >
                 Run Tests
-            </Button>      
+            </Button>
             {/* <Button variant="contained" onClick={runTests}>
                 Run Tests
             </Button> */}
             {/* If isRunningCode is false, render RunCode, else render a loading interface */}
-            {isRunningCode ? 
-              <Stack className="items-center">
-                <CircularProgress size="2rem" thickness={3} />
-                  <Typography>
-                    Running code...
-                  </Typography>
-              </Stack>
-            : <RunCode runResults={RunCodeResults} />}
+            {isRunningCode ? (
+                <Stack className="items-center">
+                    <CircularProgress size="2rem" thickness={3} />
+                    <Typography>Running code...</Typography>
+                </Stack>
+            ) : (
+                <RunCode runResults={RunCodeResults} />
+            )}
         </div>
     );
 };
