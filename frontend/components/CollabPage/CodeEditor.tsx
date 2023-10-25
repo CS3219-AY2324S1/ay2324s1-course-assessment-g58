@@ -27,9 +27,6 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     );
     const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
 
-    // for setting editor theme
-    const [theme, setTheme] = useState("light");
-
     // options for monaco editor
     const options: editor.IStandaloneEditorConstructionOptions = {
         readOnly: false,
@@ -140,16 +137,25 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
 
     // handle mounting of editor
     const handleEditorDidMount: OnMount = (editor, monaco) => {
-        editorRef.current = editor;
+        // set initial light/dark mode
+        if (
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+            // dark mode
+            editor.updateOptions({ theme: "vs-dark" });
+        }
 
-        // set theme of editor
+        // change theme of editor if user switches between light and dark mode
         window
             .matchMedia("(prefers-color-scheme: dark)")
             .addEventListener("change", (event) => {
                 event.matches
-                    ? editorRef.current?.updateOptions({ theme: "vs-dark" })
-                    : editorRef.current?.updateOptions({ theme: "vs" });
+                    ? editor.updateOptions({ theme: "vs-dark" })
+                    : editor.updateOptions({ theme: "vs" });
             });
+
+        editorRef.current = editor;
 
         // handle all required event listeners
         handleSelectionEventListeners();
