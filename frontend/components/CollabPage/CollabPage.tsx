@@ -88,6 +88,10 @@ const CollabPage = () => {
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        toggleInterviewerView: toggleInterviewerView,
+        showInterviewerView: showInterviewerView,
+        isInterviewer: isInterviewer,
+        startRoleChange: startRoleChange,
     };
     // useEffect(() => {
     //     // Reject people with no roomId
@@ -176,38 +180,23 @@ const CollabPage = () => {
                     )}
                 </Grid>
                 <Grid item xs={6}>
-                    <Box display="flex" justifyContent="space-between">
-                        <Stack direction="row" spacing={2}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={toggleInterviewerView}
-                                disabled={!isInterviewer}
-                            >
-                                {showInterviewerView
-                                    ? "Hide Interviewer View"
-                                    : "Show Interviewer View"}
-                            </Button>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={startRoleChange}
-                            >
-                                Switch roles
-                            </Button>
-                        </Stack>
-                        <CollabPageNavigation {...collabPageNavigationProps} />
-                    </Box>
-                    <CodeEditor
-                        language={language}
-                        roomId={roomId}
-                        editorContent={
-                            questions[questionNumber]?.templates?.find(
-                                (template) => template.language === language
-                            )?.starterCode ?? ""
-                        }
-                        question={questions[questionNumber]}
-                    />
+                    <Stack direction="column" spacing={1}>
+                        <Box display="flex" justifyContent="space-between">
+                            <CollabPageNavigation
+                                {...collabPageNavigationProps}
+                            />
+                        </Box>
+                        <CodeEditor
+                            language={language}
+                            roomId={roomId}
+                            editorContent={
+                                questions[questionNumber]?.templates?.find(
+                                    (template) => template.language === language
+                                )?.starterCode ?? ""
+                            }
+                            question={questions[questionNumber]}
+                        />
+                    </Stack>
                     {showInterviewerView && (
                         <div className="interviewer-view-container">
                             <InterviewerView />
