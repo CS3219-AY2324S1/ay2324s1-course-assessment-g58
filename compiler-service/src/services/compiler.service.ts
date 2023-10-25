@@ -1,5 +1,8 @@
 import { generatePythonFile } from "../utils/pythonDriverGenerator";
 import { generateCFile } from "../utils/cDriverGenerator";
+import { generateCppFile } from "../utils/cppDriverGenerator";
+import { generateJavaFile } from "../utils/javaDriverGenerator";
+import { generateJavaScriptFile } from "../utils/javascriptDriverGenerator";
 import { Calls } from "../types/calls";
 import { Functions } from "../types/functions";
 import { CompilationData } from "../types/compilationData";
@@ -24,66 +27,88 @@ function getFailedTestNumber(errorMsg: string): number | null {
     return null;
 }
 
+function decodeAfterCompileData(data: AfterCompileData): AfterCompileData {
+    return {
+        stdout: data.stdout ? Buffer.from(data.stdout, 'base64').toString() : null,
+        status_id: data.status_id,
+        time: data.time,
+        memory: data.memory,
+        stderr: data.stderr ? Buffer.from(data.stderr, 'base64').toString() : null,
+        compile_output: data.compile_output ? Buffer.from(data.compile_output, 'base64').toString() : null,
+    };
+}
+
 export const compileCode = async (language: string,
         source_code: string,
         calls: Calls,
-        functions: Functions): Promise<CompileCodeResult> => {
-    
+        functions: Functions,
+        driverCode: string | null): Promise<CompileCodeResult> => {
     const language_id = language ==  LANGUAGE.CPP ? JUDGE_0_CPP_LANG_ID :
             language == LANGUAGE.C ? JUDGE_0_C_LANG_ID :
             language == LANGUAGE.JAVA ? JUDGE_0_JAVA_LANG_ID :
             language == LANGUAGE.PYTHON ? JUDGE_0_PYTHON_LANG_ID :
             language == LANGUAGE.JAVASCRIPT ? JUDGE_0_JAVASCRIPT_LANG_ID : undefined;
-
+    
     if (language_id == undefined) {
         return { data: null, error: true, message: "Invalid language", statusCode: 400, firstFailedTestCaseNumber: null };
     }
 
-    if (language == LANGUAGE.PYTHON) {
+    if (driverCode != null) {
+        return await compileWithDriverCode(source_code, driverCode, language_id);
+    }
+
+    if (language == LANGUAGE.PYTHON && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compilePythonCode(source_code, calls, functions);
     }
 
-    if (language == LANGUAGE.C) {
+    if (language == LANGUAGE.C && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
         return await compileCCode(source_code, calls, functions);
     }
 
-    // TODO: handle other languages
-    return {data: null, error: true, message: "Only python supported now", statusCode: 400, firstFailedTestCaseNumber: null };
+    if (language == LANGUAGE.CPP && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
+        return await compileCppCode(source_code, calls, functions);
+    }
+
+    if (language == LANGUAGE.JAVA && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
+        return await compileJavaCode(source_code, calls, functions);
+    }
+
+    if (language == LANGUAGE.JAVASCRIPT && calls != null && calls.length > 0 && functions != null && functions.length > 0) {
+        return await compileJavascriptCode(source_code, calls, functions);
+    }
+
+    return await compileWithoutTests(source_code, language_id);
     
 };
 
 const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult> => {
     try {
-        const response = await fetch(JUDGE_0_URL + "submissions/?base64_encoded=false&wait=false", {
+        const response = await fetch(JUDGE_0_URL + "submissions/?base64_encoded=true&wait=false", {
             method: "POST",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
         });
 
         const responseBody = await response.json();
-
         const { token } = responseBody;
-        
         let responseBodySubmission;
         let retries = 5;
 
         while (retries > 0) {
             const responseSubmission = await fetch(JUDGE_0_URL + "submissions/" + token
-                    + "?base64_encoded=True&fields=stdout,stderr,status_id,time,memory", {
+                    + "?base64_encoded=true&fields=stdout,stderr,status_id,time,memory,compile_output", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
             });
 
             responseBodySubmission = await responseSubmission.json();
-
             if (responseBodySubmission.status_id !== 1) {
                 break;  // Exit loop if status is not 1 (in queue)
             }
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 3000));
             retries--;
         }
-        const afterCompileData = responseBodySubmission as AfterCompileData;
-        
+        const afterCompileData = decodeAfterCompileData(responseBodySubmission as AfterCompileData);
         let firstFailedTestCaseNumber: number | null = null;
         if (afterCompileData.stderr != null) {
             firstFailedTestCaseNumber = getFailedTestNumber(afterCompileData.stderr);
@@ -94,17 +119,48 @@ const getJudge0Output = async (data: CompilationData): Promise<CompileCodeResult
     }
 };
 
+const compileWithoutTests = async (source_code: string, language_id: number): Promise<CompileCodeResult> => {
+    const rawData = {
+        language_id: language_id,
+        source_code: Buffer.from(source_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };
+
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+}
+
+const compileWithDriverCode = async (source_code: string, driverCode: string, language_id: number): Promise<CompileCodeResult> => {
+    //driverCode = driverCode.replace(/\t/g, '    ');
+    const rawData = {
+        language_id: language_id,
+        source_code: Buffer.from(source_code + "\n" + driverCode).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };
+
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+}
+
 const compilePythonCode = async (source_code: string,
         calls: Calls,
         functions: Functions): Promise<CompileCodeResult> => {
     const language_id = JUDGE_0_PYTHON_LANG_ID;
     const source_with_driver_code = generatePythonFile(source_code, calls, functions);
+    // const rawData = {
+    //     language_id: language_id,
+    //     source_code: source_with_driver_code,
+    //     stdin: "",
+    //     expected_output: "",
+    // };
     const rawData = {
         language_id: language_id,
-        source_code: source_with_driver_code,
-        stdin: "",
-        expected_output: "",
-    };
+        source_code: Buffer.from(source_with_driver_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };    
 
     const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
     return { data, error, message, statusCode, firstFailedTestCaseNumber };
@@ -115,61 +171,85 @@ const compileCCode = async (source_code: string,
     functions: Functions): Promise<CompileCodeResult> => {
     const language_id = JUDGE_0_C_LANG_ID;
     const source_with_driver_code = generateCFile(source_code, calls, functions);
+    // const rawData = {
+    //     language_id: language_id,
+    //     source_code: source_with_driver_code,
+    //     stdin: "",
+    //     expected_output: "",
+    // };
     const rawData = {
         language_id: language_id,
-        source_code: source_with_driver_code,
-        stdin: "",
-        expected_output: "",
-    };
+        source_code: Buffer.from(source_with_driver_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };    
 
     const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
     return { data, error, message, statusCode, firstFailedTestCaseNumber };
 };
 
-// const compileCppCode = async (source_code: string,
-//     calls: Calls,
-//     functions: Functions): Promise<CompileCodeResult> => {
-//     const language_id = JUDGE_0_CPP_LANG_ID;
-//     const source_with_driver_code = generateCppFile(source_code, calls, functions);
-//     const rawData = {
-//         language_id: language_id,
-//         source_code: source_with_driver_code,
-//         stdin: "",
-//         expected_output: "",
-//     };
+const compileCppCode = async (source_code: string,
+    calls: Calls,
+    functions: Functions): Promise<CompileCodeResult> => {
+    const language_id = JUDGE_0_CPP_LANG_ID;
+    const source_with_driver_code = generateCppFile(source_code, calls, functions);
+    // const rawData = {
+    //     language_id: language_id,
+    //     source_code: source_with_driver_code,
+    //     stdin: "",
+    //     expected_output: "",
+    // };
+    const rawData = {
+        language_id: language_id,
+        source_code: Buffer.from(source_with_driver_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };    
 
-//     const { data, error, message, statusCode } = await getJudge0Output(rawData);
-//     return { data, error, message, statusCode };
-// };
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+};
 
-// const compileJavaCode = async (source_code: string,
-//     calls: Calls,
-//     functions: Functions): Promise<CompileCodeResult> => {
-//     const language_id = JUDGE_0_JAVA_LANG_ID;
-//     const source_with_driver_code = generateJavaFile(source_code, calls, functions);
-//     const rawData = {
-//         language_id: language_id,
-//         source_code: source_with_driver_code,
-//         stdin: "",
-//         expected_output: "",
-//     };
+const compileJavaCode = async (source_code: string,
+    calls: Calls,
+    functions: Functions): Promise<CompileCodeResult> => {
+    const language_id = JUDGE_0_JAVA_LANG_ID;
+    const source_with_driver_code = generateJavaFile(source_code, calls, functions);
+    // const rawData = {
+    //     language_id: language_id,
+    //     source_code: source_with_driver_code,
+    //     stdin: "",
+    //     expected_output: "",
+    // };
+    const rawData = {
+        language_id: language_id,
+        source_code: Buffer.from(source_with_driver_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };    
 
-//     const { data, error, message, statusCode } = await getJudge0Output(rawData);
-//     return { data, error, message, statusCode };
-// };
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+};
 
-// const compileJavascriptCode = async (source_code: string,
-//     calls: Calls,
-//     functions: Functions): Promise<CompileCodeResult> => {
-//     const language_id = JUDGE_0_JAVASCRIPT_LANG_ID;
-//     const source_with_driver_code = generateJavascriptFile(source_code, calls, functions);
-//     const rawData = {
-//         language_id: language_id,
-//         source_code: source_with_driver_code,
-//         stdin: "",
-//         expected_output: "",
-//     };
+const compileJavascriptCode = async (source_code: string,
+    calls: Calls,
+    functions: Functions): Promise<CompileCodeResult> => {
+    const language_id = JUDGE_0_JAVASCRIPT_LANG_ID;
+    const source_with_driver_code = generateJavaScriptFile(source_code, calls, functions);
+    // const rawData = {
+    //     language_id: language_id,
+    //     source_code: source_with_driver_code,
+    //     stdin: "",
+    //     expected_output: "",
+    // };
+    const rawData = {
+        language_id: language_id,
+        source_code: Buffer.from(source_with_driver_code).toString('base64'),
+        stdin: Buffer.from("").toString('base64'),
+        expected_output: Buffer.from("").toString('base64'),
+    };    
 
-//     const { data, error, message, statusCode } = await getJudge0Output(rawData);
-//     return { data, error, message, statusCode };
-// };
+    const { data, error, message, statusCode, firstFailedTestCaseNumber } = await getJudge0Output(rawData);
+    return { data, error, message, statusCode, firstFailedTestCaseNumber };
+};

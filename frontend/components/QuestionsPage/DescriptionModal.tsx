@@ -1,10 +1,20 @@
 // src: https://mui.com/material-ui/react-modal/
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import Question from "@/types/Question";
+import Question, { questionTemplate, defaultQuestionTemplates } from "@/types/Question";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+    Box,
+    Button,
+    Modal,
+    Typography,
+    TextField,
+    Grid,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    TextareaAutosize
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface DescriptionModalProps {
     question: Question | null;
@@ -83,6 +93,21 @@ function DescriptionModal({
     const [updatedCategory, setUpdatedCategory] = React.useState(
         question?.category || ""
     );
+    const [updatedTemplates, setUpdatedTemplates] = React.useState<questionTemplate[]>(
+        question?.templates || defaultQuestionTemplates
+    );
+
+    const handleTemplateChange = (index: number, setStarterCode: boolean, newValue: string) => {
+        setUpdatedTemplates(prevTemplates => {
+            const updatedTemplates = [...prevTemplates];
+            if (setStarterCode) {
+                updatedTemplates[index].starterCode = newValue;
+            } else {
+                updatedTemplates[index].driverCode = newValue == "" ? null : newValue;
+            }
+            return updatedTemplates;
+        });
+    };
 
     const handleConfirmEdit = () => {
         const updatedQuestion: Question = {
@@ -91,6 +116,7 @@ function DescriptionModal({
             description: updatedDescription,
             difficulty: updatedDifficulty,
             category: updatedCategory,
+            templates: updatedTemplates
         };
         if (
             updatedQuestion.title == "" ||
@@ -122,89 +148,112 @@ function DescriptionModal({
             >
                 <Box sx={style}>
                     {admin && (
-                        <button
-                            id="editButton"
-                            type="button"
-                            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+                        <Button
+                            variant="contained"
                             onClick={() => setEditMode(!editMode)}
                         >
                             Edit
-                        </button>
+                        </Button>
                     )}
                     {editMode ? (
                         <>
-                            <Typography
-                                id="modal-modal-title"
-                                variant="h6"
-                                component="h2"
-                            >
-                                Title: {question.title}
+                            <Typography id="add-question-modal-title" variant="h6" component="h2">
+                                Edit question
                             </Typography>
-                            <Typography
-                                id="modal-modal-title-new"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Title:
-                            </Typography>
-                            <input
-                                type="text"
+                            <TextField
+                                label="Title"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
                                 value={updatedTitle}
-                                onChange={(e) =>
-                                    setUpdatedTitle(e.target.value)
-                                }
-                                placeholder="Title"
-                                style={inputStyle}
+                                onChange={(e) => setUpdatedTitle(e.target.value)}
                             />
-                            <Typography
-                                id="modal-modal-category"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Category:
-                            </Typography>
-                            <input
-                                type="text"
+                            <TextField
+                                label="Category"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
                                 value={updatedCategory}
-                                onChange={(e) =>
-                                    setUpdatedCategory(e.target.value)
-                                }
-                                placeholder="Category"
-                                style={inputStyle}
+                                onChange={(e) => setUpdatedCategory(e.target.value)}
                             />
-                            <Typography
-                                id="modal-modal-difficulty"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Difficulty:
-                            </Typography>
-                            <input
-                                type="text"
+                            <TextField
+                                label="Difficulty"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
                                 value={updatedDifficulty}
-                                onChange={(e) =>
-                                    setUpdatedDifficulty(e.target.value)
-                                }
-                                placeholder="Difficulty"
-                                style={inputStyle}
+                                onChange={(e) => setUpdatedDifficulty(e.target.value)}
                             />
-                            <Typography
-                                id="modal-modal-description"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Description:
-                            </Typography>
-                            <textarea
+                            <TextField
+                                label="Description"
+                                variant="outlined"
+                                fullWidth
+                                multiline
+                                rows={4}
+                                InputProps={{
+                                    inputComponent: TextareaAutosize,
+                                    inputProps: {
+                                    style: { resize: 'both' }, // Allows resizing both horizontally and vertically
+                                    },
+                                }}
+                                margin="normal"
                                 value={updatedDescription}
-                                onChange={(e) =>
-                                    setUpdatedDescription(e.target.value)
-                                }
-                                placeholder="Description"
-                                style={textareaStyle}
+                                onChange={(e) => setUpdatedDescription(e.target.value)}
                             />
-                            <button
+                            <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>Templates</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                            {updatedTemplates.map((template, index) => (
+                            <Grid container spacing={2} key={index}>
+                                <Grid item xs={12}>
+                                <Typography variant="subtitle1">Language: {template.language}</Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                <TextField
+                                    label="Starter Code"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    InputProps={{
+                                    inputComponent: TextareaAutosize,
+                                    inputProps: {
+                                        style: { resize: 'both' }, // Allows resizing both horizontally and vertically
+                                    },
+                                    }}
+                                    value={template.starterCode}
+                                    onChange={(e) => handleTemplateChange(index, true, e.target.value)}
+                                />
+                                </Grid>
+                                <Grid item xs={12}>
+                                <TextField
+                                    label="Driver Code"
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    InputProps={{
+                                    inputComponent: TextareaAutosize,
+                                    inputProps: {
+                                        style: { resize: 'both' }, // Allows resizing both horizontally and vertically
+                                    },
+                                    }}
+                                    value={template.driverCode || ''}
+                                    onChange={(e) => handleTemplateChange(index, false, e.target.value)}
+                                />
+                                </Grid>
+                            </Grid>
+                            ))}
+                            </AccordionDetails>
+                            </Accordion>
+                            <Button
+                                variant="contained"
                                 onClick={handleConfirmEdit}
-                                className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
                             >
                                 Confirm
-                            </button>
+                            </Button>
                         </>
                     ) : (
                         <>
@@ -234,6 +283,26 @@ function DescriptionModal({
                             >
                                 Question Category: {question.category}
                             </Typography>
+                            <Accordion>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography>Templates</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {question.templates.map((template, index) => (
+                                        <Grid container spacing={2} key={index}>
+                                            <Grid item xs={12}>
+                                                <Typography variant="subtitle1">Language: {template.language}</Typography>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Typography variant="subtitle1">Starter Code: {formatText(template.starterCode)}</Typography>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Typography variant="subtitle1">Driver Code: {formatText(template.driverCode || '')}</Typography>
+                                            </Grid>
+                                        </Grid>
+                                    ))}
+                                </AccordionDetails>
+                            </Accordion>
                         </>
                     )}
                 </Box>

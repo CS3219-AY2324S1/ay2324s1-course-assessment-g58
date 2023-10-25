@@ -61,3 +61,9 @@ res body contains `stdout`, `stderr`, `status_id`, `time`, `memory`
 
 # Testing
 Run `npm test`
+
+length of array: not null when return type is an array, lengthOfArray[n] = length of dim n+1
+
+assumptions in c code:
+argument format for an array will be (array, len of first dim, len of next dim, ...len of last dim, arg 2..., arg n)
+arrays types are always in the format eg. int*, int**

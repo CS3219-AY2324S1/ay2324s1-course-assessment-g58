@@ -1,15 +1,7 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Socket, io } from "socket.io-client";
-import { DIFFICULTY, LANGUAGE } from "@/utils/enums";
-
-export type Question = {
-    _id: string;
-    title: string;
-    description: string;
-    difficulty: string;
-    category: string;
-};
+import Question from "@/types/Question";
 
 interface MatchingContextType {
     roomId: string;
@@ -27,7 +19,7 @@ type MatchType = {
     userId: string;
     difficulty: string;
     language: string;
-    room: string;
+    roomId: string;
     questions: Question[];
 };
 
@@ -52,7 +44,9 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
         language: string
     ) => {
         // Connect to the server
-        const socket = io("http://localhost:3004");
+        const socket = io(
+            process.env.NEXT_PUBLIC_MATCHING_SERVER_URL as string
+        );
         setSocket(socket);
 
         // Handle successful connection
@@ -71,7 +65,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
         socket.on("match", (matchingUser: MatchType) => {
             console.log("Match found:", matchingUser);
             // TODO: do we need socketId ?
-            setRoomId(matchingUser.room);
+            setRoomId(matchingUser.roomId);
             setUserId(matchingUser.userId); // TODO: confirm is this is the local or matched user
             setDifficulty(matchingUser.difficulty);
             setLanguage(matchingUser.language);

@@ -19,6 +19,11 @@ apiEndpoints:
             - "/get-all-questions"
             - "/delete-question"
             - "/edit-question"
+    compiler:
+        host: "*"
+        paths:
+            - "/compile"
+            - "/enqueue-request"
 
 serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
@@ -26,6 +31,8 @@ serviceEndpoints:
         url: "http://localhost:3001"
     questionService:
         url: "http://localhost:3002"
+    compilerService:
+        url: "http://localhost:3006"
 
 policies:
     - basic-auth
@@ -36,6 +43,7 @@ policies:
     - oauth2
     - proxy
     - rate-limit
+    - rabbitmq-middleware-policy
 
 pipelines:
     # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
@@ -53,3 +61,14 @@ pipelines:
             - proxy:
                   - action:
                         serviceEndpoint: questionService
+    compilerPipeline:
+        apiEndpoints:
+            - compiler
+        policies:
+            - rabbitmq-middleware-policy:
+        # policies:
+        #     - proxy:
+        #           - action:
+        #                 serviceEndpoint: compilerService
+
+routes:

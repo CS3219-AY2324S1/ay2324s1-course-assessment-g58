@@ -1,6 +1,8 @@
+import { ReturnType } from "./testCaseType";
+
 export interface Function {
     name: String;
-    returnType: String;
+    returnType: ReturnType;
 }
 
 export type Functions = Function[];

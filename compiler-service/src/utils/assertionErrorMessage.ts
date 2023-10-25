@@ -7,6 +7,7 @@ export const formatErrorMessagePython = (template: String, testNum: string, expe
         .replace("{actual}", actual);
 };
 
+//TODO: handle arrays
 export const formatErrorMessageC = (template: String, testNum: string, expected: string, actualType: string) => {
     let actual: string;
 
@@ -26,8 +27,11 @@ export const formatErrorMessageC = (template: String, testNum: string, expected:
         case 'char*':
             actual = "%s";
             break;
+        case 'bool':
+            actual = "%d";
+            break;
         default:
-            actual = "void"; // Handle other types or throw an error if unsupported type is passed
+            actual = "a different result"; // Handle other types or throw an error if unsupported type is passed
             break;
     }
 
@@ -37,4 +41,17 @@ export const formatErrorMessageC = (template: String, testNum: string, expected:
         .replace("{actual}", actual);
 };
 
+export const formatErrorMessageJava = (template: string, testNum: string, expected: string) => {
+    return template
+        .replace("{testNum}", testNum)
+        .replace("{expected}", expected)
+        .replace("{actual}", "");
+};
+
+export const formatErrorMessageJavaScript = (template: string, testNum: string, expected: string) => {
+    return template
+        .replace("{testNum}", testNum)
+        .replace("{expected}", expected)
+        .replace("{actual}", "");
+};
 export const ASSERTION_ERROR_PATTERN = /AssertionError: Test (\d+): Expected .+, but got .+/;

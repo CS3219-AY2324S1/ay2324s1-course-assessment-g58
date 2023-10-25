@@ -3,45 +3,84 @@ import { useRef, useEffect, useState } from "react";
 import Editor, { OnChange, OnMount } from "@monaco-editor/react";
 import { LANGUAGE } from "@/utils/enums";
 import { Socket, io } from "socket.io-client";
+import { fetchPost } from "@/utils/apiHelpers";
+import { 
+    Button,
+    CircularProgress,
+    Stack,
+    Typography    
+} from "@mui/material";
+import RunCode from "@/components/CollabPage/RunCode/RunCode";
 
 // types
 import { editor } from "monaco-editor/esm/vs/editor/editor.api";
+import Question from "@/types/Question";
+import DataForCompilerService from "@/types/DataForCompilerService";
+import CompilerServiceResult, {defaultRunCodeResults} from "@/types/CompilerServiceResult";
 
-const CodeEditor = ({ language, editorContent, roomId }: Props) => {
+const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const decorationRef = useRef<editor.IEditorDecorationsCollection | null>(
         null
     );
     const incomingRef = useRef(false);
-    // const [socket, setSocket] = useState<Socket>();
     const socketRef = useRef<Socket | null>(null);
+    const [RunCodeResults, setRunCodeResults] = useState<CompilerServiceResult>(defaultRunCodeResults);
+    const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
 
+    const runTests = async () => {
+        // get source code from editor, if undefined, it is empty string
+        const source_code = (editorRef.current?.getValue() ?? "").replace(/\t/g, "    ");
+        const dataForCompilerService: DataForCompilerService = {
+            language: language,
+            source_code: source_code,
+            driverCode: question?.templates?.find(template => template.language === language)?.driverCode ?? null,
+        };
+        setIsRunningCode(true);
+        socketRef.current?.emit("runCode");
+        const response = await fetchPost("/api/compiler", dataForCompilerService);
+        setIsRunningCode(false);
+        if (response.status == 201) {
+            const compileResult: CompilerServiceResult = response.data;
+            setRunCodeResults(compileResult);
+            socketRef.current?.emit("runCodeDone", compileResult);
+            console.log(compileResult);
+        } else {
+            alert(response.message);
+        }
+    };
+
+    useEffect(() => {
+        if (!question) return;
+        // reset compile results on new question
+        setRunCodeResults(defaultRunCodeResults);
+    }, [question]);
+    
     // Connect to collab service socket via roomId
     //TODO: non hardcode url handling
     useEffect(() => {
         if (roomId === "") return;
-        const socket = io("http://localhost:3005", {
+        const socket = io(process.env.NEXT_PUBLIC_COLLAB_SERVER_URL as string, {
             auth: {
                 roomId: roomId,
             },
             autoConnect: false,
         });
         socket.connect();
-        //setSocket(socket);
         socketRef.current = socket;
-    
+
         socket?.on("text", (event: editor.IModelContentChangedEvent) => {
             incomingRef.current = true;
             editorRef.current?.getModel()?.applyEdits(event.changes);
         });
-    
+
         socket?.on("select", (event: editor.ICursorSelectionChangedEvent) => {
-            console.log(event);
             const selectionArray = [];
-    
+
             if (
                 event.selection.startColumn === event.selection.endColumn &&
-                event.selection.startLineNumber === event.selection.endLineNumber
+                event.selection.startLineNumber ===
+                    event.selection.endLineNumber
             ) {
                 selectionArray.push({
                     range: event.selection,
@@ -53,22 +92,35 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
                     options: { className: "otherUserSelection" },
                 });
             }
-    
+
             decorationRef.current?.clear();
             decorationRef.current =
-                editorRef.current?.createDecorationsCollection(selectionArray) ??
-                null;
+                editorRef.current?.createDecorationsCollection(
+                    selectionArray
+                ) ?? null;
+        });
+
+        // reset text in model on next question
+        socket?.on("proceedWithNextQuestion", () => {
+            editorRef.current?.getModel()?.setValue("");
+        });
+        
+        socket?.on("runCode", () => {
+            setIsRunningCode(true);
+        });
+
+        socket?.on("runCodeDone", (response: CompilerServiceResult) => {
+            setIsRunningCode(false);
+            setRunCodeResults(response);
         });
 
         return () => {
             socket.disconnect();
         };
     }, [roomId]);
-        
 
     // handle mounting of editor
     const handleEditorDidMount: OnMount = (editor, monaco) => {
-        console.log("Editor has mounted, with socket ", socketRef.current);
         editorRef.current = editor;
 
         // handle all required event listeners
@@ -77,8 +129,6 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
 
     // when user makes a text edit
     const handleEditEvent: OnChange = (value, event) => {
-        console.log("handle edit event: " + incomingRef.current);
-
         if (incomingRef.current) {
             incomingRef.current = false;
             return;
@@ -91,24 +141,43 @@ const CodeEditor = ({ language, editorContent, roomId }: Props) => {
     function handleSelectionEventListeners() {
         editorRef.current!.onDidChangeCursorSelection(
             (event: editor.ICursorSelectionChangedEvent) => {
-                console.log(socketRef.current);
                 socketRef.current?.emit("selection", event);
             }
         );
-        console.log("selection event listener launched");
     }
 
+    //change editor tab size to 4
+    editorRef.current?.getModel()?.updateOptions({ tabSize: 4 });
     return (
-        <Editor
-            key={roomId}
-            height="50vh"
-            defaultLanguage={(language ?? LANGUAGE.PYTHON)
-                .toString()
-                .toLowerCase()}
-            defaultValue={editorContent}
-            onMount={handleEditorDidMount}
-            onChange={handleEditEvent}
-        />
+        <div>
+            <Editor
+                key={roomId}
+                height="50vh"
+                defaultLanguage={(language ?? LANGUAGE.PYTHON)
+                    .toString()
+                    .toLowerCase()}
+                defaultValue={editorContent}
+                value={editorContent}
+                onMount={handleEditorDidMount}
+                onChange={handleEditEvent}
+            />
+            {/* change button to unclickable when isRunningCode */}
+            <Button variant="contained" onClick={runTests} disabled={isRunningCode}>
+                Run Tests
+            </Button>      
+            {/* <Button variant="contained" onClick={runTests}>
+                Run Tests
+            </Button> */}
+            {/* If isRunningCode is false, render RunCode, else render a loading interface */}
+            {isRunningCode ? 
+              <Stack className="items-center">
+                <CircularProgress size="2rem" thickness={3} />
+                  <Typography>
+                    Running code...
+                  </Typography>
+              </Stack>
+            : <RunCode runResults={RunCodeResults} />}
+        </div>
     );
 };
 
@@ -118,4 +187,5 @@ interface Props {
     language: string;
     editorContent: string;
     roomId: string;
+    question: Question;
 }

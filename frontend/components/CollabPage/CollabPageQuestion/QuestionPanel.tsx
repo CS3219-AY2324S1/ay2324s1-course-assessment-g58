@@ -1,4 +1,4 @@
-import { Question } from "../../../contexts/MatchingContext";
+import Question  from "../../../types/Question";
 import {
     Card,
     CardContent,

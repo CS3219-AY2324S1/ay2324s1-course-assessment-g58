@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+    users:
+        container_name: user-service
+        build:
+            context: .
+            dockerfile: ./backend/user-service/Dockerfile
+        ports:
+            - "3001:3001"
+        env_file:
+            - ./backend/user-service/.env
+
+    questions:
+        container_name: question-service
+        build:
+            context: .
+            dockerfile: ./mongodb-database/Dockerfile
+        ports:
+            - "3002:3002"
+        env_file:
+            - ./mongodb-database/.env

@@ -6,6 +6,33 @@ function arrayLimit(val: Array<any>) {
     return val.length > 0;
 }
 
+type questionTemplate = {
+    language: string;
+    starterCode: string;
+    driverCode: string | null;
+};
+
+type variableTypes = {
+    python: string;
+    cpp: string;
+    c: string;
+    java: string;
+    javascript: string;
+};
+
+type questionFunction = {
+    name: string;
+    returnType: variableTypes;
+};
+
+type questionCall = {
+    functionName: string;
+    arguments: string[];
+    argumentsTypes: variableTypes[];
+    expectedOutput: string;
+    lengthOfArray: number[] | null;
+};
+
 // Class Implementation
 export interface IQuestion extends mongoose.Document {
     _id: Types.ObjectId;
@@ -13,25 +40,9 @@ export interface IQuestion extends mongoose.Document {
     description: string;
     difficulty: string;
     category: string;
-    templates: [
-        {
-          language: string;
-          starterCode: string;
-        }
-    ];
-    functions: [
-        {
-            name: string;
-            returnType: string;
-        }
-    ];
-    calls: [
-        {
-            functionName: string;
-            arguments: [string];
-            expectedOutput: string;
-        }
-    ];
+    templates: questionTemplate[];
+    functions: questionFunction[];
+    calls: questionCall[];
 }
 
 // Mongoose Schema and Model
@@ -56,16 +67,20 @@ const QuestionSchema = new mongoose.Schema({
         type: [
           {
             language: {
-              type: String,
-              required: true,
+                type: String,
+                required: true,
             },
             starterCode: {
-              type: String,
-              required: true,
+                type: String,
+                required: true,
             },
+            driverCode: {
+                type: String,
+                required: false,
+            }
           },
         ],
-        required: true
+        required: false
     },
     functions: {
         type: [
@@ -75,8 +90,26 @@ const QuestionSchema = new mongoose.Schema({
                     required: true,
                 },
                 returnType: {
-                    type: String,
-                    required: true,
+                    python: {
+                        type: String,
+                        required: true,
+                    },
+                    cpp: {
+                        type: String,
+                        required: true,
+                    },
+                    c: {
+                        type: String,
+                        required: true,
+                    },
+                    java: {
+                        type: String,
+                        required: true,
+                    },
+                    javascript: {
+                        type: String,
+                        required: true,
+                    },
                 },
             }
         ],
@@ -95,9 +128,40 @@ const QuestionSchema = new mongoose.Schema({
                     type: [String],
                     required: true,
                 },
+                argumentsTypes: {
+                    type: [
+                        {
+                            python: {
+                                type: String,
+                                required: true,
+                            },
+                            cpp: {
+                                type: String,
+                                required: true,
+                            },
+                            c: {
+                                type: String,
+                                required: true,
+                            },
+                            java: {
+                                type: String,
+                                required: true,
+                            },
+                            javascript: {
+                                type: String,
+                                required: true,
+                            },
+                        }
+                    ],
+                    required: true,
+                },
                 expectedOutput: {
                     type: String,
                     required: true,
+                },
+                lengthOfArray: {
+                    type: [Number],
+                    required: false,
                 }
             }
         ],
