@@ -27,6 +27,9 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     );
     const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
 
+    // for setting editor theme
+    const [theme, setTheme] = useState("light");
+
     // options for monaco editor
     const options: editor.IStandaloneEditorConstructionOptions = {
         readOnly: false,
@@ -139,6 +142,15 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const handleEditorDidMount: OnMount = (editor, monaco) => {
         editorRef.current = editor;
 
+        // set theme of editor
+        window
+            .matchMedia("(prefers-color-scheme: dark)")
+            .addEventListener("change", (event) => {
+                event.matches
+                    ? editorRef.current?.updateOptions({ theme: "vs-dark" })
+                    : editorRef.current?.updateOptions({ theme: "vs" });
+            });
+
         // handle all required event listeners
         handleSelectionEventListeners();
     };
@@ -162,8 +174,6 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         );
     }
 
-    //change editor tab size to 4
-    // editorRef.current?.getModel()?.updateOptions({ tabSize: 4 });
     return (
         <div>
             <Editor
