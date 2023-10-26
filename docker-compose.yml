@@ -28,6 +28,24 @@ services:
         env_file:
             - ./mongodb-database/.env
 
+    matching:
+        container_name: matching-service
+        build:
+            context: .
+            dockerfile: ./matching-service/Dockerfile
+        ports:
+            - "3004:3004"
+        env_file:
+            - ./matching-service/.env
+
+    collaboration:
+        container_name: collaboration-service
+        build:
+            context: .
+            dockerfile: ./collaboration-service/Dockerfile
+        ports:
+            - "3005:3005"
+
     server:
         image: judge0/judge0:1.13.0
         volumes:
@@ -85,3 +103,4 @@ volumes:
     redis-data:
     rabbitmq_data:
     rabbitmq_log:
+    
