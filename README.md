@@ -4,11 +4,9 @@
 
 2. Start docker
 
-3. Run `docker compose build` to build the images and containers
+3. Run `docker-compose up --build` to build and run images and containers
 
-4. Run `docker compose up` to start the container (Note: this will only start the user & question service)
-
-5. Note: this does not start the api-gateway. Follow the relevant `./gateway/README.md`
+4. Note: this does not start the api-gateway. Follow the relevant `./gateway/README.md`
 
 ## Developer guide
 

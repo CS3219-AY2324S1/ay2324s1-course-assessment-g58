@@ -1,13 +1,12 @@
 # Starting judge0 server (dev)
 **Starting judge0 compiler server**
+In root directory:
 ```
-cd judge0-v1.13.0
-docker-compose up -d db redis
-sleep 10s
-docker-compose up -d
-sleep 5s
+docker-compose up -d server db workers redis rabbitmq
 ```
 Your instance of Judge0 CE v1.13.0 is now available at `localhost:2358`
+
+Rabbitmq is running on `localhost:5672` (AMQP) and `localhost:15672` (GUI)
 
 **Shutting down**
 `docker-compose down`
@@ -21,49 +20,25 @@ If your server-1 keeps crashing on subsequent launches, do:
 # Compile service
 1. `npm install`
 1. `npm run dev`
-1. Running on localhost:3005
+1. Running on localhost:3006
 
-## Input:
-`Post` to `localhost:3005` with body of `language`, `source_code`, `testFunction: String` and `tests`. 
+## Functions and calls
+This is deprecated and unused. However, the server can handle this input, see tests directory
 
-`language`:
-Should be `c`, `c++`, `python` or `java`
+## Java
+Java code must contain:
+```java
+public class Main {
+    public static void main(String[] args) {
 
-`testFunction`:
-For now we only handle single function leetcode qns. The value of `testFunction` is the name of the function the user has to fill up with their answer
-
-`tests`:
-```typescript
-export interface Test {
-    input: string;
-    expectedOutput: string;
+    }
 }
-
-export type Tests = Test[];
-
-/* eg:
-"tests": [
-        {
-            "input": "1, 2",
-            "expectedOutput": "3"
-        },
-        {
-            "input": "3, 4",
-            "expectedOutput": "7"
-        }
-    ]
-}
-*/
 ```
+Judge0 only runs main function of main class
 
-## Output: 
-res body contains `stdout`, `stderr`, `status_id`, `time`, `memory`
-
-# Testing
-Run `npm test`
-
-length of array: not null when return type is an array, lengthOfArray[n] = length of dim n+1
-
-assumptions in c code:
-argument format for an array will be (array, len of first dim, len of next dim, ...len of last dim, arg 2..., arg n)
-arrays types are always in the format eg. int*, int**
+## Test cases:
+For frontend to register a failed testcase, ensure your driver code prints to `**STDERR**` in the following format:
+```javascript
+ASSERTION_ERROR_PATTERN = /AssertionError: Test (\d+): Expected .+, but got .+/;
+```
+If not the frontend wont know the first test case failed value, so failed test cases will not show up in UI
