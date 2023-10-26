@@ -1,7 +1,7 @@
 export enum LANGUAGE {
-    PYTHON = "Python",
-    JAVA = "Java",
-    CPP = "C++",
+    PYTHON = "PYTHON",
+    JAVA = "JAVA",
+    CPP = "CPP",
     C = "C",
-    JAVASCRIPT = "Javascript",
+    JAVASCRIPT = "JAVASCRIPT",
 }
