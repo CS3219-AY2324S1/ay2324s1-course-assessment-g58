@@ -46,6 +46,22 @@ services:
         ports:
             - "3005:3005"
 
+    compiler:
+        depends_on:
+            - server
+            - workers
+            - db
+            - redis
+            - rabbitmq
+        container_name: compiler-service
+        build:
+            context: .
+            dockerfile: ./compiler-service/Dockerfile
+        ports:
+            - "3006:3006"
+        environment: # Running locally has different url than running on docker (not localhost)
+            - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+
     server:
         image: judge0/judge0:1.13.0
         volumes:
@@ -91,6 +107,9 @@ services:
         ports:
             - "5672:5672"      # AMQP protocol
             - "15672:15672"    # Management UI
+        expose:
+            - 5672
+            - 15672
         environment:
             RABBITMQ_DEFAULT_USER: user
             RABBITMQ_DEFAULT_PASS: password
