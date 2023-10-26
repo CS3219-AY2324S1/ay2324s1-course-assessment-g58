@@ -6,7 +6,7 @@ x-logging:
     driver: json-file
     options:
       max-size: 100m
-      
+
 services:
     users:
         container_name: user-service
@@ -67,6 +67,21 @@ services:
         <<: *default-logging
         restart: always
 
+    rabbitmq:
+        image: rabbitmq:management
+        hostname: rabbitmq
+        ports:
+            - "5672:5672"      # AMQP protocol
+            - "15672:15672"    # Management UI
+        environment:
+            RABBITMQ_DEFAULT_USER: user
+            RABBITMQ_DEFAULT_PASS: password
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+            - rabbitmq_log:/var/log/rabbitmq
+
 volumes:
-  postgres-data:
-  redis-data:
+    postgres-data:
+    redis-data:
+    rabbitmq_data:
+    rabbitmq_log:
