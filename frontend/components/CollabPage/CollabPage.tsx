@@ -16,6 +16,7 @@ import {
     DialogTitle,
     DialogContent,
     Stack,
+    Grid,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
@@ -70,16 +71,19 @@ const CollabPage = () => {
     const handleNextQuestion = () => {
         socket?.emit("openNextQuestionPrompt");
     };
+
     // Called when this user accepts next question prompt
     const handleIPressedAccept = () => {
         setIHaveAcceptedNextQn(true);
         socket?.emit("aUserHasAcceptedNextQuestionPrompt");
     };
+
     // Called when this user rejects next question prompt
     const handleIPressedReject = () => {
         setIHaveAcceptedNextQn(false);
         socket?.emit("aUserHasRejectedNextQuestionPrompt");
     };
+
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
@@ -87,7 +91,12 @@ const CollabPage = () => {
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        toggleInterviewerView: toggleInterviewerView,
+        showInterviewerView: showInterviewerView,
+        isInterviewer: isInterviewer,
+        startRoleChange: startRoleChange,
     };
+
     useEffect(() => {
         // Reject people with no roomId
         if (router.pathname == "/collab" && roomId === "") {
@@ -166,86 +175,72 @@ const CollabPage = () => {
 
     return (
         <div>
-            <h1>Collab Page</h1>
-            <h2>Matched User: {userId}</h2>
-            <h2>Room ID: {roomId}</h2>
-            {questions[questionNumber] ? (
-                <QuestionPanel {...questionPanelProps} />
-            ) : (
-                <p>No more questions available.</p>
-            )}
-            <div className="button-container">
-                <Box display="flex" justifyContent="space-between">
-                    <Stack direction="row" spacing={2}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={toggleInterviewerView}
-                            disabled={!isInterviewer}
-                        >
-                            {showInterviewerView
-                                ? "Hide Interviewer View"
-                                : "Show Interviewer View"}
-                        </Button>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={startRoleChange}
-                        >
-                            Switch roles
-                        </Button>
+            <Grid container={true} spacing={2} sx={{ marginTop: "5px" }}>
+                <Grid item xs={6}>
+                    {questions[questionNumber] ? (
+                        <QuestionPanel {...questionPanelProps} />
+                    ) : (
+                        <p>No more questions available.</p>
+                    )}
+                </Grid>
+                <Grid item xs={6}>
+                    <Stack direction="column" spacing={1}>
+                        <Box display="flex" justifyContent="space-between">
+                            <CollabPageNavigation
+                                {...collabPageNavigationProps}
+                            />
+                        </Box>
+                        <CodeEditor
+                            language={language}
+                            roomId={roomId}
+                            editorContent={
+                                questions[questionNumber]?.templates?.find(
+                                    (template) => template.language === language
+                                )?.starterCode ?? ""
+                            }
+                            question={questions[questionNumber]}
+                        />
                     </Stack>
-                    <CollabPageNavigation {...collabPageNavigationProps} />
-                </Box>
-            </div>
-            <div className="code-editor-and-interviewer">
-                <CodeEditor
-                    language={language}
-                    roomId={roomId}
-                    editorContent={
-                        questions[questionNumber]?.templates?.find(template => template.language === language)?.starterCode ?? ""
-                    }
-                    question={questions[questionNumber]}
-                />
-                {showInterviewerView && (
-                    <div className="interviewer-view-container">
-                        <InterviewerView />
-                    </div>
-                )}
-            </div>
-            <Dialog open={showDialog} onClose={handleClosePickRole}>
-                <DialogTitle>Pick a Role</DialogTitle>
-                <DialogContent>
-                    {!isInterviewerChosen && (
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            style={{ color: "black" }}
-                            onClick={() => {
-                                setInterviewer(true);
-                                setShowDialog(false);
-                                socket?.emit("interviewer chosen");
-                            }}
-                        >
-                            Interviewer
-                        </Button>
+                    {showInterviewerView && (
+                        <div className="interviewer-view-container">
+                            <InterviewerView />
+                        </div>
                     )}
-                    {!isIntervieweeChosen && (
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            style={{ color: "black" }}
-                            onClick={() => {
-                                setInterviewer(false);
-                                setShowDialog(false);
-                                socket?.emit("interviewee chosen");
-                            }}
-                        >
-                            Interviewee
-                        </Button>
-                    )}
-                </DialogContent>
-            </Dialog>
+                    <Dialog open={showDialog} onClose={handleClosePickRole}>
+                        <DialogTitle>Pick a Role</DialogTitle>
+                        <DialogContent>
+                            {!isInterviewerChosen && (
+                                <Button
+                                    variant="contained"
+                                    color="warning"
+                                    style={{ color: "black" }}
+                                    onClick={() => {
+                                        setInterviewer(true);
+                                        setShowDialog(false);
+                                        socket?.emit("interviewer chosen");
+                                    }}
+                                >
+                                    Interviewer
+                                </Button>
+                            )}
+                            {!isIntervieweeChosen && (
+                                <Button
+                                    variant="contained"
+                                    color="warning"
+                                    style={{ color: "black" }}
+                                    onClick={() => {
+                                        setInterviewer(false);
+                                        setShowDialog(false);
+                                        socket?.emit("interviewee chosen");
+                                    }}
+                                >
+                                    Interviewee
+                                </Button>
+                            )}
+                        </DialogContent>
+                    </Dialog>
+                </Grid>
+            </Grid>
             <SimpleSnackbar
                 snackBarIsOpen={snackBarIsOpen}
                 onClose={handleSnackbarClose}

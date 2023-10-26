@@ -30,14 +30,12 @@ const MatchingButton = () => {
     const [isMatching, setMatching] = useState(false);
     const [missingLanguage, setMissingLanguage] = useState(false);
     const [missingDifficulty, setMissingDifficulty] = useState(false);
-    const diffChoices = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD];
-    const langChoices = [
-        LANGUAGE.PYTHON,
-        LANGUAGE.JAVA,
-        LANGUAGE.CPP,
-        LANGUAGE.C,
-        LANGUAGE.JAVASCRIPT,
-    ];
+
+    const langOptions = Object.keys(LANGUAGE).map((key) => ({
+        key: key,
+        value: (LANGUAGE as any)[key],
+    }));
+
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
     const router = useRouter();
@@ -186,14 +184,17 @@ const MatchingButton = () => {
                                     label="language"
                                     className="w-full"
                                     value={language}
-                                    onChange={(e) =>
-                                        setLanguage(e.target.value as string)
-                                    }
+                                    onChange={(e) => {
+                                        setLanguage(e.target.value);
+                                    }}
                                 >
-                                    {Object.values(LANGUAGE).map((value) => {
+                                    {langOptions.map((option) => {
                                         return (
-                                            <MenuItem key={value} value={value}>
-                                                {value}
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.key}
+                                            >
+                                                {option.value}
                                             </MenuItem>
                                         );
                                     })}
