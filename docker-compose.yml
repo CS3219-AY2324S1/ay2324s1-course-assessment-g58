@@ -61,6 +61,7 @@ services:
             - "3006:3006"
         environment: # Running locally has different url than running on docker (not localhost)
             - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+            - JUDGE0_URL=http://server:2358/
 
     server:
         image: judge0/judge0:1.13.0
