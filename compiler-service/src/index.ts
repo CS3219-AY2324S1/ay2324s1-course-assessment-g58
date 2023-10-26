@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import router from './routes/index';
 import * as amqp from 'amqplib';
 import { compileCode } from './services/compiler.service';
 
