@@ -1,12 +1,13 @@
 {
   "name": "compiler-service",
   "version": "1.0.0",
-  "description": "**First use**\r ```\r cd judge0-v1.13.0\r docker-compose up -d db redis\r sleep 10s\r docker-compose up -d\r sleep 5s\r ```\r Your instance of Judge0 CE v1.13.0 is now available at `localhost:2358`",
-  "main": "dist/index.ts",
+  "description": "",
+  "main": "dist/index.js",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.ts --timeout 10000",
     "dev": "nodemon --exec ts-node src/index.ts",
-    "start": "node dist/index.ts"
+    "start": "node dist/index.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "-": "^0.0.1",
     "@types/amqplib": "^0.10.3",
     "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "nodemon": "^3.0.1"
   },

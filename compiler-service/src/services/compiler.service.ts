@@ -10,8 +10,9 @@ import { AfterCompileData } from "../types/afterCompileData";
 import { CompileCodeResult } from "../types/compileCodeResult";
 import { LANGUAGE } from "../types/languageEnum";
 import { ASSERTION_ERROR_PATTERN } from "../utils/assertionErrorMessage";
+require('dotenv').config();
 
-const JUDGE_0_URL = "http://localhost:2358/" // TODO: dont keep this so static and available to the public
+const JUDGE_0_URL = process.env.JUDGE0_URL // TODO: dont keep this so static and available to the public
 
 const JUDGE_0_PYTHON_LANG_ID = 71; //(3.8.1)
 const JUDGE_0_C_LANG_ID = 50; //(GCC 9.2.0)

@@ -1,5 +1,7 @@
 http:
     port: 8080
+https:
+    port: 8080
 admin:
     port: 9876
     host: localhost
@@ -27,13 +29,16 @@ apiEndpoints:
 
 serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
+    # For deployment, uncomment the environment variables and comment the localhost urls.
     userService:
         url: "http://localhost:3001"
+        # url: "${USER_SERVER_URL}"
     questionService:
         url: "http://localhost:3002"
+        # url: "${QUESTION_SERVICE_URL}"
     compilerService:
         url: "http://localhost:3006"
-
+        
 policies:
     - basic-auth
     - cors
@@ -51,24 +56,28 @@ pipelines:
         apiEndpoints:
             - user
         policies:
+            - log:
+                - action:
+                    message: ${req.method} ${req.originalUrl} # parameter for log action
             - proxy:
                   - action:
                         serviceEndpoint: userService
+                        timeout: 65000
     questionPipeline:
         apiEndpoints:
             - questionBank
         policies:
+            - log:
+                - action:
+                    message: ${req.method} ${req.originalUrl} # parameter for log action
             - proxy:
                   - action:
                         serviceEndpoint: questionService
+                        timeout: 65000
     compilerPipeline:
         apiEndpoints:
             - compiler
         policies:
-            - rabbitmq-middleware-policy:
-        # policies:
-        #     - proxy:
-        #           - action:
-        #                 serviceEndpoint: compilerService
+            - rabbitmq-middleware-policy:    
 
 routes:

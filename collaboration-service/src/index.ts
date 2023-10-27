@@ -1,11 +1,10 @@
 import express, { Express } from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
-import cors from "cors";
 import { ExtendedSocket } from "./models/ExtendedSocket";
 
 const app: Express = express();
-app.use(cors());
+app.use(express.json());
 const PORT = process.env.PORT || 3005;
 
 const httpServer = http.createServer(app);
@@ -13,7 +12,7 @@ const httpServer = http.createServer(app);
 // Protect our server by only allowing connections from our frontend
 const io = new Server(httpServer, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: ["http://localhost:3000", "https://peerprep.ryanchuahj.com"],
         methods: ["GET", "POST"],
     },
 });
@@ -22,9 +21,9 @@ const acceptances: { [roomId: string]: Set<string> } = {};
 
 // TODO: protect our server against direct, maybe malicious socket.io connections
 
-// handle '/' route for testing
+// handle '/' route for testing and health check
 app.get("/", (req, res) => {
-    res.send("Hello World");
+    res.send("Hello from Collab Service");
 });
 
 // Start the server

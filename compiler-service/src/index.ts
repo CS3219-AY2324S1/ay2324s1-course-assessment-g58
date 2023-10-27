@@ -1,38 +1,47 @@
 import express, { Request, Response } from 'express';
-import router from './routes/index';
 import * as amqp from 'amqplib';
 import { compileCode } from './services/compiler.service';
+require('dotenv').config();
 
 async function startConsumer() {
-    const connection = await amqp.connect('amqp://user:password@localhost:5672');
-    const channel = await connection.createChannel();
-    const queue = 'messages';
-  
-    await channel.assertQueue(queue, { durable: false });
-    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-  
-    channel.consume(queue, async (msg) => {
-        if (msg !== null) {
-            const { correlationId, replyTo } = msg.properties;
-            try {
-                const { language, source_code, driverCode } = JSON.parse(msg.content.toString());
-                console.log("[x] Received", language, source_code, driverCode, replyTo, correlationId);
+    let connected = false;
+    while (!connected) {
+        try {
+            const connection = await amqp.connect(process.env.RABBITMQ_URL!);
+            const channel = await connection.createChannel();
+            const queue = 'messages';
+        
+            await channel.assertQueue(queue, { durable: false });
+            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+        
+            channel.consume(queue, async (msg) => {
+                if (msg !== null) {
+                    const { correlationId, replyTo } = msg.properties;
+                    try {
+                        const { language, source_code, driverCode } = JSON.parse(msg.content.toString());
+                        console.log("[x] Received", language, source_code, driverCode, replyTo, correlationId);
 
-                const output = await compileCode(language, source_code, [], [], driverCode);
-                console.log(output);
-                // Send the output back to the client
-                channel.sendToQueue(replyTo, Buffer.from(JSON.stringify(output)), { correlationId });
-                channel.ack(msg);
-            } catch (err: any) {
-                channel.sendToQueue(replyTo, Buffer.from(JSON.stringify({
-                    error: true,
-                    message: err.message,
-                    statusCode: err.statusCode || 500,
-                })), { correlationId });
-                channel.ack(msg);
-            }
+                        const output = await compileCode(language, source_code, [], [], driverCode);
+                        console.log(output);
+                        // Send the output back to the client
+                        channel.sendToQueue(replyTo, Buffer.from(JSON.stringify(output)), { correlationId });
+                        channel.ack(msg);
+                    } catch (err: any) {
+                        channel.sendToQueue(replyTo, Buffer.from(JSON.stringify({
+                            error: true,
+                            message: err.message,
+                            statusCode: err.statusCode || 500,
+                        })), { correlationId });
+                        channel.ack(msg);
+                    }
+                }
+            });
+            connected = true;
+        } catch (error) {
+            console.error("Connection to ",  process.env.RABBITMQ_URL, " failed, retrying in 5 seconds...", error);
+            await new Promise(resolve => setTimeout(resolve, 5000));
         }
-    });
+    }
 }
   
 startConsumer();
