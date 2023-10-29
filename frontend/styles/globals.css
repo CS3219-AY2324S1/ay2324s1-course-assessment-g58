@@ -125,3 +125,15 @@ textarea {
 .otherUserSelection {
     background-color: lightsalmon;
 }
+.video-container {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #000;
+    z-index: 999;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    
+    
+  }
+  

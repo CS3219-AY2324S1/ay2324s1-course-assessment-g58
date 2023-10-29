@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { Button, Grid, Typography } from "@mui/material";
+import { useEffect, useRef, useState,  } from "react";
+import Draggable from "react-draggable";
+import { Button, Grid, Typography, Stack } from "@mui/material";
 import { Videocam, VideocamOff, MicNone, MicOff } from "@mui/icons-material";
 import {Peer, MediaConnection} from "peerjs";
 import { useMatching } from "@/contexts/MatchingContext";
@@ -18,7 +19,7 @@ const VideoAudioChat = ({ username1, username2 }: {
   const partnerVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
   const userNameRef = useRef<string | null>(null);
   const partnerNameRef = useRef<string | null>(null);
-
+  const [callActive, setCallActive] = useState(true);
   const { socketId } = useMatching();
   
 
@@ -124,35 +125,64 @@ const VideoAudioChat = ({ username1, username2 }: {
       .forEach((track) => (track.enabled = !audioToggle));
     setAudioToggle(!audioToggle);
   };
+  
+};
+const handleEndCall = () => {
+  if (callActive) {
+    setCallActive(false); // Set callActive to false
+    userVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
+    partnerVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
+  }
 };
 
   return (
-    <Grid container style={{ height: "100%" }} direction="column" alignItems="center">
-      <video style={{ width: "100%", height: "30%" }} ref={partnerVideoRef} />
-      <Typography variant="h6" >{partnerNameRef.current}</Typography>
-      <video style={{ width: "100%", height: "30%" }} ref={userVideoRef} />
-      <Typography variant="h6">{userNameRef.current}</Typography>
-      <Grid>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          style={{ margin: "5px" }}
-          onClick={handleVideoToggle}
-        >
-          {videoToggle ? <Videocam /> : <VideocamOff />}
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          style={{ margin: "5px" }}
-          onClick={handleAudioToggle}
-        >
-          {audioToggle ? <MicNone /> : <MicOff />}
-        </Button>
-      </Grid>
-    </Grid>
+    callActive ? (
+    <Draggable>
+      <div className="video-container">
+      <Stack direction="column">
+        <Stack direction="row" alignItems="center" justifyContent="space-between" >
+          <div className="video">
+            <video ref={partnerVideoRef} />
+          </div> 
+        
+          <div className="video">
+            <video ref={userVideoRef} />
+          </div> 
+        </Stack>
+        <Stack direction="row" alignItems="center">  
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            style={{ margin: "5px" }}
+            onClick={handleVideoToggle}
+          >
+            {videoToggle ? <Videocam /> : <VideocamOff />}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            style={{ margin: "5px" }}
+            onClick={handleAudioToggle}
+          >
+            {audioToggle ? <MicNone /> : <MicOff />}
+          </Button>
+          <Button
+              variant="contained"
+              color="secondary"
+              size="large"
+              style={{ margin: '5px' }}
+              className="end-call-button" // Apply the CSS class here
+              onClick={handleEndCall} // Attach the onClick event to close the component
+            >
+              End Call
+            </Button>
+        </Stack>
+      </Stack>
+      </div>
+    </Draggable>
+    ) :  null
   );
 };
 
