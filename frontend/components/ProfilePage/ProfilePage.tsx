@@ -99,60 +99,73 @@ const ProfilePage = () => {
         });
     };
     return (
-        <Box width="full" height="full">
-            <Container>
-                <Grid container spacing={3} className="w-full">
-                    <Grid item className="w-1/3">
+        <Box >
+            <Container sx ={{ marginLeft:"0"}}>
+                <Grid container spacing={1} sx={{height: '100vh'}}>
+                    <Grid item sx={{width: "20%"}}>
                         <Card
-                            className="p-4"
                             sx={{
-                                backgroundColor: "white",
+                                padding: "1rem",
                                 position: "relative", // Set the background color here
+                                minWidth: 190, // Set your desired minimum width
+                                minHeight: 200,
+                                marginLeft:"0"
                             }}
                         >
-                            <Stack direction="row">
-                                <Avatar className="w-20 h-20 text-4xl">
+                            <Avatar>
                                     {(user as string)[0]}
                                 </Avatar>
-                                <Stack className="p-4">
-                                    <Typography
-                                        variant="subtitle1"
-                                        fontWeight="bold"
-                                    >
-                                        {user}
-                                    </Typography>
-                                    <Typography variant="caption">
-                                        {email}
-                                    </Typography>
+                                <Stack>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 16 16" style={{  verticalAlign: 'middle', marginRight:"5"}}>
+                                            <path fill="currentColor" d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142a.75.75 0 1 1-1.498.07a4.5 4.5 0 0 0-8.99 0a.75.75 0 0 1-1.498-.07a6.004 6.004 0 0 1 3.431-5.142a3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0a2.5 2.5 0 0 0 5 0Z"/>
+                                        </svg>
+                                        <Typography
+                                            variant="caption"
+                                            fontWeight="bold"
+                                            sx={{fontSize:"16"}}
+                                        >
+                                            {user}
+                                        </Typography>
+                                    </div>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 16 16" style={{  verticalAlign: 'middle', marginRight:"5"}}>
+                                            <path fill="currentColor" d="M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 12.251c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.809L8.38 9.397a.75.75 0 0 1-.76 0L1.5 5.809v6.442Zm13-8.181v-.32a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25v.32L8 7.88Z"/>
+                                        </svg>
+                                        <Typography variant="caption" sx={{fontSize:""}} >
+                                            {email}
+                                        </Typography>
+                                    </div>
                                 </Stack>
-                            </Stack>
                             <Button
                                 onClick={() => setEditing(!isEditing)}
                                 variant="outlined"
                                 color="info"
                                 style={{ textTransform: "none" }}
-                                className="w-full mt-2 border-none hover:border-none bg-blue-50"
+                                className="border-none hover:border-none bg-blue-50"
+                                sx={{marginBottom:"5px"}}
                             >
                                 Edit Profile
                             </Button>
                             {isEditing && (
                                 <Stack>
-                                    <Divider className="my-4" />
+                                    <Divider/>
                                     <TextField
                                         variant="outlined"
                                         label="Enter a New Username"
                                         value={updatedUsername}
                                         size="small"
+                                        sx={{marginBottom:"1px"}}
                                         onChange={(e) => {
                                             setUpdatedUsername(e.target.value);
+                    
                                         }}
                                     />
                                     <Stack
                                         direction="row"
-                                        className="mt-2 justify-between"
                                     >
                                         <Button
-                                            className="w-[49%] border-none hover:border-none bg-green-50"
+                                            className="border-none hover:border-none bg-green-50"
                                             variant="outlined"
                                             color="success"
                                             onClick={updateUser}
@@ -160,7 +173,7 @@ const ProfilePage = () => {
                                             Save
                                         </Button>
                                         <Button
-                                            className="w-[49%] border-none hover:border-none bg-red-50"
+                                            className="border-none hover:border-none bg-red-50"
                                             variant="outlined"
                                             color="error"
                                             onClick={() => setEditing(false)}
@@ -169,13 +182,14 @@ const ProfilePage = () => {
                                         </Button>
                                     </Stack>
                                     <Button
-                                        className="w-[49%] border-none hover:border-none bg-red-50"
+                                        className=" border-none hover:border-none bg-red-50"
                                         variant="outlined"
                                         color="error"
                                         onClick={() => setIsDialogOpen(true)}
                                         style={{
-                                            marginTop: "100px",
-                                            marginLeft: "auto",
+                            
+                                            marginRight: "auto",
+                                            marginTop: "50px",
                                         }}
                                     >
                                         Delete
@@ -213,13 +227,13 @@ const ProfilePage = () => {
                             )}
                         </Card>
                     </Grid>
-                    <Grid item className="w-2/3">
-                        <Card className="p-4">
+                    <Grid item className="">
+                        <Card className="">
                             <Stack direction="row" className="items-center">
                                 <Typography variant="h6" fontWeight="bold">
                                     {submissions}
                                 </Typography>
-                                <Typography className="ml-2">
+                                <Typography className="">
                                     submissions in the last year
                                 </Typography>
                             </Stack>
@@ -227,9 +241,8 @@ const ProfilePage = () => {
                         </Card>
                     </Grid>
                 </Grid>
-                <Grid container className="w-full pr-6 mt-4">
+                {/* <Grid container className="w-full pr-6 mt-4">
                     <Card className="p-0 w-full bg-white">
-                        {/* Header */}
                         <Typography
                             variant="h6"
                             gutterBottom
@@ -241,10 +254,7 @@ const ProfilePage = () => {
                         >
                             Our Users
                         </Typography>
-
-                        {/* User List */}
                         <List sx={{ maxHeight: "200px", overflowY: "auto" }}>
-                            {/* Example list of current users */}
                             {users.map((user) => (
                                 <ListItem key={user.email}>
                                     <ListItemAvatar>
@@ -269,7 +279,7 @@ const ProfilePage = () => {
                             expand / refresh
                         </Button>
                     </Card>
-                </Grid>
+                </Grid> */}
             </Container>
         </Box>
     );

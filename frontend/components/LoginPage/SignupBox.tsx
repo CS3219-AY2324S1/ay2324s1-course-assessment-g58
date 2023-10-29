@@ -48,7 +48,7 @@ export default function SignUpBox() {
   const [password, setPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
-  const [admin, setAdmin] = useState<boolean | null>(null);
+  const [admin, setAdmin] = useState<boolean >(false);
 
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>
