@@ -44,18 +44,28 @@ router.post("/", async (req: Request, res: Response) => {
         });
     }
 
-    const newUser = await prisma.user.create({
-        data: {
-            username: username,
-            email: email,
-            password: await hashPassword(password),
-            admin: admin,
-        },
-        select: {
-            username: true,
-            email: true,
-            admin: true,
-        },
+    // Delete invitation if present and create user
+    const newUser = await prisma.$transaction(async (tx) => {
+        if (admin) {
+            await prisma.invitation.delete({
+                where: {
+                    email: email,
+                },
+            });
+        }
+        return await prisma.user.create({
+            data: {
+                username: username,
+                email: email,
+                password: await hashPassword(password),
+                admin: admin,
+            },
+            select: {
+                username: true,
+                email: true,
+                admin: true,
+            },
+        });
     });
 
     res.json(newUser);

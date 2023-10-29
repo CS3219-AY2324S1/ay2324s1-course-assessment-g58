@@ -1,10 +1,12 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import axios from "axios";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
 /** The post "/" endpoint creates the invitation for user.
+ *  This endpoint also sends a email request to the email-service
  *
  *  @returns status 200 OK if invitee added to invitation table.
  *  @returns status 400 Bad Request if invitation creation failed.
@@ -45,6 +47,18 @@ router.post("/", async (req: Request, res: Response) => {
     if (!newInvitation) {
         res.status(400).json({
             message: `Failed to create new Invitation`,
+        });
+        return;
+    }
+
+    // Send request to email-service
+    const response = await axios.post(process.env.EMAIL_SERVICE_URL as string, {
+        inviteeEmail: inviteeEmail,
+    });
+    if (!response || response.status !== 200) {
+        console.log("Received response:", response);
+        res.status(400).json({
+            message: `Failed to send new Email`,
         });
         return;
     }
