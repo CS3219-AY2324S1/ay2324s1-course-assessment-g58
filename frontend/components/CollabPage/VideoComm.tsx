@@ -130,8 +130,7 @@ const VideoAudioChat = ({ username1, username2 }: {
 const handleEndCall = () => {
   if (callActive) {
     setCallActive(false); // Set callActive to false
-    userVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
-    partnerVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
+    
   }
 };
 
