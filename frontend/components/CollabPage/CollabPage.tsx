@@ -7,11 +7,8 @@ import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
 import InterviewerView from "./InterviewerView";
 import {
-    Container,
     Box,
     Button,
-    Paper,
-    TextareaAutosize,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -19,6 +16,7 @@ import {
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 import SimpleSnackbar from "./RejectQuestionSnackBar";
+import VideoAudioChat from "./VideoComm";
 
 const CollabPage = () => {
     const { user } = useAuth();
@@ -36,6 +34,8 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
+    const user1socket = roomId.split("*-*")[0];
+    const user2socket = roomId.split("*-*")[1];
 
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
@@ -262,6 +262,10 @@ const CollabPage = () => {
                 snackBarIsOpen={snackBarIsOpen}
                 onClose={handleSnackbarClose}
             />
+            <VideoAudioChat
+                      username1={user1socket}
+                      username2={user2socket}
+                    />
         </div>
     );
 };

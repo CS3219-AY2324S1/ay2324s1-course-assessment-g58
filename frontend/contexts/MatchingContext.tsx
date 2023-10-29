@@ -19,6 +19,7 @@ interface MatchingContextType {
     cancelMatching: () => void;
     handleTimerExpire: () => void;
     questions: Question[];
+    socketId: string;
 }
 
 type MatchType = {
@@ -28,6 +29,7 @@ type MatchType = {
     language: string;
     roomId: string;
     questions: Question[];
+    
 };
 
 const MatchingContext = createContext<MatchingContextType | undefined>(
@@ -42,6 +44,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
     const [language, setLanguage] = useState("");
     const [difficulty, setDifficulty] = useState("");
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [socketId, setSocketId] = useState("");
 
     const router = useRouter();
 
@@ -77,6 +80,8 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
             setDifficulty(matchingUser.difficulty);
             setLanguage(matchingUser.language);
             setQuestions(matchingUser.questions);
+            setSocketId(matchingUser.socketId);
+            
             router.push("/collab");
         });
 
@@ -97,6 +102,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
         setUserId(""); // TODO: confirm is this is the local or matched user
         setDifficulty("");
         setLanguage("");
+        setSocketId("");
     };
 
     // Handle timer timeout event
@@ -116,6 +122,7 @@ export const MatchingProvider = ({ children }: { children: ReactNode }) => {
                 cancelMatching,
                 handleTimerExpire,
                 questions,
+                socketId,
             }}
         >
             {children}

@@ -73,9 +73,10 @@ async function findMatch(user: User, socket: Socket) {
         removeFromQueue(matchingUser.socketId);
 
         // Create a room for communication
-        const roomName = `${user.socketId}-${matchingUser.socketId}`;
+        const roomName = `${user.socketId}*-*${matchingUser.socketId}`;
         user.roomId = roomName;
         matchingUser.roomId = roomName;
+        
 
         // Get questions for the room
         const response = await fetch(
@@ -108,6 +109,8 @@ async function findMatch(user: User, socket: Socket) {
             matchingUser.roomId
         );
         console.log("Room created:", roomName);
+        console.log(matchingUser.socketId);
+        console.log(user.socketId);
     } else {
         console.log("No match found for:", user);
     }
@@ -125,6 +128,7 @@ interface User {
     language: string;
     roomId?: string;
     questions?: Question[];
+    
 }
 
 export type Question = {
