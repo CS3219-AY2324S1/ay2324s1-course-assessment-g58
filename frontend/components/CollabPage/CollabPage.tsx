@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
@@ -38,6 +38,9 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
+    const [isEndingSession, setIsEndingSession] = useState(false); //to delete
+    const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] = useState(false);
+    const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] = useState(false);
 
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
@@ -87,6 +90,23 @@ const CollabPage = () => {
         socket?.emit("aUserHasRejectedNextQuestionPrompt");
     };
 
+    // Called when user tries to end session
+    const handleEndSession = () => {
+        socket?.emit("openEndSessionPrompt");
+    };
+
+    // Called when this user accepts end session prompt
+    const handleIPressedAcceptEndSession = () => {
+        setIHaveAcceptedEndSession(true);
+        socket?.emit("aUserHasAcceptedEndSessionPrompt");
+    };
+
+    // Called when this user rejects end session prompt
+    const handleIPressedRejectEndSession = () => {
+        setIHaveAcceptedEndSession(false);
+        socket?.emit("aUserHasRejectedEndSessionPrompt");
+    };
+
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
@@ -98,6 +118,12 @@ const CollabPage = () => {
         showInterviewerView: showInterviewerView,
         isInterviewer: isInterviewer,
         startRoleChange: startRoleChange,
+        handleEndSession: handleEndSession,
+        isEndSessionHandshakeOpen: isEndSessionHandshakeOpen,
+        setIsEndSessionHandshakeOpen: setIsEndSessionHandshakeOpen,
+        handleIPressedAcceptEndSession: handleIPressedAcceptEndSession,
+        handleIPressedRejectEndSession: handleIPressedRejectEndSession,
+        iHaveAcceptedEndSession: iHaveAcceptedEndSession,
     };
 
     useEffect(() => {
@@ -142,8 +168,7 @@ const CollabPage = () => {
             setIHaveAcceptedNextQn(false);
 
             if (questionNumber >= questions.length - 1) {
-                alert("You have completed all the questions!");
-                router.push("/");
+                setIsEndingSession(true);
             } else {
                 setQuestionNumber((prev) => prev + 1);
             }
@@ -153,9 +178,29 @@ const CollabPage = () => {
         socket.on("dontProceedWithNextQuestion", () => {
             console.log("dontProceedWithNextQuestion");
             setSnackBarIsOpen(true);
-            //alert("Proposal to move on to next question has been rejected.");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
+        });
+
+        // Server tells clients this when any client clicks on 'End session` button
+        socket.on("openEndSessionPrompt", () => {
+            setIsEndSessionHandshakeOpen(true);
+        });
+
+        // Server tells clients this when all clients in room have accepted end session prompt
+        socket.on("proceedWithEndSession", () => {
+            console.log("proceedWithEndSession");
+            setIsEndSessionHandshakeOpen(false);
+            setIHaveAcceptedEndSession(false);
+
+            setIsEndingSession(true);
+        });
+
+        socket.on("dontProceedWithEndSession", () => {
+            console.log("dontProceedWithEndSession");
+            alert("Proposal to end session has been rejected.");
+            setIsEndSessionHandshakeOpen(false);
+            setIHaveAcceptedEndSession(false);
         });
 
         return () => {
@@ -168,6 +213,17 @@ const CollabPage = () => {
         isInterviewerChosen,
         isIntervieweeChosen,
     ]);
+
+    // Hadnle end session state when end session button is pressed or no more questions
+    useEffect(() => {
+        if (isEndingSession) {
+            alert("Ending session in 10s");
+            setTimeout(() => {
+                setIsEndingSession(false);
+                router.push("/");
+            }, 1000);
+        }
+    }, [isEndingSession]);
 
     // When unmounting this component i.e leaving page, cancel matching (leave matching service socket)
     useEffect(() => {
