@@ -3,6 +3,14 @@ import * as React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 interface RejectEndSessionSnackbarProps {
     rejectEndSessionSnackBarIsOpen: boolean;
@@ -41,9 +49,12 @@ export default function SimpleSnackbar(
         open={rejectEndSessionSnackBarIsOpen}
         autoHideDuration={3000}
         onClose={handleClose}
-        message="End session request rejected"
         action={action}
-      />
+      >
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          End session request rejected
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
