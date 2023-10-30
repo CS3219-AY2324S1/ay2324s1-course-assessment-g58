@@ -46,6 +46,9 @@ const CollabPage = () => {
     };
     const changeRole = () => {
         setInterviewer(!isInterviewer);
+        if (showInterviewerView) {
+            setShowInterviewerView(false);
+        }
     };
 
     const handleClosePickRole = (event: any, reason: string) => {
