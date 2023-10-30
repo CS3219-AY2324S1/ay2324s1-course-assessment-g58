@@ -4,8 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon src/index.ts"
+        "test": "echo \"User service: No tests yet, add tests\" && exit 0",
+        "start": "nodemon src/index.ts",
+        "build": "tsc -p ."
     },
     "author": "",
     "license": "ISC",
