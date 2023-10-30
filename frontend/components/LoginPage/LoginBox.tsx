@@ -121,7 +121,7 @@ export default function LoginBox() {
                                         router.push("/login?mode=register")
                                     }
                                 >
-                                    Don&apos;t have an account? Sign up
+                                    No account yet? Sign up
                                 </Link>
                             </Grid>
                         </Grid>
