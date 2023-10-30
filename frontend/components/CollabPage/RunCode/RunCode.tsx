@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Divider } from '@mui/material';
 import CompilerServiceResult from '@/types/CompilerServiceResult';
+import FailedTestCasesAccordions from './FailedTestCasesAccordions';
 
 interface RunCodeProps {
     runResults: CompilerServiceResult;
@@ -26,7 +27,7 @@ const statusDescriptions: StatusDescriptions = {
   };
   
   const getStatusMessage = (statusId: number) => {
-    return statusDescriptions[statusId] || "No errors";
+    return statusDescriptions[statusId] || "Code executed successfully";
   };
 
 function RunCode({ runResults }: RunCodeProps) {
@@ -48,6 +49,16 @@ function RunCode({ runResults }: RunCodeProps) {
             <Typography variant="body2" color="textSecondary" component="p" gutterBottom>
               Memory: {data.memory} KB
             </Typography>
+            {data.compile_output && (
+              <>
+                <Typography variant="body2" color="error" component="p" gutterBottom>
+                  Compile Output:
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="pre" gutterBottom>
+                    {data.compile_output}
+                  </Typography>
+              </>
+            )}
             {data.stdout && (
               <>
                 <Typography variant="body2" color="textSecondary" component="p" gutterBottom>
@@ -58,7 +69,8 @@ function RunCode({ runResults }: RunCodeProps) {
                 </Typography>
               </>
             )}
-            {data.stderr && (
+            {/* Show stderr if no failed test cases */}
+            {data.stderr && firstFailedTestCaseNumber === null && (
               <>
                 <Typography variant="body2" color="error" component="p" gutterBottom>
                   Error:
@@ -74,9 +86,9 @@ function RunCode({ runResults }: RunCodeProps) {
               </Typography>
             )}
             {firstFailedTestCaseNumber && (
-              <Typography variant="body2" color="error" component="p" gutterBottom>
-                First Failed Test Case: {firstFailedTestCaseNumber}
-              </Typography>
+              <FailedTestCasesAccordions
+                stderr={data.stderr}
+              />
             )}
           </CardContent>
         </Card>
