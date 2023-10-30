@@ -21,6 +21,7 @@ import {
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 import SimpleSnackbar from "./RejectQuestionSnackBar";
+import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -38,10 +39,10 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
-    const [isEndingSession, setIsEndingSession] = useState(false); //to delete
+    const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
     const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] = useState(false);
     const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] = useState(false);
-
+    const [endSessionSnackBarIsOpen, setEndSessionSnackBarIsOpen] = useState(false);
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
     };
@@ -66,6 +67,10 @@ const CollabPage = () => {
 
     const handleSnackbarClose = () => {
         setSnackBarIsOpen(false);
+    };
+
+    const handleEndSessionSnackbarClose = () => {
+        setEndSessionSnackBarIsOpen(false);
     };
 
     const questionPanelProps = {
@@ -198,7 +203,7 @@ const CollabPage = () => {
 
         socket.on("dontProceedWithEndSession", () => {
             console.log("dontProceedWithEndSession");
-            alert("Proposal to end session has been rejected.");
+            setEndSessionSnackBarIsOpen(true);
             setIsEndSessionHandshakeOpen(false);
             setIHaveAcceptedEndSession(false);
         });
@@ -221,7 +226,7 @@ const CollabPage = () => {
             setTimeout(() => {
                 setIsEndingSession(false);
                 router.push("/");
-            }, 1000);
+            }, 15000);
         }
     }, [isEndingSession]);
 
@@ -245,9 +250,9 @@ const CollabPage = () => {
                 <Grid item xs={6}>
                     <Stack direction="column" spacing={1}>
                         <Box display="flex" justifyContent="space-between">
-                            <CollabPageNavigation
+                            {!isEndingSession &&<CollabPageNavigation
                                 {...collabPageNavigationProps}
-                            />
+                            />}
                         </Box>
                         <CodeEditor
                             language={language}
@@ -303,6 +308,10 @@ const CollabPage = () => {
             <SimpleSnackbar
                 snackBarIsOpen={snackBarIsOpen}
                 onClose={handleSnackbarClose}
+            />
+            <RejectEndSessionSnackBar
+                rejectEndSessionSnackBarIsOpen={endSessionSnackBarIsOpen}
+                onClose={handleEndSessionSnackbarClose}
             />
         </div>
     );
