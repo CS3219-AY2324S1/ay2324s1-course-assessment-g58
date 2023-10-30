@@ -22,6 +22,7 @@ import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 import SimpleSnackbar from "./RejectQuestionSnackBar";
 import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
+import EndingSessionBackdrop from "./EndingSessionBackDrop";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -222,11 +223,10 @@ const CollabPage = () => {
     // Hadnle end session state when end session button is pressed or no more questions
     useEffect(() => {
         if (isEndingSession) {
-            alert("Ending session in 10s");
             setTimeout(() => {
                 setIsEndingSession(false);
                 router.push("/");
-            }, 15000);
+            }, 3000);
         }
     }, [isEndingSession]);
 
@@ -250,9 +250,9 @@ const CollabPage = () => {
                 <Grid item xs={6}>
                     <Stack direction="column" spacing={1}>
                         <Box display="flex" justifyContent="space-between">
-                            {!isEndingSession &&<CollabPageNavigation
+                            {!isEndingSession && (<CollabPageNavigation
                                 {...collabPageNavigationProps}
-                            />}
+                            />)}
                         </Box>
                         <CodeEditor
                             language={language}
@@ -313,6 +313,7 @@ const CollabPage = () => {
                 rejectEndSessionSnackBarIsOpen={endSessionSnackBarIsOpen}
                 onClose={handleEndSessionSnackbarClose}
             />
+            {isEndingSession && (<EndingSessionBackdrop/>)}
         </div>
     );
 };
