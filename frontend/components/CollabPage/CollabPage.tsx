@@ -120,6 +120,7 @@ const CollabPage = () => {
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        isLastQuestion: questionNumber >= questions.length - 1,
         toggleInterviewerView: toggleInterviewerView,
         showInterviewerView: showInterviewerView,
         isInterviewer: isInterviewer,

@@ -7,6 +7,8 @@ import {
   Modal,
   Box,
   Button,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 
 const style = {
@@ -52,9 +54,15 @@ export default function EndSessionModal(
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Proposal to end the session.
-          </Typography>
+          <Stack sx={{ width: '100%' }} spacing={2}>
+              <Alert severity="error">
+                <AlertTitle>Warning</AlertTitle>
+                Are you sure you want to end the session? This is irreversible.
+              </Alert>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Proposal to end the session.
+            </Typography>
+          </Stack>
           {iHaveAcceptedEndSession ? (
             <Stack className="items-center">
               <CircularProgress size="2rem" thickness={3} />

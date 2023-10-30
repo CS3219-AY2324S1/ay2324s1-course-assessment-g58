@@ -10,6 +10,7 @@ interface CollabPageNavigationProps {
     handleIPressedAccept: () => void;
     handleIPressedReject: () => void;
     iHaveAcceptedNextQn: boolean;
+    isLastQuestion: boolean;
     toggleInterviewerView: () => void;
     showInterviewerView: boolean;
     isInterviewer: boolean | undefined;
@@ -29,6 +30,7 @@ function CollabPageNavigation({
     handleIPressedAccept,
     handleIPressedReject,
     iHaveAcceptedNextQn,
+    isLastQuestion,
     toggleInterviewerView,
     showInterviewerView,
     isInterviewer,
@@ -46,6 +48,7 @@ function CollabPageNavigation({
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        isLastQuestion: isLastQuestion,
     };
 
 
