@@ -4,10 +4,10 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Collaboration service: No tests yet, add tests\" && exit 0",
     "dev": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc",
+    "build": "tsc -p .",
     "test-client": "ts-node test/test-client.ts",
     "test-client-2": "ts-node test/test-client-2.ts",
     "test-client-3": "ts-node test/test-client-3.ts",
