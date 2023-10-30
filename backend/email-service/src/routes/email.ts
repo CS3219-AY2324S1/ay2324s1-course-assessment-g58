@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 require("dotenv").config();
 
 const router = express.Router();
-// https://stackoverflow.com/questions/19509357/not-able-to-connect-to-outlook-com-smtp-using-nodemailer
+
 const transporter = nodemailer.createTransport({
     host: "smtp.forwardemail.net",
     port: 465,
@@ -18,7 +18,8 @@ const transporter = nodemailer.createTransport({
 // https://nodemailer.com/about/
 router.post("/", async (req: Request, res: Response) => {
     const { inviteeEmail } = req.body;
-    const inviteLink = process.env.FRONTEND_URL + "/email?=" + inviteeEmail;
+    const inviteLink =
+        process.env.FRONTEND_URL + "/admin-signup?email=" + inviteeEmail;
     console.log("Generated invite:", inviteLink);
     const info = await transporter.sendMail({
         from: '"PeerPrep" <peerprep@ryanchuahj.com>',

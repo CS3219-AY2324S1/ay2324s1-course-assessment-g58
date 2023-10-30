@@ -4,12 +4,40 @@ import axios from "axios";
 
 const prisma = new PrismaClient();
 const router = express.Router();
+const ADMIN_LIMIT = 10; // A limit of 10 admins
+
+/** The get "/" endpoint gets the invitations created by the user.
+ *
+ *  @returns status 200 OK and invitations.
+ *  @returns status 404 Not Found if inviter email hasn't created any invitations or email is not an admin
+ */
+router.get("/", async (req: Request, res: Response) => {
+    const invitations = await prisma.invitation.findMany({
+        select: {
+            email: true,
+        },
+    });
+    if (!invitations) {
+        res.status(404).json({
+            message: `No Invitations found`,
+        });
+        return;
+    } else {
+        // convert invitations to a string[]
+        const data: string[] = [];
+        for (const index in invitations) {
+            data.push(invitations[index].email);
+        }
+        res.status(200).json(data);
+    }
+});
 
 /** The post "/" endpoint creates the invitation for user.
+ *  This endpoint only creates an invitation if the total number of admins and invitations is less than the admin limit.
  *  This endpoint also sends a email request to the email-service
  *
  *  @returns status 200 OK if invitee added to invitation table.
- *  @returns status 400 Bad Request if invitation creation failed.
+ *  @returns status 400 Bad Request if invitation creation failed or admin limit has been reached.
  *  @returns status 404 Not Found if inviter email doesn't exist in user table
  */
 router.post("/", async (req: Request, res: Response) => {
@@ -24,6 +52,20 @@ router.post("/", async (req: Request, res: Response) => {
     if (!inviter) {
         res.status(404).json({
             message: `Inviter: ${email} not found`,
+        });
+        return;
+    }
+
+    // Count number of admins
+    const adminCount = await prisma.user.count({
+        where: {
+            admin: true,
+        },
+    });
+    const invitationCount = await prisma.invitation.count();
+    if (adminCount + invitationCount >= ADMIN_LIMIT) {
+        res.status(400).json({
+            message: `Admin count has reached limit.`,
         });
         return;
     }

@@ -38,11 +38,7 @@ export async function fetchGet(url: string) {
     }
 }
 
-export async function fetchGetWithAuthorization(
-    url: string,
-    data: any,
-    token: any
-) {
+export async function fetchGetWithAuthorization(url: string, token: any) {
     // Default options are marked with *
     const response = await fetch(url, {
         method: "GET",

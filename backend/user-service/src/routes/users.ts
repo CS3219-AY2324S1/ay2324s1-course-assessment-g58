@@ -19,12 +19,12 @@ router.get("/", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
     const { username, email, password, admin } = req.body;
 
+    // Check if email is being used
     const existingUser = await prisma.user.findUnique({
         where: {
             email: email,
         },
     });
-
     if (existingUser) {
         res.status(403).json({
             message: `Email: ${email} is already being used`,
@@ -32,12 +32,12 @@ router.post("/", async (req: Request, res: Response) => {
         return;
     }
 
+    // Check if username is being used
     const duplicateUser = await prisma.user.findUnique({
         where: {
             username: username,
         },
     });
-
     if (duplicateUser) {
         return res.status(409).json({
             message: `User with username: ${username} already exists.`,

@@ -36,14 +36,13 @@ function Copyright(props: any) {
 export default function AdminSignup() {
     const router = useRouter();
     const [password, setPassword] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
     const [username, setUsername] = useState<string>("");
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         await fetchPost("/api/users", {
             username: username,
-            email: email,
+            email: router.query.email,
             password: password,
             admin: true,
         })

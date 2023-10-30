@@ -16,19 +16,15 @@ import {
     DialogContent,
     DialogActions,
     DialogContentText,
+    Backdrop,
+    CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import SendIcon from "@mui/icons-material/Send";
 import { fetchToken, useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState, FormEvent } from "react";
-import {
-    fetchGet,
-    fetchPut,
-    fetchDelete,
-    fetchPost,
-    fetchGetWithAuthorization,
-} from "@/utils/apiHelpers";
+import { fetchGet, fetchPut, fetchDelete, fetchPost } from "@/utils/apiHelpers";
 import ContributionTracker from "./ContributionTracker";
 import { validateEmail } from "@/utils/validationHelpers";
 
@@ -48,7 +44,9 @@ const ProfilePage = () => {
     const [invites, setInvites] = useState<String[]>([]);
     const [isInviting, setInviting] = useState(false);
     const [isInviteError, setInviteError] = useState(false);
+    const [isSubmitting, setSubmitting] = useState(false);
 
+    // TODO: Add a toast for successful update/creation/deletion
     const updateUser = async (event: FormEvent) => {
         event.preventDefault();
         await fetchPut("/api/users", {
@@ -90,41 +88,62 @@ const ProfilePage = () => {
             setInviteError(true);
             return;
         }
-
+        setSubmitting(true);
         await fetchPost("/api/invite", {
             email: email,
             inviteeEmail: inviteeEmail,
             token: fetchToken(),
-        }).then((res) => {
-            console.log(res);
-            if (res.status === 201) {
-                setInvites([...invites, inviteeEmail]);
-                setInviteeEmail("");
-            } else {
-                console.error("Create failed");
-            }
-        });
+        })
+            .then((res) => {
+                console.log(res);
+                if (res.status === 201) {
+                    setInvites([...invites, inviteeEmail]);
+                    setInviteeEmail("");
+                } else {
+                    console.error("Create failed");
+                }
+            })
+            .finally(() => setSubmitting(false));
     };
 
     const handleInviteDelete = async (index: number) => {
+        setSubmitting(true);
         await fetchDelete("/api/invite", {
             email: email,
             inviteeEmail: invites[index],
             token: fetchToken(),
-        }).then((res) => {
-            console.log(res);
-            if (res.status === 200) {
-                const updatedEmails = invites.filter((_, i) => i !== index);
-                setInvites(updatedEmails);
-            } else {
-                console.error("Delete failed");
+        })
+            .then((res) => {
+                console.log(res);
+                if (res.status === 200) {
+                    const updatedEmails = invites.filter((_, i) => i !== index);
+                    setInvites(updatedEmails);
+                } else {
+                    console.error("Delete failed");
+                }
+            })
+            .finally(() => setSubmitting(false));
+    };
+
+    const refreshUsers = async () => {
+        await fetchGet("/api/users").then((res) => {
+            if (res.status == 200 && res.data) setUsers(res.data);
+        });
+    };
+
+    const refreshInvites = async () => {
+        const token = fetchToken();
+        await fetchPost("/api/invite/get-all", { token: token }).then((res) => {
+            if (res.status == 200 && res.data) {
+                setInvites(res.data);
             }
         });
     };
 
-    const handleSendEmail = async () => {
-        await fetchPost("/api/aws/SendEmail", { email: inviteeEmail }).then();
-    };
+    useEffect(() => {
+        refreshUsers();
+        refreshInvites();
+    }, []);
 
     useEffect(() => {
         const squares = document.querySelector(".squares");
@@ -141,46 +160,8 @@ const ProfilePage = () => {
         setSubmissions(totalSubmissions);
     }, []);
 
-    const refreshUsers = async () => {
-        await fetchGet("/api/users").then((res) => {
-            if (res.status == 200 && res.data) setUsers(res.data);
-        });
-    };
-
-    const refreshInvites = async () => {
-        const token = fetchToken();
-        await fetchGetWithAuthorization(
-            "/api/invite",
-            { token: token },
-            token
-        ).then((res) => {
-            if (res.status == 200 && res.data) setInvites(res.data);
-        });
-    };
-
-    useEffect(() => {
-        refreshUsers();
-        refreshInvites();
-    }, []);
-
     return (
         <Box height="95vh">
-            {/* TODO: Remove these buttons */}
-            <Button
-                onClick={async () =>
-                    await fetchPost("/api/aws/CreateEmailTemplate", {})
-                }
-            >
-                Create template
-            </Button>
-            <Button
-                onClick={async () =>
-                    await fetchPost("/api/aws/ListEmailTemplates", {})
-                }
-            >
-                List template
-            </Button>
-            <Button onClick={handleSendEmail}>Send test email</Button>
             <Stack direction="row">
                 <Card
                     sx={{
@@ -208,6 +189,7 @@ const ProfilePage = () => {
                             <Typography variant="caption">{email}</Typography>
                         </Stack>
                     </Stack>
+                    {/* Edit Profile */}
                     <Button
                         onClick={() => setEditing(!isEditing)}
                         variant="contained"
@@ -268,103 +250,113 @@ const ProfilePage = () => {
                             </Box>
                         </Stack>
                     )}
+                    {/* Invite Admins */}
                     {admin && (
-                        <Button
-                            onClick={() => setInviting(!isInviting)}
-                            variant="contained"
-                            color="success"
-                            sx={{
-                                textTransform: "none",
-                                marginTop: "1rem",
-                                width: "100%",
-                            }}
-                        >
-                            Invite Admins
-                        </Button>
-                    )}
-                    {admin && isInviting && (
                         <Stack>
-                            <Box
+                            <Button
+                                onClick={() => setInviting(!isInviting)}
+                                variant="contained"
+                                color="success"
                                 sx={{
-                                    bgcolor: "lightgray",
-                                    borderRadius: "0.5rem",
-                                    padding: 2,
-                                    marginTop: 2,
+                                    textTransform: "none",
+                                    marginTop: "1rem",
+                                    width: "100%",
                                 }}
                             >
-                                <Typography padding={1} variant="subtitle2">
-                                    Send an Invitation Email to add a new Admin
-                                </Typography>
-                                <Stack direction="row">
-                                    <TextField
-                                        variant="outlined"
-                                        label="Enter an Email"
-                                        value={inviteeEmail}
-                                        size="small"
-                                        onChange={(e) =>
-                                            setInviteeEmail(e.target.value)
-                                        }
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter")
-                                                handleInviteCreate();
-                                        }}
-                                        sx={{ width: "100%" }}
-                                        error={isInviteError}
-                                        helperText={
-                                            isInviteError
-                                                ? "Please enter a valid email."
-                                                : ""
-                                        }
-                                    />
-                                    <Box>
-                                        <Button
-                                            sx={{
-                                                height: "95%",
-                                                marginLeft: 1,
+                                Invite Admins
+                            </Button>
+                            {isInviting && (
+                                <Box
+                                    sx={{
+                                        bgcolor: "lightgray",
+                                        borderRadius: "0.5rem",
+                                        padding: 2,
+                                        marginTop: 2,
+                                    }}
+                                >
+                                    <Typography padding={1} variant="subtitle2">
+                                        Send an Invitation Email to add a new
+                                        Admin
+                                    </Typography>
+                                    <Stack direction="row">
+                                        <TextField
+                                            variant="outlined"
+                                            label="Enter an Email"
+                                            value={inviteeEmail}
+                                            size="small"
+                                            onChange={(e) =>
+                                                setInviteeEmail(e.target.value)
+                                            }
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter")
+                                                    handleInviteCreate();
                                             }}
-                                            variant="contained"
-                                            color="info"
-                                            onClick={handleInviteCreate}
+                                            sx={{ width: "100%" }}
+                                            error={isInviteError}
+                                            helperText={
+                                                isInviteError
+                                                    ? "Please enter a valid email."
+                                                    : ""
+                                            }
+                                        />
+                                        <Box>
+                                            <Button
+                                                sx={{
+                                                    height: "95%",
+                                                    marginLeft: 1,
+                                                }}
+                                                variant="contained"
+                                                color="info"
+                                                onClick={handleInviteCreate}
+                                            >
+                                                <SendIcon />
+                                            </Button>
+                                        </Box>
+                                    </Stack>
+                                    {/* Invitees List */}
+                                    {invites.length > 0 && (
+                                        <List
+                                            sx={{
+                                                maxHeight: "200px",
+                                                overflowY: "scroll",
+                                                margin: 1,
+                                                bgcolor: "azure",
+                                                borderRadius: "0.5rem",
+                                            }}
                                         >
-                                            <SendIcon />
-                                        </Button>
-                                    </Box>
-                                </Stack>
-                                {/* Invitees List */}
-                                {invites.length > 0 && (
-                                    <List
-                                        sx={{
-                                            maxHeight: "200px",
-                                            overflowY: "scroll",
-                                            margin: 1,
-                                            bgcolor: "azure",
-                                            borderRadius: "0.5rem",
-                                        }}
-                                    >
-                                        {/* Example list of current users */}
-                                        {invites.map((invite, index) => (
-                                            <ListItem key={invite as string}>
-                                                <ListItemAvatar>
-                                                    <Avatar />
-                                                </ListItemAvatar>
-                                                <ListItemText
-                                                    primary={invite}
-                                                />
-                                                <CloseIcon
-                                                    sx={{ cursor: "pointer" }}
-                                                    onClick={() =>
-                                                        handleInviteDelete(
-                                                            index
-                                                        )
-                                                    }
-                                                />
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                )}
-                            </Box>
+                                            {/* Example list of current users */}
+                                            {invites.map((invite, index) => (
+                                                <ListItem
+                                                    key={invite as string}
+                                                >
+                                                    <ListItemAvatar>
+                                                        <Avatar />
+                                                    </ListItemAvatar>
+                                                    <ListItemText
+                                                        sx={{
+                                                            overflowX: "hidden",
+                                                        }}
+                                                        primary={invite}
+                                                    />
+                                                    <CloseIcon
+                                                        sx={{
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={() =>
+                                                            handleInviteDelete(
+                                                                index
+                                                            )
+                                                        }
+                                                    />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    )}
+                                </Box>
+                            )}
                         </Stack>
                     )}
+                    {/* Delete Account */}
                     <Stack>
                         <Button
                             sx={{
@@ -478,11 +470,16 @@ const ProfilePage = () => {
                     </Grid>
                 </Grid>
             </Stack>
-            {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    This is a success message!
-                </Alert>
-            </Snackbar> */}
+            {/* Renders a backdrop while processing request */}
+            <Backdrop
+                sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={isSubmitting}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </Box>
     );
 };
