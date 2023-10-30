@@ -123,6 +123,51 @@ io.on("connection", (socket: Socket) => {
             .emit("dontProceedWithNextQuestion");
     });
 
+    // Broadcast intention to end session to a room (including sender)
+    extendedSocket.on("openEndSessionPrompt", () => {
+        io.sockets.in(extendedSocket.roomId).emit("openEndSessionPrompt");
+    });
+
+    // Recieve request by a user to end session, wait for all users to accept
+    // before broadcasting to all users in the room
+    extendedSocket.on("aUserHasAcceptedEndSessionPrompt", () => {
+        console.log(extendedSocket.id, " accepted end session");
+
+        // Initialize the set for the room if it doesn't exist
+        if (!acceptances[extendedSocket.roomId]) {
+            acceptances[extendedSocket.roomId] = new Set();
+        }
+
+        // Add the user's socket ID to the set
+        acceptances[extendedSocket.roomId].add(extendedSocket.id);
+
+        // Check if all clients in the room have accepted
+        const numClientsInRoom =
+            io.sockets.adapter.rooms.get(extendedSocket.roomId)?.size || 0;
+        console.log("clients in room:", numClientsInRoom);
+        console.log(
+            "total clients in room: ",
+            io.sockets.adapter.rooms.get(extendedSocket.roomId)
+        );
+        // Need times 2 as each client has 2 sockets- general and for code editor
+        if (acceptances[extendedSocket.roomId].size * 2 === numClientsInRoom) {
+            io.sockets
+                .in(extendedSocket.roomId)
+                .emit("proceedWithEndSession");
+            // Delete as users have moved on to next qn, reset this
+            delete acceptances[extendedSocket.roomId];
+        }
+    });
+
+    // Recieve message that a user doesn't want to end sess, reset all 'acceptances' for the room
+    extendedSocket.on("aUserHasRejectedEndSessionPrompt", () => {
+        console.log(extendedSocket.id, " rejected end session");
+        delete acceptances[extendedSocket.roomId];
+        io.sockets
+            .in(extendedSocket.roomId)
+            .emit("dontProceedWithEndSession");
+    });
+
     // Handle text edit event in CodeEditor
     extendedSocket.on("editEvent", (event) => {
         extendedSocket.broadcast.to(extendedSocket.roomId).emit("text", event);

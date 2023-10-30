@@ -23,54 +23,47 @@ const style = {
   p: 4,
 };
 
-interface NextQnHandshakeModalProps {
-    isNextQnHandshakeOpen: boolean;
-    setIsNextQnHandshakeOpen: (isOpen: boolean) => void;
-    handleIPressedAccept: () => void;
-    handleIPressedReject: () => void;
-    iHaveAcceptedNextQn: boolean;
-    isLastQuestion: boolean;
+interface EndSessionHandshakeModalProps {
+    isEndSessionHandshakeOpen: boolean;
+    setIsEndSessionHandshakeOpen: (isOpen: boolean) => void;
+    handleIPressedAcceptEndSession: () => void;
+    handleIPressedRejectEndSession: () => void;
+    iHaveAcceptedEndSession: boolean;
 }
 
-export default function BasicModal(
-    { isNextQnHandshakeOpen,
-      setIsNextQnHandshakeOpen,
-      handleIPressedAccept,
-      handleIPressedReject,
-      iHaveAcceptedNextQn,
-      isLastQuestion }: NextQnHandshakeModalProps) {
+export default function EndSessionModal(
+    { isEndSessionHandshakeOpen,
+      setIsEndSessionHandshakeOpen,
+      handleIPressedAcceptEndSession,
+      handleIPressedRejectEndSession,
+      iHaveAcceptedEndSession }: EndSessionHandshakeModalProps) {
   const handleClose = (event: any, reason: string) => {
     if (reason && reason == "backdropClick")
       return; /* This prevents modal from closing on an external click */
 
       if (reason && reason == "escapeKeyDown") 
             return; //prevent user from closing dialog using esacpe button
-    setIsNextQnHandshakeOpen(false);
+    setIsEndSessionHandshakeOpen(false);
   };
   return (
     <div>
       <Modal
-        open={isNextQnHandshakeOpen}
+        open={isEndSessionHandshakeOpen}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          {isLastQuestion ?
-            (<Stack sx={{ width: '100%' }} spacing={2}>
-              <Alert severity="warning">
+          <Stack sx={{ width: '100%' }} spacing={2}>
+              <Alert severity="error">
                 <AlertTitle>Warning</AlertTitle>
-                This is the last question. Are you sure you want to end the session?
+                Are you sure you want to end the session? This is irreversible.
               </Alert>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Proposal to end the session.
-              </Typography>
-            </Stack>) : 
-            (<Typography id="modal-modal-title" variant="h6" component="h2">
-              Proposal to move on to the next question.
-            </Typography>)
-          }
-          {iHaveAcceptedNextQn ? (
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Proposal to end the session.
+            </Typography>
+          </Stack>
+          {iHaveAcceptedEndSession ? (
             <Stack className="items-center">
               <CircularProgress size="2rem" thickness={3} />
               <Typography>
@@ -82,14 +75,14 @@ export default function BasicModal(
               <Button
                 variant="outlined"
                 color="success"
-                onClick={handleIPressedAccept}
+                onClick={handleIPressedAcceptEndSession}
               >
                 Accept
               </Button>
               <Button
                 variant="outlined"
                 color="error"
-                onClick={handleIPressedReject}
+                onClick={handleIPressedRejectEndSession}
               >
                 Reject
               </Button>

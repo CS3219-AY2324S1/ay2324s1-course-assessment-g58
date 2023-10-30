@@ -1,5 +1,6 @@
 import React from "react";
 import NextQnHandshakeModal from "./NextQnHandshakeModal";
+import EndSessionHandshakeModal from "./EndSessionHandshakeModal";
 import { Button, Stack } from "@mui/material";
 
 interface CollabPageNavigationProps {
@@ -9,10 +10,17 @@ interface CollabPageNavigationProps {
     handleIPressedAccept: () => void;
     handleIPressedReject: () => void;
     iHaveAcceptedNextQn: boolean;
+    isLastQuestion: boolean;
     toggleInterviewerView: () => void;
     showInterviewerView: boolean;
     isInterviewer: boolean | undefined;
     startRoleChange: () => void;
+    handleEndSession: () => void;
+    isEndSessionHandshakeOpen: boolean;
+    setIsEndSessionHandshakeOpen: (isOpen: boolean) => void;
+    handleIPressedAcceptEndSession: () => void;
+    handleIPressedRejectEndSession: () => void;
+    iHaveAcceptedEndSession: boolean;
 }
 
 function CollabPageNavigation({
@@ -22,10 +30,17 @@ function CollabPageNavigation({
     handleIPressedAccept,
     handleIPressedReject,
     iHaveAcceptedNextQn,
+    isLastQuestion,
     toggleInterviewerView,
     showInterviewerView,
     isInterviewer,
     startRoleChange,
+    handleEndSession,
+    isEndSessionHandshakeOpen,
+    setIsEndSessionHandshakeOpen,
+    handleIPressedAcceptEndSession,
+    handleIPressedRejectEndSession,
+    iHaveAcceptedEndSession,
 }: CollabPageNavigationProps) {
     const NextQnHandshakeModalProps = {
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
@@ -33,12 +48,23 @@ function CollabPageNavigation({
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        isLastQuestion: isLastQuestion,
+    };
+
+
+    const EndSessionHandshakeModalProps = {
+        isEndSessionHandshakeOpen: isEndSessionHandshakeOpen,
+        setIsEndSessionHandshakeOpen: setIsEndSessionHandshakeOpen,
+        handleIPressedAcceptEndSession: handleIPressedAcceptEndSession,
+        handleIPressedRejectEndSession: handleIPressedRejectEndSession,
+        iHaveAcceptedEndSession: iHaveAcceptedEndSession,
     };
 
     //Navigation bar to switch roles, toggle interviewer view, go to next question and end session
     return (
         <div>
             <NextQnHandshakeModal {...NextQnHandshakeModalProps} />
+            <EndSessionHandshakeModal {...EndSessionHandshakeModalProps} />
             <Stack direction="row" spacing={2}>
                 <Button
                     variant="contained"
@@ -64,7 +90,11 @@ function CollabPageNavigation({
                 >
                     Next Question
                 </Button>
-                <Button variant="contained" color="error">
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleEndSession}
+                >
                     End Session
                 </Button>
             </Stack>

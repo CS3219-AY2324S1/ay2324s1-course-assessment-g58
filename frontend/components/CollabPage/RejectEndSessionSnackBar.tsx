@@ -12,16 +12,16 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-interface SimpleSnackbarProps {
-    snackBarIsOpen: boolean;
+interface RejectEndSessionSnackbarProps {
+    rejectEndSessionSnackBarIsOpen: boolean;
     onClose: () => void;
 }
 
 export default function SimpleSnackbar(
     {
-      snackBarIsOpen,
+        rejectEndSessionSnackBarIsOpen,
       onClose,
-    }: SimpleSnackbarProps) 
+    }: RejectEndSessionSnackbarProps) 
 {
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -46,13 +46,13 @@ export default function SimpleSnackbar(
   return (
     <div>
       <Snackbar
-        open={snackBarIsOpen}
+        open={rejectEndSessionSnackBarIsOpen}
         autoHideDuration={3000}
         onClose={handleClose}
         action={action}
       >
         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Next question request rejected
+          End session request rejected
         </Alert>
       </Snackbar>
     </div>

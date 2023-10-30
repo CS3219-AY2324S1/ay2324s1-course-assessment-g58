@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
@@ -21,6 +21,8 @@ import {
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 import SimpleSnackbar from "./RejectQuestionSnackBar";
+import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
+import EndingSessionBackdrop from "./EndingSessionBackDrop";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -38,7 +40,10 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
-
+    const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
+    const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] = useState(false);
+    const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] = useState(false);
+    const [endSessionSnackBarIsOpen, setEndSessionSnackBarIsOpen] = useState(false);
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
     };
@@ -48,6 +53,9 @@ const CollabPage = () => {
     };
     const changeRole = () => {
         setInterviewer(!isInterviewer);
+        if (showInterviewerView) {
+            setShowInterviewerView(false);
+        }
     };
 
     const handleClosePickRole = (event: any, reason: string) => {
@@ -60,6 +68,10 @@ const CollabPage = () => {
 
     const handleSnackbarClose = () => {
         setSnackBarIsOpen(false);
+    };
+
+    const handleEndSessionSnackbarClose = () => {
+        setEndSessionSnackBarIsOpen(false);
     };
 
     const questionPanelProps = {
@@ -84,6 +96,23 @@ const CollabPage = () => {
         socket?.emit("aUserHasRejectedNextQuestionPrompt");
     };
 
+    // Called when user tries to end session
+    const handleEndSession = () => {
+        socket?.emit("openEndSessionPrompt");
+    };
+
+    // Called when this user accepts end session prompt
+    const handleIPressedAcceptEndSession = () => {
+        setIHaveAcceptedEndSession(true);
+        socket?.emit("aUserHasAcceptedEndSessionPrompt");
+    };
+
+    // Called when this user rejects end session prompt
+    const handleIPressedRejectEndSession = () => {
+        setIHaveAcceptedEndSession(false);
+        socket?.emit("aUserHasRejectedEndSessionPrompt");
+    };
+
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
@@ -91,10 +120,17 @@ const CollabPage = () => {
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        isLastQuestion: questionNumber >= questions.length - 1,
         toggleInterviewerView: toggleInterviewerView,
         showInterviewerView: showInterviewerView,
         isInterviewer: isInterviewer,
         startRoleChange: startRoleChange,
+        handleEndSession: handleEndSession,
+        isEndSessionHandshakeOpen: isEndSessionHandshakeOpen,
+        setIsEndSessionHandshakeOpen: setIsEndSessionHandshakeOpen,
+        handleIPressedAcceptEndSession: handleIPressedAcceptEndSession,
+        handleIPressedRejectEndSession: handleIPressedRejectEndSession,
+        iHaveAcceptedEndSession: iHaveAcceptedEndSession,
     };
 
     useEffect(() => {
@@ -139,8 +175,7 @@ const CollabPage = () => {
             setIHaveAcceptedNextQn(false);
 
             if (questionNumber >= questions.length - 1) {
-                alert("You have completed all the questions!");
-                router.push("/");
+                setIsEndingSession(true);
             } else {
                 setQuestionNumber((prev) => prev + 1);
             }
@@ -150,9 +185,29 @@ const CollabPage = () => {
         socket.on("dontProceedWithNextQuestion", () => {
             console.log("dontProceedWithNextQuestion");
             setSnackBarIsOpen(true);
-            //alert("Proposal to move on to next question has been rejected.");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
+        });
+
+        // Server tells clients this when any client clicks on 'End session` button
+        socket.on("openEndSessionPrompt", () => {
+            setIsEndSessionHandshakeOpen(true);
+        });
+
+        // Server tells clients this when all clients in room have accepted end session prompt
+        socket.on("proceedWithEndSession", () => {
+            console.log("proceedWithEndSession");
+            setIsEndSessionHandshakeOpen(false);
+            setIHaveAcceptedEndSession(false);
+
+            setIsEndingSession(true);
+        });
+
+        socket.on("dontProceedWithEndSession", () => {
+            console.log("dontProceedWithEndSession");
+            setEndSessionSnackBarIsOpen(true);
+            setIsEndSessionHandshakeOpen(false);
+            setIHaveAcceptedEndSession(false);
         });
 
         return () => {
@@ -165,6 +220,16 @@ const CollabPage = () => {
         isInterviewerChosen,
         isIntervieweeChosen,
     ]);
+
+    // Hadnle end session state when end session button is pressed or no more questions
+    useEffect(() => {
+        if (isEndingSession) {
+            setTimeout(() => {
+                setIsEndingSession(false);
+                router.push("/");
+            }, 3000);
+        }
+    }, [isEndingSession]);
 
     // When unmounting this component i.e leaving page, cancel matching (leave matching service socket)
     useEffect(() => {
@@ -186,9 +251,9 @@ const CollabPage = () => {
                 <Grid item xs={6}>
                     <Stack direction="column" spacing={1}>
                         <Box display="flex" justifyContent="space-between">
-                            <CollabPageNavigation
+                            {!isEndingSession && (<CollabPageNavigation
                                 {...collabPageNavigationProps}
-                            />
+                            />)}
                         </Box>
                         <CodeEditor
                             language={language}
@@ -245,6 +310,11 @@ const CollabPage = () => {
                 snackBarIsOpen={snackBarIsOpen}
                 onClose={handleSnackbarClose}
             />
+            <RejectEndSessionSnackBar
+                rejectEndSessionSnackBarIsOpen={endSessionSnackBarIsOpen}
+                onClose={handleEndSessionSnackbarClose}
+            />
+            {isEndingSession && (<EndingSessionBackdrop/>)}
         </div>
     );
 };
