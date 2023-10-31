@@ -1,8 +1,9 @@
 import {
     Avatar,
-    Box,
     Button,
+    Box,
     Card,
+    Container,
     Grid,
     Stack,
     TextField,
@@ -100,6 +101,7 @@ const ProfilePage = () => {
                     setInvites([...invites, inviteeEmail]);
                     setInviteeEmail("");
                 } else {
+                    alert(res.message);
                     console.error("Create failed");
                 }
             })
@@ -161,14 +163,14 @@ const ProfilePage = () => {
     }, []);
 
     return (
-        <Box height="95vh">
+        <div>
             <Stack direction="row">
                 <Card
                     sx={{
                         marginY: 4,
                         marginLeft: 40,
                         marginRight: 2,
-                        width: "25%",
+                        width: "50%",
                         padding: 2,
                     }}
                 >
@@ -403,7 +405,7 @@ const ProfilePage = () => {
                         justifyContent: "right",
                         paddingY: 4,
                         paddingRight: 40,
-                        width: "75%",
+                        width: "50%",
                     }}
                 >
                     <Grid item xs={6}>
@@ -480,7 +482,7 @@ const ProfilePage = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        </Box>
+        </div>
     );
 };
 

@@ -2,7 +2,9 @@ import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+    log: ['query', 'info', 'warn', 'error']
+});
 const router = express.Router();
 const ADMIN_LIMIT = 10; // A limit of 10 admins
 

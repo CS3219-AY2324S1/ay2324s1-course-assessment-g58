@@ -9,6 +9,8 @@ x-logging:
 
 services:
     users:
+        depends_on:
+            - email
         container_name: user-service
         build:
             context: .
@@ -17,6 +19,8 @@ services:
             - "3001:3001"
         env_file:
             - ./backend/user-service/.env
+        environment:
+            - EMAIL_SERVICE_URL=http://email:3007/email
 
     questions:
         container_name: question-service
@@ -62,6 +66,16 @@ services:
         environment: # Running locally has different url than running on docker (not localhost)
             - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
             - JUDGE0_URL=http://server:2358/
+    
+    email:
+        container_name: email-service
+        build:
+            context: .
+            dockerfile: ./backend/email-service/Dockerfile
+        ports:
+            - "3007:3007"
+        env_file:
+            - ./backend/email-service/.env
 
     server: # Judge0
         image: judge0/judge0:1.13.0
