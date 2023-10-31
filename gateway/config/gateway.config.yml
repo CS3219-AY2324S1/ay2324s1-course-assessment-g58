@@ -11,9 +11,11 @@ apiEndpoints:
         host: "*"
         paths:
             - "/api/users"
+            - "/api/users/verify-invitation"
             - "/api/login"
             - "/api/logout"
             - "/api/token-login"
+            - "/api/invite"
     questionBank:
         host: "*"
         paths:

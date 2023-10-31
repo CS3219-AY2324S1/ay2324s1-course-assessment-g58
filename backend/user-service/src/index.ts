@@ -3,9 +3,10 @@ import userRouter from "./routes/users";
 import loginRouter from "./routes/login";
 import logoutRouter from "./routes/logout";
 import tokenRouter from "./routes/tokenLogin";
-import { authenticate } from "./middleware/authorize";
+import inviteRouter from "./routes/invite";
+import { authenticate, authorize } from "./middleware/authorize";
 
-require('dotenv').config();
+require("dotenv").config();
 
 const app: Application = express();
 
@@ -31,6 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/users", userRouter);
+app.use("/api/invite", authorize, inviteRouter);
 app.use("/api/token-login", authenticate, tokenRouter);
 
 // Health Check

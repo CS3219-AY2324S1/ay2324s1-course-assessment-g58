@@ -19,6 +19,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const fetchToken = () => {
+    return localStorage.getItem("accessToken");
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
@@ -26,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
 
     async function fetchUserFromToken() {
-        const token = localStorage.getItem("accessToken");
+        const token = fetchToken();
 
         if (!user && token) {
             try {
