@@ -1,1 +1,3 @@
-node_modules
+# For when you swtich to a branch without a service and you still have node modules
+# remove eventually
+**/node_modules/
