@@ -1,5 +1,4 @@
 // External dependencies
-import { ObjectId } from "mongodb";
 import mongoose, { Types } from "mongoose";
 
 function arrayLimit(val: Array<any>) {

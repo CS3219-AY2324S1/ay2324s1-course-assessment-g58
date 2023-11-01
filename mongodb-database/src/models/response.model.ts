@@ -2,23 +2,14 @@ import mongoose, { Types } from "mongoose";
 
 export interface IResponse extends mongoose.Document {
     _id: Types.ObjectId;
-    questionId: Types.ObjectId;
-    userId: Types.ObjectId;
     response: string;
     status: string;
-    dateTime: Date;
+    dateTime: string;
     language: string;
 }
 
 export const ResponseSchema = new mongoose.Schema({
-    questionId: {
-        type: Types.ObjectId,
-        required: true,
-    },
-    userId: {
-        type: Types.ObjectId,
-        // required: true,
-    },
+
     response: {
         type: String,
         required: true,
@@ -28,7 +19,7 @@ export const ResponseSchema = new mongoose.Schema({
         required: true,
     },
     dateTime: {
-        type: Date,
+        type: String,
         required: true,
     },
     language: {
@@ -36,3 +27,7 @@ export const ResponseSchema = new mongoose.Schema({
         required: true,
     },
 });
+
+const ResponseModel = mongoose.model<IResponse>("Response", ResponseSchema);
+
+export default ResponseModel;

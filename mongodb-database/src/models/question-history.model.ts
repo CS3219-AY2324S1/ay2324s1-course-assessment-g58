@@ -12,7 +12,7 @@ export interface IQuestionHistoryObj extends mongoose.Document {
     dateTime: Date;
 }
 
-const QuestionHistoryObjSchema = new mongoose.Schema({
+export const QuestionHistoryObjSchema = new mongoose.Schema({
     question: {
         type: QuestionSchema,
         required: true,
@@ -29,27 +29,23 @@ const QuestionHistoryObjSchema = new mongoose.Schema({
 
 export const QuestionHistoryObjModel = mongoose.model<IQuestionHistoryObj>("QuestionHistoryObj", QuestionHistoryObjSchema);
 
-export interface IQuestionHistory extends mongoose.Document {
-    _id: Types.ObjectId;
-    user: string;
-    history: IQuestionHistoryObj[];
-    dateTime: Date;
-}
+// export interface IQuestionHistory extends mongoose.Document {
+//     _id: Types.ObjectId;
+//     user: Types.ObjectId;
+//     history: IQuestionHistoryObj[];
+//     dateTime: string;
+// }
 
-const QuestionHistorySchema = new mongoose.Schema({
-    user: {
-        type: String,
-        required: true,
-        unique: true,
-    }, 
-    history: {
-        type: [QuestionHistoryObjSchema],
-        required: true,
-    },
-    dateTime: {
-        type: Date,
-        required: true,
-    },
-});
+// const QuestionHistorySchema = new mongoose.Schema({
+//     user: {
+//         type: Types.ObjectId,
+//         required: true,
+//         unique: true,
+//     }, 
+//     history: {
+//         type: [QuestionHistoryObjSchema],
+//         required: true,
+//     },
+// });
 
-export const QuestionHistoryModel = mongoose.model<IQuestionHistory>("QuestionHistory", QuestionHistorySchema);
+// export const QuestionHistoryModel = mongoose.model<IQuestionHistory>("QuestionHistory", QuestionHistorySchema);
