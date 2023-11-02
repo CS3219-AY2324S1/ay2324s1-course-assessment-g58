@@ -63,6 +63,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             socketRef.current?.emit("runCodeDone", compileResult);
             console.log(compileResult);
         } else {
+            socketRef.current?.emit("runCodeDone", defaultRunCodeResults);
             alert(response.message);
         }
     };
