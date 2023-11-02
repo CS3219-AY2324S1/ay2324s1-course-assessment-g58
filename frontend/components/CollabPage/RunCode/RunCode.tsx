@@ -27,7 +27,9 @@ const statusDescriptions: StatusDescriptions = {
   };
   
   const getStatusMessage = (statusId: number) => {
-    return statusDescriptions[statusId] || "Code executed successfully";
+    const description = statusDescriptions[statusId];
+    if (description) return description;
+    return statusId === 0 ? "-" : "Code executed successfully";
   };
 
 function RunCode({ runResults }: RunCodeProps) {
