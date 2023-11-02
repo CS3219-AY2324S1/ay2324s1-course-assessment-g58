@@ -1,5 +1,5 @@
 // Source: https://frontendshape.com/post/create-a-chat-ui-in-react-with-mui-5
-import React, { ChangeEvent, useState, useEffect } from 'react';
+import React, { ChangeEvent, useState, useEffect, useRef } from 'react';
 import {
     Box,
     TextField,
@@ -22,9 +22,6 @@ import { GptResponseResult } from '@/types/AiServiceResults';
 
 function ChatUI() {
     const [input, setInput] = useState("");
-    // const [messages, setMessages] = useState<RawMessageData[]>([
-    //     { id: 1, text: "Hi there! Ask me if you need help! Click on me to expand too!", sender: "bot" },
-    // ]);
     const { user } = useAuth();
     const [waitingForResponse, setWaitingForResponse] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState<RawMessageData | null>(null);
@@ -40,11 +37,17 @@ function ChatUI() {
            { id: 1, text: "Hi there! Ask me if you need help! Click on me to expand too!", sender: "bot" },
         ];
     });
-      
     useEffect(() => {
         // Store messages in local storage whenever messages state changes
         localStorage.setItem('messages-aiChatbot', JSON.stringify(messages));
     }, [messages]);
+
+    // Stuff to autoscroll to bottom of chat
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    };
+    useEffect(scrollToBottom, [messages, waitingForResponse]);
 
     const handleModalOpen = (message: RawMessageData) => {
         setSelectedMessage(message);
@@ -101,6 +104,7 @@ function ChatUI() {
                     <Message message={message} onClick={handleModalOpen}/>
                 ))}
                 {waitingForResponse && <LoadingMessage />}
+                <div ref={messagesEndRef} />
             </Box>
             <Box sx={{ p: 2, backgroundColor: "background.default" }}>
                 <Grid container spacing={2}>
@@ -141,6 +145,9 @@ function ChatUI() {
                     border: "2px solid #000",
                     boxShadow: 24,
                     p: 4,
+                    whiteSpace: 'pre-wrap',
+                    wordWrap: 'break-word',
+                    tabSize: 4,
                 }}>
                     <IconButton onClick={handleModalClose}>
                         <CloseIcon />
@@ -196,7 +203,9 @@ function Message({message, onClick}: MessageProps) {
                         borderRadius: isBot ? "20px 20px 20px 5px" : "20px 20px 5px 20px",
                     }}
                 >
-                <Typography variant="body1">{message.text}</Typography>
+                <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                    {message.text}
+                </Typography>
                 </Paper>
             </Box>
         </Box>
