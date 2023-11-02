@@ -9,7 +9,7 @@ async function startConsumer() {
         try {
             const connection = await amqp.connect(process.env.RABBITMQ_URL!);
             const channel = await connection.createChannel();
-            const queue = 'messages';
+            const queue = 'messages-compiler';
         
             await channel.assertQueue(queue, { durable: false });
             console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);

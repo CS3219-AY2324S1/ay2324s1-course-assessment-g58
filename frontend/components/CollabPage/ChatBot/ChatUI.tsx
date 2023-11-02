@@ -11,28 +11,39 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { RawMessageData } from '@/types/ChatBotMessage';
-
-const messages: RawMessageData[] = [
-    { id: 1, text: "Hi there!", sender: "bot" },
-    { id: 2, text: "Hello!", sender: "user" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-    { id: 3, text: "How can I assist you today?", sender: "bot" },
-];
+import { fetchPost } from '@/utils/apiHelpers';
+import { useAuth } from "@/contexts/AuthContext";
+import { GptResponseResult } from '@/types/AiServiceResults';
 
 function ChatUI() {
     const [input, setInput] = useState("");
-
-    const handleSend = () => {
+    const [messages, setMessages] = useState<RawMessageData[]>([
+        { id: 1, text: "Hi there! Ask me if you need help!", sender: "bot" },
+    ]);
+    const { user } = useAuth();
+    const [waitingForResponse, setWaitingForResponse] = useState(false);
+    
+    const handleSend = async () => {
         if (input.trim() !== "") {
-            console.log(input);
+            const nextIdRequest = messages[messages.length - 1].id + 1;
+            const sender = user ? user : "?";
+            const newMessages = [...messages, { id: nextIdRequest, text: input, sender: sender }];
+            setMessages(newMessages);
             setInput("");
+            const response = await fetchPost("/api/chatbot", { content: input });
+            if (response.status == 201) {
+                const gptResponse: GptResponseResult = response.data;
+                const { hasError, message, error } = gptResponse;
+                console.log(gptResponse);
+                if (!hasError && message) {
+                    const nextIdReply = newMessages[newMessages.length - 1].id + 1;
+                    setMessages([...newMessages, { id: nextIdReply, text: message, sender: "bot" }]);
+                } else {
+                    alert("Ai service error: " + error);
+                }
+            } else {
+                alert("Error: " + response.status + " " + response.message);
+            }
         }
     };
 
@@ -109,7 +120,7 @@ function Message({message}: MessageProps) {
                 }}
             >
                 <Avatar sx={{ bgcolor: isBot ? "primary.main" : "secondary.main" }}>
-                    {isBot ? "B" : "U"}
+                    {isBot ? "B" : message.sender[0]}
                 </Avatar>
                 <Paper
                     variant="outlined"

@@ -1,8 +1,53 @@
 import express from 'express';
 import { json } from 'body-parser';
 import OpenAI from 'openai';
+import * as amqp from 'amqplib';
+import { getGptResponse } from './services/ai.service';
 
 require('dotenv').config();
+
+async function startConsumer() {
+    let connected = false;
+    while (!connected) {
+        try {
+            const connection = await amqp.connect(process.env.RABBITMQ_URL!);
+            const channel = await connection.createChannel();
+            const queue = 'messages-ai';
+        
+            await channel.assertQueue(queue, { durable: false });
+            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+        
+            channel.consume(queue, async (msg) => {
+                if (msg !== null) {
+                    const { correlationId, replyTo } = msg.properties;
+                    try {
+                        const { content } = JSON.parse(msg.content.toString());
+                        console.log("[x] Received", content, replyTo, correlationId);
+
+                        const output = await getGptResponse(content);
+                        console.log(output);
+                        // Send the output back to the client
+                        channel.sendToQueue(replyTo, Buffer.from(JSON.stringify(output)), { correlationId });
+                        channel.ack(msg);
+                    } catch (err: any) {
+                        channel.sendToQueue(replyTo, Buffer.from(JSON.stringify({
+                            error: true,
+                            message: err.message,
+                            statusCode: err.statusCode || 500,
+                        })), { correlationId });
+                        channel.ack(msg);
+                    }
+                }
+            });
+            connected = true;
+        } catch (error) {
+            console.error("Connection to ",  process.env.RABBITMQ_URL, " failed, retrying in 5 seconds...", error);
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+    }
+}
+  
+startConsumer();
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY // This is also the default, can be omitted
@@ -17,8 +62,6 @@ if (isNaN(port)) console.error("Expected a number for port, received:", port);
 app.listen(process.env.NEXT_PUBLIC_PORT_NUMBER, () =>
     console.log(`Server started on port ${process.env.NEXT_PUBLIC_PORT_NUMBER}`)
 );
-
-// TODO: set up rabbitmq listner
 
 app.get('/', (req, res) => {
     res.send('Hello from Ai service!');
