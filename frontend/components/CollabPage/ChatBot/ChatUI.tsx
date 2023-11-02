@@ -19,6 +19,7 @@ import { RawMessageData } from '@/types/ChatBotMessage';
 import { fetchPost } from '@/utils/apiHelpers';
 import { useAuth } from "@/contexts/AuthContext";
 import { GptResponseResult } from '@/types/AiServiceResults';
+import ModalContent from './GptModalContent';
 
 function ChatUI() {
     const [input, setInput] = useState("");
@@ -153,7 +154,8 @@ function ChatUI() {
                         <CloseIcon />
                     </IconButton>
                     {selectedMessage && (
-                        <Typography variant="body1">{selectedMessage.text}</Typography>
+                        //<Typography variant="body1">{selectedMessage.text}</Typography>
+                        <ModalContent text={selectedMessage.text} />
                     )}
                 </Box>
             </Modal>
@@ -211,7 +213,6 @@ function Message({message, onClick}: MessageProps) {
         </Box>
     );
 };
-
 
 function LoadingMessage() {
     return (
