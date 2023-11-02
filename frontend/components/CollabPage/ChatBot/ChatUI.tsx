@@ -1,5 +1,5 @@
 // Source: https://frontendshape.com/post/create-a-chat-ui-in-react-with-mui-5
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useEffect } from 'react';
 import {
     Box,
     TextField,
@@ -22,13 +22,29 @@ import { GptResponseResult } from '@/types/AiServiceResults';
 
 function ChatUI() {
     const [input, setInput] = useState("");
-    const [messages, setMessages] = useState<RawMessageData[]>([
-        { id: 1, text: "Hi there! Ask me if you need help! Click on me to expand too!", sender: "bot" },
-    ]);
+    // const [messages, setMessages] = useState<RawMessageData[]>([
+    //     { id: 1, text: "Hi there! Ask me if you need help! Click on me to expand too!", sender: "bot" },
+    // ]);
     const { user } = useAuth();
     const [waitingForResponse, setWaitingForResponse] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState<RawMessageData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [messages, setMessages] = useState<RawMessageData[]>(() => {
+        // Get messages from local storage when the component mounts
+        const storedMessages = localStorage.getItem('messages-aiChatbot');
+        if (storedMessages) {
+            return JSON.parse(storedMessages);
+        }
+        // Default messages if there are no stored messages
+        return [
+           { id: 1, text: "Hi there! Ask me if you need help! Click on me to expand too!", sender: "bot" },
+        ];
+    });
+      
+    useEffect(() => {
+        // Store messages in local storage whenever messages state changes
+        localStorage.setItem('messages-aiChatbot', JSON.stringify(messages));
+    }, [messages]);
 
     const handleModalOpen = (message: RawMessageData) => {
         setSelectedMessage(message);
