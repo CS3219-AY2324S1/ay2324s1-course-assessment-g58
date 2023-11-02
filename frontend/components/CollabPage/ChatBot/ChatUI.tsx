@@ -8,7 +8,12 @@ import {
     Avatar,
     Grid,
     Paper,
+    Skeleton,
+    Stack,
+    Modal,
+    IconButton,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from "@mui/icons-material/Send";
 import { RawMessageData } from '@/types/ChatBotMessage';
 import { fetchPost } from '@/utils/apiHelpers';
@@ -18,17 +23,29 @@ import { GptResponseResult } from '@/types/AiServiceResults';
 function ChatUI() {
     const [input, setInput] = useState("");
     const [messages, setMessages] = useState<RawMessageData[]>([
-        { id: 1, text: "Hi there! Ask me if you need help!", sender: "bot" },
+        { id: 1, text: "Hi there! Ask me if you need help! Click on me to expand too!", sender: "bot" },
     ]);
     const { user } = useAuth();
     const [waitingForResponse, setWaitingForResponse] = useState(false);
-    
+    const [selectedMessage, setSelectedMessage] = useState<RawMessageData | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleModalOpen = (message: RawMessageData) => {
+        setSelectedMessage(message);
+        setIsModalOpen(true);
+    };
+      
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+    };
+      
     const handleSend = async () => {
         if (input.trim() !== "") {
             const nextIdRequest = messages[messages.length - 1].id + 1;
             const sender = user ? user : "?";
             const newMessages = [...messages, { id: nextIdRequest, text: input, sender: sender }];
             setMessages(newMessages);
+            setWaitingForResponse(true);
             setInput("");
             const response = await fetchPost("/api/chatbot", { content: input });
             if (response.status == 201) {
@@ -44,6 +61,7 @@ function ChatUI() {
             } else {
                 alert("Error: " + response.status + " " + response.message);
             }
+            setWaitingForResponse(false);
         }
     };
 
@@ -64,8 +82,9 @@ function ChatUI() {
                 sx={{ height: "300px", flexGrow: 1, overflow: "auto", p: 2 }}
             >
                 {messages.map((message) => (
-                <Message message={message} />
+                    <Message message={message} onClick={handleModalOpen}/>
                 ))}
+                {waitingForResponse && <LoadingMessage />}
             </Box>
             <Box sx={{ p: 2, backgroundColor: "background.default" }}>
                 <Grid container spacing={2}>
@@ -93,19 +112,48 @@ function ChatUI() {
                     </Grid>
                 </Grid>
             </Box>
+            <Modal open={isModalOpen} onClose={handleModalClose}>
+                <Box sx={{
+                    position: "absolute" as "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: 600,
+                    maxHeight: "80vh",
+                    overflowY: "auto",
+                    bgcolor: "background.paper",
+                    border: "2px solid #000",
+                    boxShadow: 24,
+                    p: 4,
+                }}>
+                    <IconButton onClick={handleModalClose}>
+                        <CloseIcon />
+                    </IconButton>
+                    {selectedMessage && (
+                        <Typography variant="body1">{selectedMessage.text}</Typography>
+                    )}
+                </Box>
+            </Modal>
         </Box>
     );
 };
 
 interface MessageProps {
     message: RawMessageData;
+    onClick: (message: RawMessageData) => void;
 };
 
-function Message({message}: MessageProps) {
+function Message({message, onClick}: MessageProps) {
     const isBot = message.sender === "bot";
+    const handleClick = () => {
+        if (isBot) {
+            onClick(message);
+        }
+    };
 
     return (
         <Box
+            onClick={handleClick}
             sx={{
                 display: "flex",
                 justifyContent: isBot ? "flex-start" : "flex-end",
@@ -139,4 +187,42 @@ function Message({message}: MessageProps) {
     );
 };
 
+
+function LoadingMessage() {
+    return (
+        <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    mb: 2,
+                }}
+            >
+                <Box
+                    sx={{
+                    display: "flex",
+                    flexDirection:"row",
+                    alignItems: "center",
+                    }}
+                >
+                    <Avatar sx={{ bgcolor:"primary.main"}}>
+                        {"B"}
+                    </Avatar>
+                    <Paper
+                        variant="outlined"
+                        sx={{
+                            p: 2,
+                            ml: 1,
+                            mr: 0,
+                            backgroundColor: "primary.light",
+                            borderRadius: "20px 20px 20px 5px",
+                        }}
+                    >
+                    <Stack spacing={1}>
+                        <Skeleton variant="text" width={50}/>
+                    </Stack>
+                    </Paper>
+                </Box>
+            </Box>
+    );
+}
 export default ChatUI;
