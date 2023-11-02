@@ -7,6 +7,8 @@ import {
   Modal,
   Box,
   Button,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 
 const style = {
@@ -27,6 +29,7 @@ interface NextQnHandshakeModalProps {
     handleIPressedAccept: () => void;
     handleIPressedReject: () => void;
     iHaveAcceptedNextQn: boolean;
+    isLastQuestion: boolean;
 }
 
 export default function BasicModal(
@@ -34,7 +37,8 @@ export default function BasicModal(
       setIsNextQnHandshakeOpen,
       handleIPressedAccept,
       handleIPressedReject,
-      iHaveAcceptedNextQn }: NextQnHandshakeModalProps) {
+      iHaveAcceptedNextQn,
+      isLastQuestion }: NextQnHandshakeModalProps) {
   const handleClose = (event: any, reason: string) => {
     if (reason && reason == "backdropClick")
       return; /* This prevents modal from closing on an external click */
@@ -52,9 +56,20 @@ export default function BasicModal(
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Proposal to move on to the next question.
-          </Typography>
+          {isLastQuestion ?
+            (<Stack sx={{ width: '100%' }} spacing={2}>
+              <Alert severity="warning">
+                <AlertTitle>Warning</AlertTitle>
+                This is the last question. Are you sure you want to end the session?
+              </Alert>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Proposal to end the session.
+              </Typography>
+            </Stack>) : 
+            (<Typography id="modal-modal-title" variant="h6" component="h2">
+              Proposal to move on to the next question.
+            </Typography>)
+          }
           {iHaveAcceptedNextQn ? (
             <Stack className="items-center">
               <CircularProgress size="2rem" thickness={3} />

@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -12,12 +12,23 @@ datasource db {
 }
 
 model User {
-  id        BigInt   @id(map: "users_pkey") @default(autoincrement())
-  username  String   @unique(map: "user_username_key")
-  email     String   @unique(map: "user_email_key")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  password  String
-  admin     Boolean
+  id         BigInt       @id(map: "users_pkey") @default(autoincrement())
+  username   String       @unique(map: "user_username_key")
+  email      String       @unique(map: "user_email_key")
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  password   String
+  admin      Boolean
+  Invitation Invitation[]
 
   @@map("User")
+}
+
+model Invitation {
+  id        BigInt   @id(map: "invitation_pkey") @default(autoincrement())
+  email     String   @unique(map: "invitaion_email_key")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  invitedBy User     @relation(fields: [userId], references: [id])
+  userId    BigInt
+
+  @@map("Invitation")
 }
