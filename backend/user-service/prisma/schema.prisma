@@ -11,6 +11,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ResponseStatus {
+  WRONG
+  SUCCESS
+}
+
 model User {
   id         BigInt       @id(map: "users_pkey") @default(autoincrement())
   username   String       @unique(map: "user_username_key")
@@ -18,7 +23,8 @@ model User {
   createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   password   String
   admin      Boolean
-  Invitation Invitation[]
+  invitation Invitation[]
+  session   Session[]
 
   @@map("User")
 }
@@ -31,4 +37,25 @@ model Invitation {
   userId    BigInt
 
   @@map("Invitation")
+}
+
+model Session {
+  id        BigInt     @id(map: "session_pkey") @default(autoincrement())
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  users     User[]
+  responses Response[]
+
+  @@map("Session")
+}
+
+model Response {
+  id         BigInt         @id(map: "response_pkey") @default(autoincrement())
+  questionId String
+  language   String
+  text       Json
+  status     ResponseStatus
+  session    Session        @relation(fields: [sessionId], references: [id], onDelete: Cascade) // On Session delete, delete all attached Responses
+  sessionId  BigInt
+
+  @@map("Response")
 }
