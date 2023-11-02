@@ -259,9 +259,12 @@ const CollabPage = () => {
                             language={language}
                             roomId={roomId}
                             editorContent={
+                                // questions[questionNumber]?.templates?.find(
+                                //     (template) => template.language === language
+                                // )?.starterCode ?? "test"
                                 questions[questionNumber]?.templates?.find(
                                     (template) => template.language === language
-                                )?.starterCode ?? ""
+                                )?.starterCode || "test"   
                             }
                             question={questions[questionNumber]}
                         />
