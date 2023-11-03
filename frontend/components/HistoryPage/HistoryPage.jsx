@@ -7,17 +7,20 @@ const HistoryPage = () => {
   const [response, setResponse] = useState('');
   const [history, setHistory] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const userId = '65422650274ea08bd7ac483f'; // Replace this with the actual user ID
-      const response = await fetch(`http://localhost:3002/get-history?user=${userId}`);
-      const data = await response.json();
-      console.log(data);
-      setHistory(data);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const userId = "7"; // Replace this with the actual user ID
+            // const response = await fetch(`http://localhost:3002/get-history?user=${userId}`);
+            const sessions = await fetchGet(`/api/sessions/${userId}`);
+            sessions.data.forEach((session) => {
+                console.log(session.responses);
+                setHistory(session.responses[0]);
+            });
+            // setHistory(data);
+        };
 
-    fetchData();
-  }, []);
+        fetchData();
+    }, []);
 
   const openModal = (response) => {
     setResponse(response);

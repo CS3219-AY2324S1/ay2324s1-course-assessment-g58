@@ -5,6 +5,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
+/**   This POST "/" endpoint creates a Session for a user
+ *      @param { user1Id, user2Id }
+ *      @verifies existing Users
+ */
 router.post("/", async (req: Request, res: Response) => {
     const { user1Id, user2Id } = req.body;
 
@@ -32,7 +36,7 @@ router.post("/", async (req: Request, res: Response) => {
         });
     }
 
-    // How do i prevent the same party from recreating the same session?
+    // TODO: How do i / do i need to prevent the same party from recreating the same session?
 
     // Return the sessions where the user was a part of
     const session = await prisma.session.create({
@@ -54,12 +58,16 @@ router.post("/", async (req: Request, res: Response) => {
     );
 });
 
+/**   This GET "/user/:userId" endpoint retrieves all Sessions for a user, along with their partners and Responses
+ *      Note, this uses a endpoint function to convert the Session object into a safe Data Transfer Object.
+ *      @param userId from req.param
+ *      @verifies an existing User
+ */
 router.get("/user/:userId", async (req: Request, res: Response) => {
     const userId = req.params.userId as unknown as bigint;
-
-    if (!userId) {
+    if (!userId || typeof userId != "string") {
         return res.status(404).json({
-            message: `Missing userId.`,
+            message: `Expected userId, received ${userId}.`,
         });
     }
 
@@ -93,6 +101,11 @@ router.get("/user/:userId", async (req: Request, res: Response) => {
     res.json(SessionDataToDTO(sessions));
 });
 
+/**   This DELETE "/" endpoint delete a Session
+ *      @param { sessionId } as req body
+ *      @verifies an existing Session
+ *      @warn This will cause cascading deletion of responses
+ */
 router.delete("/", async (req: Request, res: Response) => {
     const { sessionId } = req.body;
 

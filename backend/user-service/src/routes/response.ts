@@ -4,7 +4,7 @@ import { PrismaClient, ResponseStatus } from "@prisma/client";
 const prisma = new PrismaClient();
 const router = express.Router();
 
-/**   This post request creates a Response for a specific Session and Question
+/**   This POST "/" endpoint creates a Response for a specific Session and Question
  *      @param { sessionId, questionId, text, language, status } as POST body
  *      @verifies an existing Session
  *      @assumes unique (SessionId, QuestionId) key for each response
