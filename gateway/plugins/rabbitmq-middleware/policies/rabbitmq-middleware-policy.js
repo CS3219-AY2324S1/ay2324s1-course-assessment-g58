@@ -28,6 +28,16 @@ module.exports = {
                     channel.responseEmitter = new EventEmitter();
                     channel.responseEmitter.setMaxListeners(0);
                     
+                    channel.on('error', function(err) {
+                        console.error('[AMQP] channel error', err.message);
+                        next(err);
+                    });
+                    
+                    connection.on('error', function(err) {
+                        console.error('[AMQP] connection error', err.message);
+                        next(err);
+                    });
+
                     const correlationId = generateUuid();
                     const responseHandler = (msg) => {
                         if (msg?.properties.correlationId === correlationId) {

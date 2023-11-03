@@ -39,6 +39,17 @@ async function startConsumer() {
                     }
                 }
             });
+
+            // Handle channel errors
+            channel.on('error', (err) => {
+                console.error('Channel error', err);
+            });
+
+            // Handle connection errors
+            connection.on('error', (err) => {
+                console.error('Connection error', err);
+            });
+
             connected = true;
         } catch (error) {
             console.error("Connection to ",  process.env.RABBITMQ_URL, " failed, retrying in 5 seconds...", error);
