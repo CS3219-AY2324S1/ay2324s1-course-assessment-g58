@@ -102,7 +102,7 @@ function ChatUI() {
                 sx={{ height: "300px", flexGrow: 1, overflow: "auto", p: 2 }}
             >
                 {messages.map((message) => (
-                    <Message message={message} onClick={handleModalOpen}/>
+                    <Message  key={message.id} message={message} onClick={handleModalOpen}/>
                 ))}
                 {waitingForResponse && <LoadingMessage />}
                 <div ref={messagesEndRef} />
