@@ -221,9 +221,11 @@ const CollabPage = () => {
         isIntervieweeChosen,
     ]);
 
-    // Hadnle end session state when end session button is pressed or no more questions
+    // Handle end session state when end session button is pressed or no more questions
     useEffect(() => {
         if (isEndingSession) {
+            // Clear ai chatbot messages
+            localStorage.removeItem("messages-aiChatbot");
             setTimeout(() => {
                 setIsEndingSession(false);
                 router.push("/");
