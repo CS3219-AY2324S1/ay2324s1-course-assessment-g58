@@ -17,9 +17,8 @@ const transporter = nodemailer.createTransport({
 
 // https://nodemailer.com/about/
 router.post("/", async (req: Request, res: Response) => {
-    const { inviteeEmail } = req.body;
-    const inviteLink =
-        process.env.FRONTEND_URL + "/admin-signup?email=" + inviteeEmail;
+    const { inviteeEmail, inviteId } = req.body;
+    const inviteLink = `${process.env.FRONTEND_URL}/admin-signup?email=${inviteeEmail}&id=${inviteId}`;
     console.log("Generated invite:", inviteLink);
     const info = await transporter.sendMail({
         from: '"PeerPrep" <peerprep@ryanchuahj.com>',

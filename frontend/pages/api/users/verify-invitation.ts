@@ -6,14 +6,14 @@ export default async function handler(
     res: NextApiResponse<ResponseData>
 ) {
     if (req.method === "POST") {
-        const { email } = req.body;
-        if (email) {
+        const { id } = req.body;
+        if (id) {
             try {
                 const express_gateway: string =
                     (process.env.GATEWAY_SERVER_URL as string) +
                     "/api/users/verify-invitation";
                 const response = await fetchPost(express_gateway as string, {
-                    email: email,
+                    id: id,
                 });
                 console.log(response);
                 return res.json({ status: 200, data: response });
@@ -31,7 +31,7 @@ export default async function handler(
         } else {
             return res.json({
                 status: 400,
-                message: `Expected email, received ${email}`,
+                message: `Expected id, received ${id}`,
             });
         }
     } else {

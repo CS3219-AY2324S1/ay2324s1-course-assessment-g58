@@ -85,6 +85,7 @@ router.post("/", async (req: Request, res: Response) => {
             createdAt: new Date(),
         },
         select: {
+            id: true,
             email: true,
         },
     });
@@ -98,6 +99,7 @@ router.post("/", async (req: Request, res: Response) => {
     // Send request to email-service
     const response = await axios.post(process.env.EMAIL_SERVICE_URL as string, {
         inviteeEmail: inviteeEmail,
+        inviteId: newInvitation.id,
     });
     if (!response || response.status !== 200) {
         console.log("Received response:", response);

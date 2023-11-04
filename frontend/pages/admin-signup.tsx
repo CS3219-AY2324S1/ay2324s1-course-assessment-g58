@@ -20,13 +20,12 @@ const AdminSignupPage: NextPage = () => {
     useEffect(() => {
         /* On load, verify if user can be on this page */
         const verifyUser = async () => {
-            const email = router.query.email;
+            const id = router.query.id;
             await fetchPost("/api/users/verify-invitation", {
-                email: email,
+                id: id,
             }).then((res) => {
-                console.log(res);
                 if (res.status === 200) {
-                    console.log("Setting verified");
+                    console.log(res.data);
                     if (redirectTimer) clearTimeout(redirectTimer);
                     setVerified(true);
                 } else {

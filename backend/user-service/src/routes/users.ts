@@ -166,10 +166,10 @@ router.delete("/", async (req: Request, res: Response) => {
  *  @returns status 410 Gone if link has already expired.
  */
 router.post("/verify-invitation", async (req: Request, res: Response) => {
-    const { email } = req.body;
+    const { id } = req.body;
     const invitedUser = await prisma.invitation.findUnique({
         where: {
-            email: email,
+            id: id,
         },
         select: {
             email: true,
@@ -179,7 +179,7 @@ router.post("/verify-invitation", async (req: Request, res: Response) => {
 
     if (!invitedUser) {
         res.status(404).json({
-            message: `Email: ${email} not found in invitations`,
+            message: `Id: ${id} not found in invitations`,
         });
         return;
     }
@@ -196,7 +196,7 @@ router.post("/verify-invitation", async (req: Request, res: Response) => {
         return;
     }
 
-    res.status(200).json(`${email} has an invitation`);
+    res.status(200).json(`${id} has an invitation`);
 });
 
 export default router;
