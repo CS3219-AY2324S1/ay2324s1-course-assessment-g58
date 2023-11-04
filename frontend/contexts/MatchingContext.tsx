@@ -1,14 +1,7 @@
 import React, { createContext, ReactNode, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import { Socket, io } from "socket.io-client";
-
-export type Question = {
-    _id: string;
-    title: string;
-    description: string;
-    difficulty: string;
-    category: string;
-};
+import Question from "@/types/Question";
 
 interface MatchingContextType {
     roomId: string;

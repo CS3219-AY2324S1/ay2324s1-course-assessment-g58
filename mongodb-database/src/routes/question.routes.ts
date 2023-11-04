@@ -11,7 +11,10 @@ router.post('/add-new-question', async (req, res) => {
             title: req.body.title,
             description: req.body.description,
             difficulty: req.body.difficulty,
-            category: req.body.category
+            category: req.body.category,
+            templates: req.body.templates,
+            functions: req.body.functions,
+            calls: req.body.calls,
         };
         console.log(questionData);
         console.log('Creating new question...');
@@ -66,7 +69,10 @@ router.put('/edit-question', async (req, res) => {
             title: req.body.title,
             description: req.body.description,
             difficulty: req.body.difficulty,
-            category: req.body.category
+            category: req.body.category,
+            templates: req.body.templates,
+            functions: req.body.functions,
+            calls: req.body.calls,
         };
         const id = req.body._id;
         console.log('Updating question with title:', req.body.title);

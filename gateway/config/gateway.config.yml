@@ -1,5 +1,7 @@
 http:
     port: 8080
+https:
+    port: 8080
 admin:
     port: 9876
     host: localhost
@@ -9,9 +11,11 @@ apiEndpoints:
         host: "*"
         paths:
             - "/api/users"
+            - "/api/users/verify-invitation"
             - "/api/login"
             - "/api/logout"
             - "/api/token-login"
+            - "/api/invite"
     questionBank:
         host: "*"
         paths:
@@ -19,14 +23,30 @@ apiEndpoints:
             - "/get-all-questions"
             - "/delete-question"
             - "/edit-question"
+    compiler:
+        host: "*"
+        paths:
+            - "/compile"
+            - "/enqueue-request-compiler"
+    
+    ai:
+        host: "*"
+        paths:
+            - "/enqueue-request-ai"
 
 serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
+    # For deployment, uncomment the environment variables and comment the localhost urls.
     userService:
         url: "http://localhost:3001"
+        # url: "${USER_SERVER_URL}"
     questionService:
         url: "http://localhost:3002"
-
+        # url: "${QUESTION_SERVICE_URL}"
+    # compilerService:
+    #     url: "http://localhost:3006"
+    # aiService:
+    #     url: "http://localhost:3008"
 policies:
     - basic-auth
     - cors
@@ -36,6 +56,7 @@ policies:
     - oauth2
     - proxy
     - rate-limit
+    - rabbitmq-middleware-policy
 
 pipelines:
     # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
@@ -43,15 +64,34 @@ pipelines:
         apiEndpoints:
             - user
         policies:
+            - log:
+                - action:
+                    message: ${req.method} ${req.originalUrl} # parameter for log action
             - proxy:
                   - action:
                         serviceEndpoint: userService
+                        timeout: 65000
     questionPipeline:
         apiEndpoints:
             - questionBank
         policies:
+            - log:
+                - action:
+                    message: ${req.method} ${req.originalUrl} # parameter for log action
             - proxy:
                   - action:
                         serviceEndpoint: questionService
+                        timeout: 65000
+    compilerPipeline:
+        apiEndpoints:
+            - compiler
+        policies:
+            - rabbitmq-middleware-policy:
+
+    aiPipeline:
+        apiEndpoints:
+            - ai
+        policies:
+            - rabbitmq-middleware-policy:   
 
 routes:

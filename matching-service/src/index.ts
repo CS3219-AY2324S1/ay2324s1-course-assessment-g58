@@ -1,18 +1,23 @@
 import { Socket } from "socket.io";
+import express, { Express } from "express";
 
-const express = require("express");
 require("dotenv").config();
 
-const app = express();
+const app: Express = express();
 app.use(express.json());
 
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
     // Allow connections from localhost:3000
     cors: {
-        origin: "http://localhost:3000",
+        origin: ["http://localhost:3000", "https://peerprep.ryanchuahj.com"],
         methods: ["GET", "POST"],
     },
+});
+
+// handle '/' route for testing and health check
+app.get("/", (req, res) => {
+    res.send("Hello from Matching Service");
 });
 
 // Store users in a queue
