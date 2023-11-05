@@ -1,28 +1,35 @@
-import Header from "./Header";
-import QuestionForm from "./QuestionForm";
 import QuestionTable from "./QuestionTable";
 import DescriptionModal from "./DescriptionModal";
 import { fetchPost, fetchGet, fetchDelete, fetchPut } from "@/utils/apiHelpers";
 import { useState, useEffect } from "react";
 import Question from "@/types/Question";
 import { useAuth } from "@/contexts/AuthContext";
+import LoginPage from "../LoginPage/LoginPage";
+import { messageHandler } from "@/utils/handlers";
+import { Box, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import AddQuestionModal from "./AddQuestionModal";
 
 const QuestionPage = () => {
     // get user's role
-    const { admin } = useAuth();
+    const { user, admin } = useAuth();
 
-    // Stuff for modal popup
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // State for question modal popup
+    const [questionModalOpen, setQuestionModalOpen] = useState(false);
     const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(
         null
     );
+
+    // State for add question popup
+    const [addQuestionOpen, setAddQuestionOpen] = useState(false);
+
     const handleOpenModal = (question: Question) => {
         setSelectedQuestion(question);
-        setIsModalOpen(true);
+        setQuestionModalOpen(true);
     };
 
     const handleCloseModal = () => {
-        setIsModalOpen(false);
+        setQuestionModalOpen(false);
     };
 
     // Stuff for question table
@@ -35,10 +42,10 @@ const QuestionPage = () => {
         // Add the new question to the backend and then update the state
         const response = await fetchPost("/api/questions", newQuestion);
         if (response.status == 201) {
-            alert("Success! Added: " + response.data.title);
+            messageHandler("Success! Added: " + response.data.title, "success");
             setRefresh((prev) => !prev);
         } else {
-            alert(response.message);
+            messageHandler(response.message, "error");
         }
         return response.status;
     };
@@ -47,10 +54,13 @@ const QuestionPage = () => {
         // Delete the question from the backend and then update the state
         const response = await fetchDelete("/api/questions", question);
         if (response.status == 200) {
-            alert("Success! Deleted: " + response.data.title);
+            messageHandler(
+                "Success! Deleted: " + response.data.title,
+                "success"
+            );
             setRefresh((prev) => !prev);
         } else {
-            alert(response.message);
+            messageHandler(response.message, "error");
         }
         return response.status;
     };
@@ -59,11 +69,15 @@ const QuestionPage = () => {
         // Edit the question from the backend and then update the state
         const response = await fetchPut("/api/questions", updatedQuestion);
         if (response.status == 200) {
-            alert("Success! Updated: " + response.data.title);
+            messageHandler(
+                "Success! Updated: " + response.data.title,
+                "success"
+            );
+
             setRefresh((prev) => !prev);
             handleCloseModal();
         } else {
-            alert(response.message);
+            messageHandler(response.message, "error");
         }
         return response.status;
     };
@@ -76,22 +90,44 @@ const QuestionPage = () => {
         fetchQuestions();
     }, [refresh]);
 
+    if (!user) {
+        return <LoginPage />;
+    }
+
     return (
         <main>
-            <Header />
-            {admin && <QuestionForm addQuestion={addQuestion} />}
-            <QuestionTable
-                questions={questions}
-                deleteQuestion={deleteQuestion}
-                openModal={handleOpenModal}
-            />
-            {isModalOpen && (
+            {admin && addQuestionOpen && (
+                <AddQuestionModal
+                    handleClose={() => setAddQuestionOpen(false)}
+                    addQuestion={addQuestion}
+                />
+            )}
+            <Box display="flex" padding={2}>
+                <QuestionTable
+                    questions={questions}
+                    deleteQuestion={deleteQuestion}
+                    openModal={handleOpenModal}
+                />
+            </Box>
+            {questionModalOpen && (
                 <DescriptionModal
                     question={selectedQuestion}
                     closeModal={handleCloseModal}
                     editQuestion={editQuestion}
                 />
             )}
+            <Fab
+                color="primary"
+                aria-label="add"
+                style={{
+                    position: "fixed",
+                    bottom: "20px",
+                    right: "20px",
+                }}
+                onClick={() => setAddQuestionOpen(true)}
+            >
+                <AddIcon />
+            </Fab>
         </main>
     );
 };

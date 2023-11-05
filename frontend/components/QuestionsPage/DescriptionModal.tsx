@@ -18,6 +18,7 @@ import {
     TextareaAutosize,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { messageHandler } from "@/utils/handlers";
 
 interface DescriptionModalProps {
     question: Question | null;
@@ -132,7 +133,7 @@ function DescriptionModal({
             updatedQuestion.difficulty == "" ||
             updatedQuestion.category == ""
         ) {
-            alert("Please fill in all fields.");
+            messageHandler("All fields required", "error");
             return;
         }
         editQuestion(updatedQuestion);
