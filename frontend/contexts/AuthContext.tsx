@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import { fetchPost } from "@/utils/apiHelpers";
+import { messageHandler } from "@/utils/handlers";
 
 interface AuthContextType {
     user: string | null;
@@ -45,7 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setAdmin(userData.admin);
             } catch (error: any) {
                 localStorage.removeItem("accessToken");
-                alert("Please login again");
             }
         }
     }
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setAdmin(user.admin);
             router.push("/");
         } else {
-            alert("Login unsuccessful");
+            messageHandler("Login unsuccessful", "error");
         }
     };
 

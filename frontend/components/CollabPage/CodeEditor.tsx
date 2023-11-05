@@ -14,6 +14,7 @@ import DataForCompilerService from "@/types/DataForCompilerService";
 import CompilerServiceResult, {
     defaultRunCodeResults,
 } from "@/types/CompilerServiceResult";
+import { messageHandler } from "@/utils/handlers";
 
 const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -62,7 +63,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             socketRef.current?.emit("runCodeDone", compileResult);
             console.log(compileResult);
         } else {
-            alert(response.message);
+            messageHandler(response.message, "error");
         }
     };
 
