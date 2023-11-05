@@ -27,6 +27,8 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         defaultRunCodeResults
     );
     const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
+    const [editorContentState, setEditorContentState] =
+        useState<string>(editorContent);
 
     // options for monaco editor
     const options: editor.IStandaloneEditorConstructionOptions = {
@@ -117,11 +119,6 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
                 ) ?? null;
         });
 
-        // reset text in model on next question
-        socket?.on("proceedWithNextQuestion", () => {
-            editorRef.current?.getModel()?.setValue("");
-        });
-
         socket?.on("runCode", () => {
             setIsRunningCode(true);
         });
@@ -135,6 +132,10 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             socket.disconnect();
         };
     }, [roomId]);
+
+    useEffect(() => {
+        editorRef.current?.getModel()?.setValue(editorContent);
+    }, [editorContentState]);
 
     // handle mounting of editor
     const handleEditorDidMount: OnMount = (editor, monaco) => {

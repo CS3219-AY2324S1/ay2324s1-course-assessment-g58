@@ -16,14 +16,28 @@ module.exports = {
                     bodyParser.urlencoded({ extended: true })(req, res, async () => {
                     //TODO: make secure
                     const RABBITMQ_URL = 'amqp://user:password@localhost:5672';
-                    const QUEUE = 'messages';
                     const message = req.body;
+                    const req_destination = req.route.path;
+                    console.log("req destination: ", req_destination);
                     console.log(message);
+                    const QUEUE = req_destination === "/enqueue-request-compiler"
+                        ? 'messages-compiler'
+                        : 'messages-ai';
                     const connection = await amqp.connect(RABBITMQ_URL);
                     const channel = await connection.createChannel();
                     channel.responseEmitter = new EventEmitter();
                     channel.responseEmitter.setMaxListeners(0);
                     
+                    channel.on('error', function(err) {
+                        console.error('[AMQP] channel error', err.message);
+                        next(err);
+                    });
+                    
+                    connection.on('error', function(err) {
+                        console.error('[AMQP] connection error', err.message);
+                        next(err);
+                    });
+
                     const correlationId = generateUuid();
                     const responseHandler = (msg) => {
                         if (msg?.properties.correlationId === correlationId) {

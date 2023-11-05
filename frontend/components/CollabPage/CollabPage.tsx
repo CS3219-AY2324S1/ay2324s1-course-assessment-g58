@@ -17,6 +17,9 @@ import {
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
+import SimpleSnackbar from "./RejectQuestionSnackBar";
+import VideoAudioChat from "./VideoComm";
+import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
@@ -36,6 +39,9 @@ const CollabPage = () => {
         useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
+    const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
+    const user1socket = roomId.split("*-*")[0];
+    const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
     const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] =
         useState(false);
@@ -210,9 +216,11 @@ const CollabPage = () => {
         isIntervieweeChosen,
     ]);
 
-    // Hadnle end session state when end session button is pressed or no more questions
+    // Handle end session state when end session button is pressed or no more questions
     useEffect(() => {
         if (isEndingSession) {
+            // Clear ai chatbot messages
+            localStorage.removeItem("messages-aiChatbot");
             setTimeout(() => {
                 setIsEndingSession(false);
                 router.push("/");
@@ -250,9 +258,12 @@ const CollabPage = () => {
                             language={language}
                             roomId={roomId}
                             editorContent={
+                                // questions[questionNumber]?.templates?.find(
+                                //     (template) => template.language === language
+                                // )?.starterCode ?? "test"
                                 questions[questionNumber]?.templates?.find(
                                     (template) => template.language === language
-                                )?.starterCode ?? ""
+                                )?.starterCode || "test"
                             }
                             question={questions[questionNumber]}
                         />
@@ -297,6 +308,7 @@ const CollabPage = () => {
                     </Dialog>
                 </Grid>
             </Grid>
+            <VideoAudioChat username1={user1socket} username2={user2socket} />
             {isEndingSession && <EndingSessionBackdrop />}
         </div>
     );

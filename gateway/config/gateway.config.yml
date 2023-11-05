@@ -27,7 +27,12 @@ apiEndpoints:
         host: "*"
         paths:
             - "/compile"
-            - "/enqueue-request"
+            - "/enqueue-request-compiler"
+    
+    ai:
+        host: "*"
+        paths:
+            - "/enqueue-request-ai"
 
 serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
@@ -38,9 +43,10 @@ serviceEndpoints:
     questionService:
         url: "http://localhost:3002"
         # url: "${QUESTION_SERVICE_URL}"
-    compilerService:
-        url: "http://localhost:3006"
-        
+    # compilerService:
+    #     url: "http://localhost:3006"
+    # aiService:
+    #     url: "http://localhost:3008"
 policies:
     - basic-auth
     - cors
@@ -80,6 +86,12 @@ pipelines:
         apiEndpoints:
             - compiler
         policies:
-            - rabbitmq-middleware-policy:    
+            - rabbitmq-middleware-policy:
+
+    aiPipeline:
+        apiEndpoints:
+            - ai
+        policies:
+            - rabbitmq-middleware-policy:   
 
 routes:
