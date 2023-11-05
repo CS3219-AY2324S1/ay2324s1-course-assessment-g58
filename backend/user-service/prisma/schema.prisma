@@ -1,0 +1,23 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        BigInt   @id(map: "users_pkey") @default(autoincrement())
+  username  String   @unique(map: "user_username_key")
+  email     String   @unique(map: "user_email_key")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  password  String
+  admin     Boolean
+
+  @@map("User")
+}

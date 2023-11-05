@@ -1,15 +1,25 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/6BOvYMwN)
+# Getting Started with Docker for Development
 
-# CS3219 Team 58 Assignment
+1. Install docker at https://www.docker.com/
 
-## Getting started
-1. Install a Local Web Server: If you don't have one installed, you can install a simple web server like http-server using npm. You can install it globally by running:
+2. Start docker
 
-```
-npm install -g http-server
+3. Run `docker compose build` to build the images and containers
 
-```
-2. Navigate to the root directory and start the server with:
-```
-http-server
-```
+4. Run `docker compose up` to start the container (Note: this will only start the user & question service)
+
+5. Note: this does not start the api-gateway. Follow the relevant `./gateway/README.md`
+
+## Developer guide
+
+As of the last update of this README, only the user-service and question-service have been dockerized. A respective `Dockerfile` has been created within each of their folders. This `Dockerfile` specifies the instructions in order to build the container, install the necessary node modules etc. 
+
+To simplify the container building, a `docker-compose.yml` has been created in order to start both containers at once. This is achieved through running `docker compose build` and `docker compose up` to call both dockerfiles.
+
+The api-gateway requires more work, see https://dev.to/naseef012/create-a-microservices-app-with-dockerized-express-api-gateway-1kf9 for more information.
+
+## Finishing Development
+
+When you are done with developing, kill the program (Ctrl^C) and run `docker compose down`. This cleans up local resources used by docker.
+
+Note: For Mac users, this doesn't work and volumes will continue to pile up. Run `docker system prune -a --volumes` occasionally to remove the remaining volumes.
