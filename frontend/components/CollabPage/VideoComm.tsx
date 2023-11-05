@@ -9,19 +9,42 @@ declare global {
       localStream: MediaStream | undefined;
     }
   }
-const VideoAudioChat = ({ username1, username2 }: {
+  interface VideoAudioChatProps {
     username1: string | null;
     username2: string;
-  }) => {
+    callActive: boolean; // Add the callActive prop
+    setCallActive: React.Dispatch<React.SetStateAction<boolean>>; // Add the setCallActive prop
+  }
+  const VideoAudioChat: React.FC<VideoAudioChatProps> = ({ username1, username2, callActive, setCallActive })=> {
   const [videoToggle, setVideoToggle] = useState(true);
   const [audioToggle, setAudioToggle] = useState(true);
-  const userVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
-  const partnerVideoRef = useRef<HTMLVideoElement>(document.createElement("video"));
+  const fillerVideo = document.createElement("video")
+  const userVideoRef = useRef<HTMLVideoElement>(fillerVideo);
+  const partnerVideoRef = useRef<HTMLVideoElement>(fillerVideo);
   const userNameRef = useRef<string | null>(null);
   const partnerNameRef = useRef<string | null>(null);
-  const [callActive, setCallActive] = useState(true);
   const { socketId } = useMatching();
   
+  // const waitForNavigator = () => {
+  //   return new Promise((resolve) => {
+  //     if (navigator.mediaDevices ) {
+  //       // Navigator is available, resolve the promise immediately
+  //       resolve(null);
+  //     } else {
+  //       // Navigator is not available, wait for the window to load
+  //       window.onload = () => {
+  //         if (navigator.mediaDevices ) {
+  //           resolve(null);
+  //         } else {
+  //           // Handle the case where getUserMedia is still not supported
+  //           console.log("getUserMedia is not supported on this browser");
+  //           resolve(null); // Resolve the promise to continue with the code
+  //         }
+  //       };
+  //     }
+  //   });
+  // };
+
 
   useEffect(() => {
     // Get current username
@@ -39,6 +62,7 @@ const VideoAudioChat = ({ username1, username2 }: {
 
     let dispose = () => {};
     if (socketId !== username1) {
+      // waitForNavigator().then(() => {
       setTimeout(() => {
         navigator.mediaDevices.getUserMedia(
           { video: true, audio: true })
@@ -63,8 +87,10 @@ const VideoAudioChat = ({ username1, username2 }: {
           window.localStream.getAudioTracks().forEach((track) => track.stop());
         }
       };
+    // })
     } else {
       const handler = (call: MediaConnection) => {
+        // waitForNavigator().then(() => {
         navigator.mediaDevices.getUserMedia(
           { video: true, audio: true })
           .then((stream) => {
@@ -76,6 +102,9 @@ const VideoAudioChat = ({ username1, username2 }: {
             console.log("Failed to get local stream", error);
           }
         );
+        // });
+        
+
 
         dispose = showStream(call, partnerVideoRef.current);
       };
@@ -93,11 +122,15 @@ const VideoAudioChat = ({ username1, username2 }: {
       };
     }
   }, []);
-
+  
   const showVideo = (stream: MediaStream, video: HTMLVideoElement, muted: boolean) => {
     video.srcObject = stream;
     video.volume = muted ? 0 : 1;
-    video.onloadedmetadata = () => video.play();
+    video.onloadedmetadata = () => {
+      video.width = 320;
+      video.height = 240;
+      video.play();
+  }
   };
 
   const showStream = (call: MediaConnection, otherVideo: HTMLVideoElement) => {
@@ -134,9 +167,10 @@ const handleEndCall = () => {
   }
 };
 
+
   return (
-    callActive ? (
-    <Draggable>
+    <div className={callActive ? "video-collab-container" : "hidden"} >
+    <Draggable >
       <div className="video-container">
       <Stack direction="column">
         <Stack direction="row" alignItems="center" justifyContent="space-between" >
@@ -175,13 +209,13 @@ const handleEndCall = () => {
               className="end-call-button" // Apply the CSS class here
               onClick={handleEndCall} // Attach the onClick event to close the component
             >
-              End Call
+              Minimize Call
             </Button>
         </Stack>
       </Stack>
       </div>
     </Draggable>
-    ) :  null
+    </div>
   );
 };
 

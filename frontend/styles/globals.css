@@ -136,4 +136,16 @@ textarea {
     
     
   }
+  .hidden {
+    display: none;
+    
+    
+  }
+  .video-collab-container{
+    position: fixed;
+    top: 100px; /* Adjust the top value to your desired position */
+    right: 700px; /* Adjust the right value to your desired position */
+    z-index: 1000; /* Make sure it's above other content */
+
+  }
   

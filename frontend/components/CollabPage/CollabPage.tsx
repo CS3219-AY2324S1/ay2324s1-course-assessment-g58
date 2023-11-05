@@ -16,7 +16,7 @@ import {
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
 import SimpleSnackbar from "./RejectQuestionSnackBar";
-import VideoAudioChat from "./VideoComm";
+import  VideoAudioChat  from "./VideoComm";
 
 const CollabPage = () => {
     const { user } = useAuth();
@@ -34,6 +34,7 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
+    const [callActive, setCallActive] = useState(true);
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
 
@@ -46,6 +47,9 @@ const CollabPage = () => {
     };
     const changeRole = () => {
         setInterviewer(!isInterviewer);
+    };
+    const toggleVideo = () => {
+        setCallActive(!callActive);
     };
 
     const handleClosePickRole = (event: any, reason: string) => {
@@ -206,6 +210,18 @@ const CollabPage = () => {
                     >
                         Switch roles
                     </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={toggleVideo}
+                        style={{
+                            backgroundColor: "#0073e6",
+                            color: "white",
+                            border: "2px solid #0051a5",
+                        }}
+                    >
+                        Toggle Video
+                    </Button>
                 </Box>
             </div>
             <div className="code-editor-and-interviewer">
@@ -265,6 +281,8 @@ const CollabPage = () => {
             <VideoAudioChat
                       username1={user1socket}
                       username2={user2socket}
+                      callActive={callActive}
+                      setCallActive={setCallActive}
                     />
         </div>
     );
