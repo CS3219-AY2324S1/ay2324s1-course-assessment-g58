@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var questionCategory = document.getElementById('questionCategory').value;
 
         // Set question id
-        const questionId = getNextId();
+        const questionId = 0; // This will be updated in populateTable()
 
         // Get question difficulty
         var questionDifficulty = document.getElementById('questionComplexity').value;
@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Clear the table (assuming you have a function to do this)
         populateTable();
-        resetIds();
         alert('All questions cleared successfully');
     });
 
@@ -86,15 +85,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add a click event listener to the table body for event delegation
     tableBody.addEventListener('click', function(event) {
-        console.log("here");
         if (event.target.classList.contains('delete')) {
-            console.log("there");
             // Get all questions from local storage
             var questions = JSON.parse(localStorage.getItem(ALL_QUESTIONS));
 
             // Get the id of the question to be deleted
             const idToDelete = parseInt(event.target.getAttribute('data-id'), 10);
-
+            console.log(idToDelete)
+            console.log(questions)
             // Delete the question from the array
             const updatedQuestions = questions.filter(question => question.id !== idToDelete);
 
@@ -152,7 +150,10 @@ function populateTable() {
 
     // Update the table body with the questions
     if (questions !== null) {
+        var id = 1;
         questions.forEach(question => {
+            question.id = id;
+            id++;
             var row = document.createElement('tr');
             row.innerHTML = `
                 <td>${question.id}</td>
@@ -166,6 +167,8 @@ function populateTable() {
             tableBody.appendChild(row);
         });
     }
+    // Update local storage
+    localStorage.setItem(ALL_QUESTIONS, JSON.stringify(questions));
 }
 
 function displayDetails(question) {
@@ -183,16 +186,5 @@ function displayDetails(question) {
     document.getElementById('detailsModal').style.display = "block";
 }
 
-function getNextId() {
-    var lastId = localStorage.getItem('LAST_ID') || 0;
-    var newId = parseInt(lastId) + 1;
-    localStorage.setItem('LAST_ID', newId);
-    return newId;
-}
-
-function resetIds() {
-    localStorage.setItem('LAST_ID', 0);
-}
 // Populate the table initially
 populateTable();
-
