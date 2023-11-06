@@ -116,18 +116,20 @@ const QuestionPage = () => {
                     editQuestion={editQuestion}
                 />
             )}
-            <Fab
-                color="primary"
-                aria-label="add"
-                style={{
-                    position: "fixed",
-                    bottom: "20px",
-                    right: "20px",
-                }}
-                onClick={() => setAddQuestionOpen(true)}
-            >
-                <AddIcon />
-            </Fab>
+            {admin && (
+                <Fab
+                    color="primary"
+                    aria-label="add"
+                    style={{
+                        position: "fixed",
+                        bottom: "20px",
+                        right: "20px",
+                    }}
+                    onClick={() => setAddQuestionOpen(true)}
+                >
+                    <AddIcon />
+                </Fab>
+            )}
         </main>
     );
 };
