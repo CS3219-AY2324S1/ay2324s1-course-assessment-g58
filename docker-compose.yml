@@ -26,11 +26,12 @@ services:
         env_file:
             - ./frontend/.env
         environment: # Running locally has different url than running on docker (not localhost)
-            - NEXT_PUBLIC_MATCHING_SERVER_URL="http://matching:3004"
-            - NEXT_PUBLIC_COLLAB_SERVER_URL="http://collaboration:3005"
+            - NEXT_PUBLIC_MATCHING_SERVER_URL=http://matching:3004
+            - NEXT_PUBLIC_COLLAB_SERVER_URL=http://collaboration:3005
+            - GATEWAY_SERVER_URL=http://host.docker.internal:8080
         volumes:
             - ./frontend:/app/frontend
-            - app/frontend/node_modules
+            - /app/frontend/node_modules
     users:
         depends_on:
             - email

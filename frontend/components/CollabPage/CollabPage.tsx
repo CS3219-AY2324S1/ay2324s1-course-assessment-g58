@@ -16,7 +16,8 @@ import {
     Grid,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
-import VideoAudioChat from "./VideoComm";
+import dynamic from "next/dynamic";
+const VideoAudioChat = dynamic(() => import("./VideoComm"), { ssr: false });
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { messageHandler } from "@/utils/handlers";
 
