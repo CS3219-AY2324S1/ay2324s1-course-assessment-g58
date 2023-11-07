@@ -96,6 +96,7 @@ export function authorize(req: Request, res: Response, next: NextFunction) {
                 if (admin) {
                     req.body.user = user;
                     next();
+                    return;
                 }
 
                 // if user is not authorized for an authorized route

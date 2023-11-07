@@ -18,48 +18,49 @@ interface RejectEndSessionSnackbarProps {
 }
 
 export default function SimpleSnackbar({
-  rejectEndSessionSnackBarIsOpen,
-  onClose,
+
+    rejectEndSessionSnackBarIsOpen,
+    onClose,
 }: RejectEndSessionSnackbarProps) {
-  const handleClose = (
-      event: React.SyntheticEvent | Event,
-      reason?: string
-  ) => {
-      if (reason === "clickaway") {
-          return;
-      }
-      onClose();
-  };
+    const handleClose = (
+        event: React.SyntheticEvent | Event,
+        reason?: string
+    ) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        onClose();
+    };
 
-  const action = (
-      <React.Fragment>
-          <IconButton
-              size="small"
-              aria-label="close"
-              color="inherit"
-              onClick={handleClose}
-          >
-              <CloseIcon fontSize="small" />
-          </IconButton>
-      </React.Fragment>
-  );
+    const action = (
+        <React.Fragment>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
+    );
 
-  return (
-      <div>
-          <Snackbar
-              open={rejectEndSessionSnackBarIsOpen}
-              autoHideDuration={3000}
-              onClose={handleClose}
-              action={action}
-          >
-              <Alert
-                  onClose={handleClose}
-                  severity="error"
-                  sx={{ width: "100%" }}
-              >
-                  End session request rejected
-              </Alert>
-          </Snackbar>
-      </div>
-  );
+    return (
+        <div>
+            <Snackbar
+                open={rejectEndSessionSnackBarIsOpen}
+                autoHideDuration={3000}
+                onClose={handleClose}
+                action={action}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity="error"
+                    sx={{ width: "100%" }}
+                >
+                    End session request rejected
+                </Alert>
+            </Snackbar>
+        </div>
+    );
 }

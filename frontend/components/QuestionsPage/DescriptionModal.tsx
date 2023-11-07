@@ -1,13 +1,24 @@
 // src: https://mui.com/material-ui/react-modal/
 import * as React from "react";
-import Question from "@/types/Question";
+import Question, {
+    questionTemplate,
+    defaultQuestionTemplates,
+} from "@/types/Question";
 import { useAuth } from "@/contexts/AuthContext";
 import {
     Box,
     Button,
     Modal,
-    Typography
+    Typography,
+    TextField,
+    Grid,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    TextareaAutosize,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { messageHandler } from "@/utils/handlers";
 
 interface DescriptionModalProps {
     question: Question | null;
@@ -86,6 +97,26 @@ function DescriptionModal({
     const [updatedCategory, setUpdatedCategory] = React.useState(
         question?.category || ""
     );
+    const [updatedTemplates, setUpdatedTemplates] = React.useState<
+        questionTemplate[]
+    >(question?.templates || defaultQuestionTemplates);
+
+    const handleTemplateChange = (
+        index: number,
+        setStarterCode: boolean,
+        newValue: string
+    ) => {
+        setUpdatedTemplates((prevTemplates) => {
+            const updatedTemplates = [...prevTemplates];
+            if (setStarterCode) {
+                updatedTemplates[index].starterCode = newValue;
+            } else {
+                updatedTemplates[index].driverCode =
+                    newValue == "" ? null : newValue;
+            }
+            return updatedTemplates;
+        });
+    };
 
     const handleConfirmEdit = () => {
         const updatedQuestion: Question = {
@@ -94,6 +125,7 @@ function DescriptionModal({
             description: updatedDescription,
             difficulty: updatedDifficulty,
             category: updatedCategory,
+            templates: updatedTemplates,
         };
         if (
             updatedQuestion.title == "" ||
@@ -101,7 +133,7 @@ function DescriptionModal({
             updatedQuestion.difficulty == "" ||
             updatedQuestion.category == ""
         ) {
-            alert("Please fill in all fields.");
+            messageHandler("All fields required", "error");
             return;
         }
         editQuestion(updatedQuestion);
@@ -129,77 +161,136 @@ function DescriptionModal({
                             variant="contained"
                             onClick={() => setEditMode(!editMode)}
                         >
-                            Edit
+                            {editMode ? "Go back" : "Edit"}
                         </Button>
                     )}
                     {editMode ? (
                         <>
-                            <Typography
-                                id="modal-modal-title"
-                                variant="h6"
-                                component="h2"
-                            >
-                                Title: {question.title}
+                            <Typography variant="h6" color="text.primary">
+                                Edit question
                             </Typography>
-                            <Typography
-                                id="modal-modal-title-new"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Title:
-                            </Typography>
-                            <input
-                                type="text"
+                            <TextField
+                                label="Title"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
                                 value={updatedTitle}
                                 onChange={(e) =>
                                     setUpdatedTitle(e.target.value)
                                 }
-                                placeholder="Title"
-                                style={inputStyle}
                             />
-                            <Typography
-                                id="modal-modal-category"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Category:
-                            </Typography>
-                            <input
-                                type="text"
+                            <TextField
+                                label="Category"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
                                 value={updatedCategory}
                                 onChange={(e) =>
                                     setUpdatedCategory(e.target.value)
                                 }
-                                placeholder="Category"
-                                style={inputStyle}
                             />
-                            <Typography
-                                id="modal-modal-difficulty"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Difficulty:
-                            </Typography>
-                            <input
-                                type="text"
+                            <TextField
+                                label="Difficulty"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
                                 value={updatedDifficulty}
                                 onChange={(e) =>
                                     setUpdatedDifficulty(e.target.value)
                                 }
-                                placeholder="Difficulty"
-                                style={inputStyle}
                             />
-                            <Typography
-                                id="modal-modal-description"
-                                sx={{ mt: 2 }}
-                            >
-                                New Question Description:
-                            </Typography>
-                            <textarea
+                            <TextField
+                                label="Description"
+                                variant="outlined"
+                                fullWidth
+                                multiline
+                                rows={4}
+                                InputProps={{
+                                    inputComponent: TextareaAutosize,
+                                    inputProps: {
+                                        style: { resize: "both" }, // Allows resizing both horizontally and vertically
+                                    },
+                                }}
+                                margin="normal"
                                 value={updatedDescription}
                                 onChange={(e) =>
                                     setUpdatedDescription(e.target.value)
                                 }
-                                placeholder="Description"
-                                style={textareaStyle}
                             />
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    <Typography>Templates</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {updatedTemplates.map((template, index) => (
+                                        <Grid container spacing={2} key={index}>
+                                            <Grid item xs={12}>
+                                                <Typography variant="subtitle1">
+                                                    Language:{" "}
+                                                    {template.language}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    label="Starter Code"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    multiline
+                                                    rows={4}
+                                                    InputProps={{
+                                                        inputComponent:
+                                                            TextareaAutosize,
+                                                        inputProps: {
+                                                            style: {
+                                                                resize: "both",
+                                                            }, // Allows resizing both horizontally and vertically
+                                                        },
+                                                    }}
+                                                    value={template.starterCode}
+                                                    onChange={(e) =>
+                                                        handleTemplateChange(
+                                                            index,
+                                                            true,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    label="Driver Code"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    multiline
+                                                    rows={4}
+                                                    InputProps={{
+                                                        inputComponent:
+                                                            TextareaAutosize,
+                                                        inputProps: {
+                                                            style: {
+                                                                resize: "both",
+                                                            }, // Allows resizing both horizontally and vertically
+                                                        },
+                                                    }}
+                                                    value={
+                                                        template.driverCode ||
+                                                        ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleTemplateChange(
+                                                            index,
+                                                            false,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    ))}
+                                </AccordionDetails>
+                            </Accordion>
                             <Button
                                 variant="contained"
                                 onClick={handleConfirmEdit}
@@ -212,13 +303,14 @@ function DescriptionModal({
                             <Typography
                                 id="modal-modal-title"
                                 variant="h6"
-                                component="h2"
+                                color="text.primary"
                             >
                                 {question.title}
                             </Typography>
                             <Typography
                                 id="modal-modal-description"
                                 sx={{ mt: 2 }}
+                                color="text.primary"
                             >
                                 Question Description:{" "}
                                 {formatText(question.description)}
@@ -226,15 +318,59 @@ function DescriptionModal({
                             <Typography
                                 id="modal-modal-difficulty"
                                 sx={{ mt: 2 }}
+                                color="text.primary"
                             >
                                 Question Difficulty: {question.difficulty}
                             </Typography>
                             <Typography
                                 id="modal-modal-category"
                                 sx={{ mt: 2 }}
+                                color="text.primary"
                             >
                                 Question Category: {question.category}
                             </Typography>
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    <Typography>Templates</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {question.templates.map(
+                                        (template, index) => (
+                                            <Grid
+                                                container
+                                                spacing={2}
+                                                key={index}
+                                            >
+                                                <Grid item xs={12}>
+                                                    <Typography variant="subtitle1">
+                                                        Language:{" "}
+                                                        {template.language}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Typography variant="subtitle1">
+                                                        Starter Code:{" "}
+                                                        {formatText(
+                                                            template.starterCode
+                                                        )}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Typography variant="subtitle1">
+                                                        Driver Code:{" "}
+                                                        {formatText(
+                                                            template.driverCode ||
+                                                                ""
+                                                        )}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                        )
+                                    )}
+                                </AccordionDetails>
+                            </Accordion>
                         </>
                     )}
                 </Box>

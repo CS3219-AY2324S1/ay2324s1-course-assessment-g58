@@ -9,7 +9,7 @@ import {
     TableHead,
     TableRow,
     Paper,
-    Button
+    Button,
 } from "@mui/material";
 
 interface QuestionTableProps {
@@ -57,13 +57,22 @@ function QuestionTable({
                                 <TableCell>{question.category}</TableCell>
                                 <TableCell>{question.description}</TableCell>
                                 <TableCell>
-                                    <Button variant="contained" onClick={() => openModal(question)}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => openModal(question)}
+                                    >
                                         Details
                                     </Button>
                                 </TableCell>
                                 {admin && (
                                     <TableCell>
-                                        <Button variant="contained" color="secondary" onClick={() => handleDelete(question)}>
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            onClick={() =>
+                                                handleDelete(question)
+                                            }
+                                        >
                                             Delete
                                         </Button>
                                     </TableCell>

@@ -38,6 +38,30 @@ export async function fetchGet(url: string) {
     }
 }
 
+export async function fetchGetWithAuthorization(url: string, token: any) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: "GET",
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    });
+
+    const res = await response.json(); // parses JSON response into native JavaScript objects
+
+    if (response.status >= 300) {
+        throw new HttpError(res.status, res.message);
+    } else {
+        return res;
+    }
+}
+
 export async function fetchPost(url: string, data: any) {
     // Default options are marked with *
     const response = await fetch(url, {
@@ -48,6 +72,34 @@ export async function fetchPost(url: string, data: any) {
         headers: {
             "Content-Type": "application/json",
             // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+    const res = await response.json(); // parses JSON response into native JavaScript objects
+
+    if (response.status >= 300) {
+        throw new HttpError(res.status, res.message);
+    } else {
+        return res;
+    }
+}
+
+export async function fetchPostWithAuthorization(
+    url: string,
+    data: any,
+    token: any
+) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: "POST",
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
         },
         redirect: "follow", // manual, *follow, error
         referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
@@ -103,6 +155,35 @@ export async function fetchDelete(url: string, data: any) {
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
     const res = await response.json(); // parses JSON response into native JavaScript objects
+    if (response.status >= 300) {
+        throw new HttpError(res.status, res.message);
+    } else {
+        return res;
+    }
+}
+
+export async function fetchDeleteWithAuthorization(
+    url: string,
+    data: any,
+    token: any
+) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+        method: "DELETE",
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    });
+
+    const res = await response.json(); // parses JSON response into native JavaScript objects
+
     if (response.status >= 300) {
         throw new HttpError(res.status, res.message);
     } else {

@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
@@ -12,6 +12,8 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    Stack,
+    Grid,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
@@ -23,8 +25,8 @@ import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
 
 const CollabPage = () => {
-    const { user } = useAuth();
-    const { language, roomId, cancelMatching, questions } = useMatching();
+    const { userId, language, roomId, cancelMatching, questions } =
+        useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
     const [questionNumber, setQuestionNumber] = useState(0);
@@ -41,6 +43,11 @@ const CollabPage = () => {
     const [callActive, setCallActive] = useState(true);
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
+    const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
+    const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] =
+        useState(false);
+    const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] =
+        useState(false);
 
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
@@ -51,6 +58,9 @@ const CollabPage = () => {
     };
     const changeRole = () => {
         setInterviewer(!isInterviewer);
+        if (showInterviewerView) {
+            setShowInterviewerView(false);
+        }
     };
     const toggleVideo = () => {
         setCallActive(!callActive);
@@ -59,14 +69,9 @@ const CollabPage = () => {
     const handleClosePickRole = (event: any, reason: string) => {
         if (reason && reason == "backdropClick")
             return; /* This prevents modal from closing on an external click */
-        
-        if (reason && reason == "escapeKeyDown") 
-            return; //prevent user from closing dialog using esacpe button
-        setShowDialog(false);
-    };
 
-    const handleSnackbarClose = () => {
-        setSnackBarIsOpen(false);
+        if (reason && reason == "escapeKeyDown") return; //prevent user from closing dialog using esacpe button
+        setShowDialog(false);
     };
 
     const questionPanelProps = {
@@ -78,16 +83,36 @@ const CollabPage = () => {
     const handleNextQuestion = () => {
         socket?.emit("openNextQuestionPrompt");
     };
+
     // Called when this user accepts next question prompt
     const handleIPressedAccept = () => {
         setIHaveAcceptedNextQn(true);
         socket?.emit("aUserHasAcceptedNextQuestionPrompt");
     };
+
     // Called when this user rejects next question prompt
     const handleIPressedReject = () => {
         setIHaveAcceptedNextQn(false);
         socket?.emit("aUserHasRejectedNextQuestionPrompt");
     };
+
+    // Called when user tries to end session
+    const handleEndSession = () => {
+        socket?.emit("openEndSessionPrompt");
+    };
+
+    // Called when this user accepts end session prompt
+    const handleIPressedAcceptEndSession = () => {
+        setIHaveAcceptedEndSession(true);
+        socket?.emit("aUserHasAcceptedEndSessionPrompt");
+    };
+
+    // Called when this user rejects end session prompt
+    const handleIPressedRejectEndSession = () => {
+        setIHaveAcceptedEndSession(false);
+        socket?.emit("aUserHasRejectedEndSessionPrompt");
+    };
+
     const collabPageNavigationProps = {
         handleNextQuestion: handleNextQuestion,
         isNextQnHandshakeOpen: isNextQnHandshakeOpen,
@@ -95,7 +120,19 @@ const CollabPage = () => {
         handleIPressedAccept: handleIPressedAccept,
         handleIPressedReject: handleIPressedReject,
         iHaveAcceptedNextQn: iHaveAcceptedNextQn,
+        isLastQuestion: questionNumber >= questions.length - 1,
+        toggleInterviewerView: toggleInterviewerView,
+        showInterviewerView: showInterviewerView,
+        isInterviewer: isInterviewer,
+        startRoleChange: startRoleChange,
+        handleEndSession: handleEndSession,
+        isEndSessionHandshakeOpen: isEndSessionHandshakeOpen,
+        setIsEndSessionHandshakeOpen: setIsEndSessionHandshakeOpen,
+        handleIPressedAcceptEndSession: handleIPressedAcceptEndSession,
+        handleIPressedRejectEndSession: handleIPressedRejectEndSession,
+        iHaveAcceptedEndSession: iHaveAcceptedEndSession,
     };
+
     useEffect(() => {
         // Reject people with no roomId
         if (router.pathname == "/collab" && roomId === "") {
@@ -138,8 +175,7 @@ const CollabPage = () => {
             setIHaveAcceptedNextQn(false);
 
             if (questionNumber >= questions.length - 1) {
-                alert("You have completed all the questions!");
-                router.push("/");
+                setIsEndingSession(true);
             } else {
                 setQuestionNumber((prev) => prev + 1);
             }
@@ -148,10 +184,29 @@ const CollabPage = () => {
         // Server tells clients this when a client in room has rejected next question prompt
         socket.on("dontProceedWithNextQuestion", () => {
             console.log("dontProceedWithNextQuestion");
-            setSnackBarIsOpen(true);
-            //alert("Proposal to move on to next question has been rejected.");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
+
+            messageHandler("Next question request rejected", "warning");
+        });
+
+        // Server tells clients this when any client clicks on 'End session` button
+        socket.on("openEndSessionPrompt", () => {
+            setIsEndSessionHandshakeOpen(true);
+        });
+
+        // Server tells clients this when all clients in room have accepted end session prompt
+        socket.on("proceedWithEndSession", () => {
+            setIsEndSessionHandshakeOpen(false);
+            setIHaveAcceptedEndSession(false);
+            setIsEndingSession(true);
+        });
+
+        socket.on("dontProceedWithEndSession", () => {
+            setIsEndSessionHandshakeOpen(false);
+            setIHaveAcceptedEndSession(false);
+
+            messageHandler("End session request rejected", "warning");
         });
 
         return () => {
@@ -165,7 +220,19 @@ const CollabPage = () => {
         isIntervieweeChosen,
     ]);
 
-    // When unmounting this component i.e leaving page, cancel matching (leave mathcing service socket)
+    // Handle end session state when end session button is pressed or no more questions
+    useEffect(() => {
+        if (isEndingSession) {
+            // Clear ai chatbot messages
+            localStorage.removeItem("messages-aiChatbot");
+            setTimeout(() => {
+                setIsEndingSession(false);
+                router.push("/");
+            }, 3000);
+        }
+    }, [isEndingSession]);
+
+    // When unmounting this component i.e leaving page, cancel matching (leave matching service socket)
     useEffect(() => {
         return () => {
             cancelMatching();
@@ -173,121 +240,86 @@ const CollabPage = () => {
     }, []);
 
     return (
-        <div>
-            <CollabPageNavigation {...collabPageNavigationProps} />
-            <h1>Collab Page</h1>
-            <h2>Username: {user}</h2>
-            <h2>Room ID: {roomId}</h2>
-            {questions[questionNumber] ? (
-                <QuestionPanel {...questionPanelProps} />
-            ) : (
-                <p>No more questions available.</p>
-            )}
-            <div className="button-container">
-                <Box display="flex" alignItems="center">
-                    {isInterviewer && (
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={toggleInterviewerView}
-                            style={{
-                                backgroundColor: "#0073e6",
-                                color: "white",
-                                border: "2px solid #0051a5",
-                                marginRight: "10px",
-                            }}
-                        >
-                            {showInterviewerView
-                                ? "Hide Interviewer View"
-                                : "Show Interviewer View"}
-                        </Button>
+        <div>    
+            <Grid container={true} spacing={2} sx={{ marginTop: "5px" }}>
+                <Grid item xs={6}>
+                    {questions[questionNumber] ? (
+                        <QuestionPanel {...questionPanelProps} />
+                    ) : (
+                        <p>No more questions available.</p>
                     )}
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={startRoleChange}
-                        style={{
-                            backgroundColor: "#0073e6",
-                            color: "white",
-                            border: "2px solid #0051a5",
-                        }}
-                    >
-                        Switch roles
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={toggleVideo}
-                        style={{
-                            backgroundColor: "#0073e6",
-                            color: "white",
-                            border: "2px solid #0051a5",
-                        }}
-                    >
-                        Toggle Video
-                    </Button>
-                </Box>
-            </div>
-            <div className="code-editor-and-interviewer">
-                {/*Enter Code editor component here*/}
-                <CodeEditor
-                    language={language}
-                    roomId={roomId}
-                    editorContent={
-                        (language == LANGUAGE.PYTHON ? "## " : "// ") +
-                        "Type your solution here"
-                    }
-                />
-                {/*Until here*/}
-                {showInterviewerView && (
-                    <div className="interviewer-view-container">
-                        <InterviewerView />
-                    </div>
-                )}
-            </div>
-            <Dialog open={showDialog} onClose={handleClosePickRole} >
-                <DialogTitle>Pick a Role</DialogTitle>
-                <DialogContent>
-                    {!isInterviewerChosen && (
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            style={{ color: "black" }}
-                            onClick={() => {
-                                setInterviewer(true);
-                                setShowDialog(false);
-                                socket?.emit("interviewer chosen");
-                            }}
-                        >
-                            Interviewer
-                        </Button>
+                </Grid>
+                <Grid item xs={6}>
+                    <Stack direction="column" spacing={1}>
+                        <Box display="flex" justifyContent="space-between">
+                            {!isEndingSession && (
+                                <CollabPageNavigation
+                                    {...collabPageNavigationProps}
+                                />
+                            )}
+                        </Box>
+                        <CodeEditor
+                            language={language}
+                            roomId={roomId}
+                            editorContent={
+                                // questions[questionNumber]?.templates?.find(
+                                //     (template) => template.language === language
+                                // )?.starterCode ?? "test"
+                                questions[questionNumber]?.templates?.find(
+                                    (template) => template.language === language
+                                )?.starterCode || "test"
+                            }
+                            question={questions[questionNumber]}
+                        />
+                    </Stack>
+                    {showInterviewerView && (
+                        <div className="interviewer-view-container">
+                            <InterviewerView />
+                        </div>
                     )}
-                    {!isIntervieweeChosen && (
-                        <Button
-                            variant="contained"
-                            color="warning"
-                            style={{ color: "black" }}
-                            onClick={() => {
-                                setInterviewer(false);
-                                setShowDialog(false);
-                                socket?.emit("interviewee chosen");
-                            }}
-                        >
-                            Interviewee
-                        </Button>
-                    )}
-                </DialogContent>
-            </Dialog>
-            <SimpleSnackbar
-                snackBarIsOpen={snackBarIsOpen}
-                onClose={handleSnackbarClose}
-            />
-            <VideoAudioChat
-                      username1={user1socket}
-                      username2={user2socket}
-                      callActive={callActive}
-                      setCallActive={setCallActive}
-                    />
+
+                    <Dialog open={showDialog} onClose={handleClosePickRole}>
+                        <DialogTitle>Pick a Role</DialogTitle>
+                        <DialogContent>
+                            {!isInterviewerChosen && (
+                                <Button
+                                    variant="contained"
+                                    color="warning"
+                                    style={{ color: "black" }}
+                                    onClick={() => {
+                                        setInterviewer(true);
+                                        setShowDialog(false);
+                                        socket?.emit("interviewer chosen");
+                                    }}
+                                >
+                                    Interviewer
+                                </Button>
+                            )}
+                            {!isIntervieweeChosen && (
+                                <Button
+                                    variant="contained"
+                                    color="warning"
+                                    style={{ color: "black" }}
+                                    onClick={() => {
+                                        setInterviewer(false);
+                                        setShowDialog(false);
+                                        socket?.emit("interviewee chosen");
+                                    }}
+                                >
+                                    Interviewee
+                                </Button>
+                            )}
+                        </DialogContent>
+                    </Dialog>
+                </Grid>
+            </Grid>
+            <VideoAudioChat username1={user1socket} 
+                            username2={user2socket}
+                            callActive={callActive}
+                            setCallActive={setCallActive}
+                        />
+            {isEndingSession && <EndingSessionBackdrop />}
+
         </div>
     );
 };

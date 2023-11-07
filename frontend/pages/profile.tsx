@@ -1,14 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 import ProfilePage from "@/components/ProfilePage/ProfilePage";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginPage from "@/components/LoginPage/LoginPage";
+import NavigationBar from "@/components/NavigationBar/NavigationBar";
 
 const Profile: NextPage = () => {
     const { user } = useAuth();
 
-    return user ? <ProfilePage /> : <LoginPage />;
+    if (!user) {
+        return <LoginPage />;
+    }
+
+    return (
+        <>
+            <NavigationBar />
+            <ProfilePage />
+        </>
+    );
 };
 
 export default Profile;

@@ -31,66 +31,73 @@ interface EndSessionHandshakeModalProps {
     iHaveAcceptedEndSession: boolean;
 }
 
-export default function EndSessionModal(
-    { isEndSessionHandshakeOpen,
-      setIsEndSessionHandshakeOpen,
-      handleIPressedAcceptEndSession,
-      handleIPressedRejectEndSession,
-      iHaveAcceptedEndSession }: EndSessionHandshakeModalProps) {
-  const handleClose = (event: any, reason: string) => {
-    if (reason && reason == "backdropClick")
-      return; /* This prevents modal from closing on an external click */
+export default function EndSessionModal({
+    isEndSessionHandshakeOpen,
+    setIsEndSessionHandshakeOpen,
+    handleIPressedAcceptEndSession,
+    handleIPressedRejectEndSession,
+    iHaveAcceptedEndSession,
+}: EndSessionHandshakeModalProps) {
+    const handleClose = (event: any, reason: string) => {
+        if (reason && reason == "backdropClick")
+            return; /* This prevents modal from closing on an external click */
 
-      if (reason && reason == "escapeKeyDown") 
-            return; //prevent user from closing dialog using esacpe button
-    setIsEndSessionHandshakeOpen(false);
-  };
-  return (
-    <div>
-      <Modal
-        open={isEndSessionHandshakeOpen}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Stack sx={{ width: '100%' }} spacing={2}>
-              <Alert severity="error">
-                <AlertTitle>Warning</AlertTitle>
-                Are you sure you want to end the session? This is irreversible.
-              </Alert>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Proposal to end the session.
-            </Typography>
-          </Stack>
-          {iHaveAcceptedEndSession ? (
-            <Stack className="items-center">
-              <CircularProgress size="2rem" thickness={3} />
-              <Typography>
-                Waiting for other members to accept/reject the proposal.
-              </Typography>
-            </Stack>
-          ) : (
-            <Box>
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={handleIPressedAcceptEndSession}
-              >
-                Accept
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={handleIPressedRejectEndSession}
-              >
-                Reject
-              </Button>
-            </Box>
-          )}
-          
-        </Box>
-      </Modal>
-    </div>
-  );
+        if (reason && reason == "escapeKeyDown") return; //prevent user from closing dialog using esacpe button
+        setIsEndSessionHandshakeOpen(false);
+    };
+    return (
+        <div>
+            <Modal
+                open={isEndSessionHandshakeOpen}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Stack sx={{ width: "100%" }} spacing={2}>
+                        <Alert severity="error">
+                            <AlertTitle>Warning</AlertTitle>
+                            Are you sure you want to end the session? This is
+                            irreversible.
+                        </Alert>
+                        <Typography
+                            id="modal-modal-title"
+                            variant="h6"
+                            component="h2"
+                            color="text.primary"
+                        >
+                            Proposal to end the session.
+                        </Typography>
+                    </Stack>
+                    {iHaveAcceptedEndSession ? (
+                        <Stack className="items-center">
+                            <CircularProgress size="2rem" thickness={3} />
+                            <Typography color="text.primary">
+                                Waiting for other members to accept/reject the
+                                proposal.
+                            </Typography>
+                        </Stack>
+                    ) : (
+                        <Box>
+                            <Button
+                                variant="outlined"
+                                color="success"
+                                onClick={handleIPressedAcceptEndSession}
+                            >
+                                Accept
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                onClick={handleIPressedRejectEndSession}
+                            >
+                                Reject
+                            </Button>
+                        </Box>
+                    )}
+                </Box>
+            </Modal>
+        </div>
+    );
 }
+
