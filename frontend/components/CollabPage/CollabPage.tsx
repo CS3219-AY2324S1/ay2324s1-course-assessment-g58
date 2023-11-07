@@ -73,6 +73,8 @@ const CollabPage = () => {
         sendStartRequest: sendStartRequest,
         sendStopRequest: sendStopRequest,
         sendResetRequest: sendResetRequest,
+        setIsOpen: (x: boolean) => {}, // will be filled up by FabMenu
+        isOpen: false, // will be filled up by FabMenu   
     };
 
     const toggleInterviewerView = () => {

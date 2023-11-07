@@ -17,10 +17,6 @@ const FabMenu = ({ stopwatchProps, username1, username2 }: FabMenuProps) => {
     const open = Boolean(anchorEl);
     const [callActive, setCallActive] = useState(true);
 
-    const toggleVideo = () => {
-        setCallActive(!callActive);
-    };
-
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -31,12 +27,20 @@ const FabMenu = ({ stopwatchProps, username1, username2 }: FabMenuProps) => {
     };
     
     const handleClickStopwatch = () => {
+        setStopwatchOpen(true);
         setAnchorEl(null);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleCloseStopwatch = () => {
+        setStopwatchOpen(false);
+    };
+
+    stopwatchProps.setIsOpen = setStopwatchOpen;
+    stopwatchProps.isOpen = stopwatchOpen;
 
     return (
         <div>
@@ -74,6 +78,7 @@ const FabMenu = ({ stopwatchProps, username1, username2 }: FabMenuProps) => {
                 callActive={callActive}
                 setCallActive={setCallActive}
             />
+            <Stopwatch {...stopwatchProps} />
         </div>
     );
 };

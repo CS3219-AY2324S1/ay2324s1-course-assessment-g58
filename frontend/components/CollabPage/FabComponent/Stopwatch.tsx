@@ -5,12 +5,13 @@ import {
   Typography,
   IconButton,
   Grid,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
+import Draggable from "react-draggable";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
+import CloseIcon from "@mui/icons-material/Close";
 import RestoreIcon from "@mui/icons-material/Restore";
-import { send } from "process";
 
 export interface StopwatchProps {
     isRunning: boolean;
@@ -19,6 +20,8 @@ export interface StopwatchProps {
     sendStartRequest: () => void;
     sendStopRequest: () => void;
     sendResetRequest: () => void;
+    setIsOpen: (isOpen: boolean) => void;
+    isOpen: boolean;
 }
 
 const Stopwatch = ({
@@ -27,7 +30,9 @@ const Stopwatch = ({
     setIsReset,
     sendStartRequest,
     sendStopRequest,
-    sendResetRequest }: StopwatchProps) => {
+    sendResetRequest,
+    setIsOpen,
+    isOpen }: StopwatchProps) => {
   const [time, setTime] = useState<number>(0.0);
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -61,6 +66,10 @@ const Stopwatch = ({
     sendResetRequest();
   };
 
+  const onClose = () => {
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     if (isRunning) {
       setIsActive(true);
@@ -89,21 +98,48 @@ const Stopwatch = ({
   }, [isActive]);
 
   return (
-    <>
-      <Grid m={2} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Grid item>{formatTime()}</Grid>
-        <Grid item>
-          <ControlButtons
-            args={{
-              time,
-              isActive,
-              handlePlayPause,
-              handleReset
+    <div className={isOpen ? "stopwatch" : "hidden"}>
+      <Draggable>
+        <Box 
+          sx={{
+            position: 'absolute', // Centering in the viewport
+            top: '50%', // Align vertically
+            left: '50%', // Align horizontally
+            transform: 'translate(-50%, -50%)', // Adjust the position to center
+            bgcolor: 'background.paper', // Use theme's paper color for background
+            boxShadow: 3, // Apply some shadow
+            p: 4, // Padding around the content
+            borderRadius: 'borderRadius' // Optional: rounded corners
+          }}
+        >
+          {/* Close button at the top right corner */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
             }}
-          />
-        </Grid>
-      </Grid>
-    </>
+          >
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Grid m={2} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <Grid item>{formatTime()}</Grid>
+            <Grid item>
+              <ControlButtons
+                args={{
+                  time,
+                  isActive,
+                  handlePlayPause,
+                  handleReset
+                }}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+      </Draggable>
+    </div>
   );
 };
 
