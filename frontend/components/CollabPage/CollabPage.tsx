@@ -40,6 +40,7 @@ const CollabPage = () => {
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
+    const [callActive, setCallActive] = useState(true);
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
@@ -60,6 +61,9 @@ const CollabPage = () => {
         if (showInterviewerView) {
             setShowInterviewerView(false);
         }
+    };
+    const toggleVideo = () => {
+        setCallActive(!callActive);
     };
 
     const handleClosePickRole = (event: any, reason: string) => {
@@ -236,7 +240,7 @@ const CollabPage = () => {
     }, []);
 
     return (
-        <div>
+        <div>    
             <Grid container={true} spacing={2} sx={{ marginTop: "5px" }}>
                 <Grid item xs={6}>
                     {questions[questionNumber] ? (
@@ -273,6 +277,7 @@ const CollabPage = () => {
                             <InterviewerView />
                         </div>
                     )}
+
                     <Dialog open={showDialog} onClose={handleClosePickRole}>
                         <DialogTitle>Pick a Role</DialogTitle>
                         <DialogContent>
@@ -308,8 +313,13 @@ const CollabPage = () => {
                     </Dialog>
                 </Grid>
             </Grid>
-            <VideoAudioChat username1={user1socket} username2={user2socket} />
+            <VideoAudioChat username1={user1socket} 
+                            username2={user2socket}
+                            callActive={callActive}
+                            setCallActive={setCallActive}
+                        />
             {isEndingSession && <EndingSessionBackdrop />}
+
         </div>
     );
 };
