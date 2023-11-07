@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Fab, Menu, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { StopwatchProps } from "./Stopwatch";
@@ -11,11 +11,15 @@ interface FabMenuProps {
     username2: string;
 }
 
-const FabMenu = () => {
+const FabMenu = ({ stopwatchProps, username1, username2 }: FabMenuProps) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [stopwatchOpen, setStopwatchOpen] = React.useState(false);
-    const [videoOpen, setVideoOpen] = React.useState(false);
     const open = Boolean(anchorEl);
+    const [callActive, setCallActive] = useState(true);
+
+    const toggleVideo = () => {
+        setCallActive(!callActive);
+    };
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -23,6 +27,7 @@ const FabMenu = () => {
 
     const handleClickVideo = () => {
         setAnchorEl(null);
+        setCallActive(true);
     };
     
     const handleClickStopwatch = () => {
@@ -63,6 +68,12 @@ const FabMenu = () => {
                 <MenuItem onClick={handleClickVideo}>Video</MenuItem>
                 <MenuItem onClick={handleClickStopwatch}>Stopwatch</MenuItem>
             </Menu>
+            <VideoAudioChat 
+                username1={username1} 
+                username2={username2}
+                callActive={callActive}
+                setCallActive={setCallActive}
+            />
         </div>
     );
 };

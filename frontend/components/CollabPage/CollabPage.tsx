@@ -14,6 +14,7 @@ import {
     DialogContent,
     Stack,
     Grid,
+    Fab,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import { LANGUAGE } from "@/utils/enums";
@@ -23,8 +24,8 @@ import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
-import Stopwatch from "./FabComponent/Stopwatch";
 import FabMenu from "./FabComponent/FabMenu";
+import { StopwatchProps } from "./FabComponent/Stopwatch";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -65,7 +66,7 @@ const CollabPage = () => {
         socket?.emit("stopwatch_reset_request");
     };
 
-    const stopwatchProps = {
+    const stopwatchProps: StopwatchProps = {
         isRunning: isRunning,
         isReset: isReset,
         setIsReset: setIsReset,
@@ -275,7 +276,7 @@ const CollabPage = () => {
     }, []);
 
     return (
-        <div>
+        <div>    
             <Grid container={true} spacing={2} sx={{ marginTop: "5px" }}>
                 <Grid item xs={6}>
                     {questions[questionNumber] ? (
@@ -312,6 +313,7 @@ const CollabPage = () => {
                             <InterviewerView />
                         </div>
                     )}
+
                     <Dialog open={showDialog} onClose={handleClosePickRole}>
                         <DialogTitle>Pick a Role</DialogTitle>
                         <DialogContent>
@@ -347,10 +349,13 @@ const CollabPage = () => {
                     </Dialog>
                 </Grid>
             </Grid>
-            <VideoAudioChat username1={user1socket} username2={user2socket} />
-            {/* <Stopwatch {...stopwatchProps} /> */}
-            <FabMenu />
+            <FabMenu
+                stopwatchProps={stopwatchProps}
+                username1={user1socket}
+                username2={user2socket}
+            />
             {isEndingSession && <EndingSessionBackdrop />}
+
         </div>
     );
 };

@@ -18,6 +18,7 @@ interface RejectEndSessionSnackbarProps {
 }
 
 export default function SimpleSnackbar({
+
     rejectEndSessionSnackBarIsOpen,
     onClose,
 }: RejectEndSessionSnackbarProps) {
