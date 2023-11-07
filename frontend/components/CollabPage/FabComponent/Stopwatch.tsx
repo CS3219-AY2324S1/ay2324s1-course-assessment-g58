@@ -10,7 +10,7 @@ import {
 import Draggable from "react-draggable";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
-import CloseIcon from "@mui/icons-material/Close";
+import MinimizeIcon from '@mui/icons-material/Minimize';
 import RestoreIcon from "@mui/icons-material/Restore";
 
 export interface StopwatchProps {
@@ -121,7 +121,7 @@ const Stopwatch = ({
             }}
           >
             <IconButton onClick={onClose}>
-              <CloseIcon />
+              <MinimizeIcon />
             </IconButton>
           </Box>
           <Grid m={2} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
