@@ -21,6 +21,8 @@ import SimpleSnackbar from "./RejectQuestionSnackBar";
 import VideoAudioChat from "./VideoComm";
 import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
+import { enqueueSnackbar } from "notistack";
+import { messageHandler } from "@/utils/handlers";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -41,10 +43,11 @@ const CollabPage = () => {
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
-    const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] = useState(false);
-    const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] = useState(false);
-    const [endSessionSnackBarIsOpen, setEndSessionSnackBarIsOpen] = useState(false);
-  
+    const [isEndSessionHandshakeOpen, setIsEndSessionHandshakeOpen] =
+        useState(false);
+    const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] =
+        useState(false);
+
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
     };
@@ -65,14 +68,6 @@ const CollabPage = () => {
 
         if (reason && reason == "escapeKeyDown") return; //prevent user from closing dialog using esacpe button
         setShowDialog(false);
-    };
-
-    const handleSnackbarClose = () => {
-        setSnackBarIsOpen(false);
-    };
-
-    const handleEndSessionSnackbarClose = () => {
-        setEndSessionSnackBarIsOpen(false);
     };
 
     const questionPanelProps = {
@@ -185,9 +180,10 @@ const CollabPage = () => {
         // Server tells clients this when a client in room has rejected next question prompt
         socket.on("dontProceedWithNextQuestion", () => {
             console.log("dontProceedWithNextQuestion");
-            setSnackBarIsOpen(true);
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
+
+            messageHandler("Next question request rejected", "warning");
         });
 
         // Server tells clients this when any client clicks on 'End session` button
@@ -197,18 +193,16 @@ const CollabPage = () => {
 
         // Server tells clients this when all clients in room have accepted end session prompt
         socket.on("proceedWithEndSession", () => {
-            console.log("proceedWithEndSession");
             setIsEndSessionHandshakeOpen(false);
             setIHaveAcceptedEndSession(false);
-
             setIsEndingSession(true);
         });
 
         socket.on("dontProceedWithEndSession", () => {
-            console.log("dontProceedWithEndSession");
-            setEndSessionSnackBarIsOpen(true);
             setIsEndSessionHandshakeOpen(false);
             setIHaveAcceptedEndSession(false);
+
+            messageHandler("End session request rejected", "warning");
         });
 
         return () => {
@@ -254,9 +248,11 @@ const CollabPage = () => {
                 <Grid item xs={6}>
                     <Stack direction="column" spacing={1}>
                         <Box display="flex" justifyContent="space-between">
-                            {!isEndingSession && (<CollabPageNavigation
-                                {...collabPageNavigationProps}
-                            />)}
+                            {!isEndingSession && (
+                                <CollabPageNavigation
+                                    {...collabPageNavigationProps}
+                                />
+                            )}
                         </Box>
                         <CodeEditor
                             language={language}
@@ -267,7 +263,7 @@ const CollabPage = () => {
                                 // )?.starterCode ?? "test"
                                 questions[questionNumber]?.templates?.find(
                                     (template) => template.language === language
-                                )?.starterCode || "test"   
+                                )?.starterCode || "test"
                             }
                             question={questions[questionNumber]}
                         />
@@ -312,19 +308,8 @@ const CollabPage = () => {
                     </Dialog>
                 </Grid>
             </Grid>
-            <SimpleSnackbar
-                snackBarIsOpen={snackBarIsOpen}
-                onClose={handleSnackbarClose}
-            />
-            <VideoAudioChat
-                      username1={user1socket}
-                      username2={user2socket}
-                    />
-            <RejectEndSessionSnackBar
-                rejectEndSessionSnackBarIsOpen={endSessionSnackBarIsOpen}
-                onClose={handleEndSessionSnackbarClose}
-            />
-            {isEndingSession && (<EndingSessionBackdrop/>)}
+            <VideoAudioChat username1={user1socket} username2={user2socket} />
+            {isEndingSession && <EndingSessionBackdrop />}
         </div>
     );
 };

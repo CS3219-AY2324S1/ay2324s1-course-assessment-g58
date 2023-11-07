@@ -28,6 +28,8 @@ import { useEffect, useState, FormEvent } from "react";
 import { fetchGet, fetchPut, fetchDelete, fetchPost } from "@/utils/apiHelpers";
 import ContributionTracker from "./ContributionTracker";
 import { validateEmail } from "@/utils/validationHelpers";
+import { enqueueSnackbar } from "notistack";
+import { messageHandler } from "@/utils/handlers";
 
 type User = {
     username: string;
@@ -58,9 +60,13 @@ const ProfilePage = () => {
                 // get new token
                 localStorage.setItem("accessToken", res.data.token);
                 setUser(updatedUsername);
-                alert("Success! Updated: " + res.data.user.email);
+                messageHandler(
+                    "Success! Updated: " + res.data.user.email,
+                    "success"
+                );
             } else {
-                alert(res.message);
+                enqueueSnackbar(res.message, { variant: "error" });
+                messageHandler(res.message, "error");
             }
         });
     };
@@ -73,10 +79,13 @@ const ProfilePage = () => {
             console.log(res);
             if (res.status == 200) {
                 setIsDialogOpen(false);
-                alert("Success! Deleted: " + res.data.email);
+                messageHandler(
+                    "Success! Deleted: " + res.data.email,
+                    "success"
+                );
                 logout();
             } else {
-                alert(res.message);
+                messageHandler(res.message, "error");
             }
         });
     };
@@ -101,7 +110,7 @@ const ProfilePage = () => {
                     setInvites([...invites, inviteeEmail]);
                     setInviteeEmail("");
                 } else {
-                    alert(res.message);
+                    messageHandler(res.message, "error");
                     console.error("Create failed");
                 }
             })

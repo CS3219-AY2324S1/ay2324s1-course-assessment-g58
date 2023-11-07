@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../contexts/AuthContext";
-import QuestionPage from "../components/QuestionsPage/QuestionsPage";
+import HomePage from "../components/HomePage/HomePage";
 import { NextPage } from "next";
+import NavigationBar from "@/components/NavigationBar/NavigationBar";
 
 const Home: NextPage = () => {
     const { user } = useAuth();
@@ -23,7 +24,12 @@ const Home: NextPage = () => {
         );
     }
 
-    return <QuestionPage />;
+    return (
+        <>
+            <NavigationBar />
+            <HomePage />
+        </>
+    );
 };
 
 export default Home;

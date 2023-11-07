@@ -24,6 +24,7 @@
     "eslint-config-next": "13.4.19",
     "monaco-editor": "^0.43.0",
     "next": "13.4.19",
+    "notistack": "^3.0.1",
     "peerjs": "^1.5.1",
     "postcss": "8.4.29",
     "react": "18.2.0",

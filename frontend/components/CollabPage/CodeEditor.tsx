@@ -14,6 +14,7 @@ import DataForCompilerService from "@/types/DataForCompilerService";
 import CompilerServiceResult, {
     defaultRunCodeResults,
 } from "@/types/CompilerServiceResult";
+import { messageHandler } from "@/utils/handlers";
 
 const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -26,7 +27,8 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         defaultRunCodeResults
     );
     const [isRunningCode, setIsRunningCode] = useState<boolean>(false);
-    const [editorContentState, setEditorContentState] = useState<string>(editorContent);
+    const [editorContentState, setEditorContentState] =
+        useState<string>(editorContent);
 
     // options for monaco editor
     const options: editor.IStandaloneEditorConstructionOptions = {
@@ -63,8 +65,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             socketRef.current?.emit("runCodeDone", compileResult);
             console.log(compileResult);
         } else {
-            socketRef.current?.emit("runCodeDone", defaultRunCodeResults);
-            alert(response.message);
+            messageHandler(response.message, "error");
         }
     };
 
