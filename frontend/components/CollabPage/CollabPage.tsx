@@ -23,6 +23,7 @@ import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
+import Stopwatch from "./Stopwatch/Stopwatch";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -309,6 +310,7 @@ const CollabPage = () => {
                 </Grid>
             </Grid>
             <VideoAudioChat username1={user1socket} username2={user2socket} />
+            <Stopwatch />
             {isEndingSession && <EndingSessionBackdrop />}
         </div>
     );
