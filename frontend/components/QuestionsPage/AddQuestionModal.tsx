@@ -16,6 +16,7 @@ import Question, {
     questionTemplate,
     defaultQuestionTemplates,
 } from "@/types/Question";
+import { messageHandler } from "@/utils/handlers";
 
 interface AddQuestionModalProps {
     handleClose: () => void;
@@ -64,9 +65,7 @@ function AddQuestionModal({ handleClose, addQuestion }: AddQuestionModalProps) {
 
     const handleAddQuestion = async () => {
         if (!title || !description || !difficulty || !category) {
-            alert(
-                "Fill out all of title, description, difficulty, and category"
-            );
+            messageHandler("All fields required", "error");
             return;
         }
 
