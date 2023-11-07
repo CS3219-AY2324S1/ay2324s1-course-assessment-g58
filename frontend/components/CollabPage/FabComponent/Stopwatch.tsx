@@ -10,8 +10,24 @@ import {
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
 import RestoreIcon from "@mui/icons-material/Restore";
+import { send } from "process";
 
-const Stopwatch = () => {
+export interface StopwatchProps {
+    isRunning: boolean;
+    isReset: boolean;
+    setIsReset: (isReset: boolean) => void;
+    sendStartRequest: () => void;
+    sendStopRequest: () => void;
+    sendResetRequest: () => void;
+}
+
+const Stopwatch = ({
+    isRunning,
+    isReset,
+    setIsReset,
+    sendStartRequest,
+    sendStopRequest,
+    sendResetRequest }: StopwatchProps) => {
   const [time, setTime] = useState<number>(0.0);
   const [isActive, setIsActive] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,12 +51,31 @@ const Stopwatch = () => {
   };
 
   const handlePlayPause = () => {
-    setIsActive(!isActive);
+    if (isActive) {
+      sendStopRequest();
+    } else {
+      sendStartRequest();
+    }
   };
   const handleReset = () => {
-    setTime(0);
-    setIsActive(false);
+    sendResetRequest();
   };
+
+  useEffect(() => {
+    if (isRunning) {
+      setIsActive(true);
+    } else {
+      setIsActive(false);
+    }
+  
+  }, [isRunning]);
+
+  useEffect(() => {
+    if (isReset) {
+      setIsReset(false);
+      setTime(0);
+    }
+  }, [isReset]);
 
   useEffect(() => {
     if (isActive) {

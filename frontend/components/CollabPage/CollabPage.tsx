@@ -23,7 +23,8 @@ import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
-import Stopwatch from "./Stopwatch/Stopwatch";
+import Stopwatch from "./FabComponent/Stopwatch";
+import FabMenu from "./FabComponent/FabMenu";
 
 const CollabPage = () => {
     const { userId, language, roomId, cancelMatching, questions } =
@@ -48,6 +49,30 @@ const CollabPage = () => {
         useState(false);
     const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] =
         useState(false);
+    // Stopwatch stuff
+    const [isRunning, setIsRunning] = useState(false);
+    const [isReset, setIsReset] = useState(false);
+
+    const sendStartRequest = () => {
+        socket?.emit("stopwatch_start_request");
+    };
+
+    const sendStopRequest = () => {
+        socket?.emit("stopwatch_stop_request");
+    };
+
+    const sendResetRequest = () => {
+        socket?.emit("stopwatch_reset_request");
+    };
+
+    const stopwatchProps = {
+        isRunning: isRunning,
+        isReset: isReset,
+        setIsReset: setIsReset,
+        sendStartRequest: sendStartRequest,
+        sendStopRequest: sendStopRequest,
+        sendResetRequest: sendResetRequest,
+    };
 
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
@@ -205,6 +230,19 @@ const CollabPage = () => {
 
             messageHandler("End session request rejected", "warning");
         });
+        
+        socket.on("start_stopwatch", () => {
+            setIsRunning(true);
+        });
+
+        socket.on("stop_stopwatch", () => {
+            setIsRunning(false);
+        });
+
+        socket.on("reset_stopwatch", () => {
+            setIsReset(true);
+            setIsRunning(false);
+        });
 
         return () => {
             socket.disconnect();
@@ -310,7 +348,8 @@ const CollabPage = () => {
                 </Grid>
             </Grid>
             <VideoAudioChat username1={user1socket} username2={user2socket} />
-            <Stopwatch />
+            {/* <Stopwatch {...stopwatchProps} /> */}
+            <FabMenu />
             {isEndingSession && <EndingSessionBackdrop />}
         </div>
     );
