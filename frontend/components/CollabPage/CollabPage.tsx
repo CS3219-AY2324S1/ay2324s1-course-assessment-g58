@@ -16,12 +16,8 @@ import {
     Grid,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
-import { LANGUAGE } from "@/utils/enums";
-import SimpleSnackbar from "./RejectQuestionSnackBar";
 import VideoAudioChat from "./VideoComm";
-import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
-import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
 
 const CollabPage = () => {
@@ -39,7 +35,6 @@ const CollabPage = () => {
         useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
-    const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
