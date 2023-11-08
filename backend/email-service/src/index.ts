@@ -16,5 +16,5 @@ app.use(express.json());
 app.use("/email", emailRouter);
 
 app.get("/", (req: Request, res: Response) => {
-    console.log("Hello from email-service!");
+    res.send("Hello from email-service!");
 });
