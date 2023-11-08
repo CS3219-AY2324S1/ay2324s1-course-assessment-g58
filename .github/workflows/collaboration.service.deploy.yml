@@ -17,6 +17,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Set up environment
+      run: |
+        echo "NEXT_PUBLIC_PORT_NUMBER=3001" >> .env
+        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+        cat .env # Verify that secrets are set
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
