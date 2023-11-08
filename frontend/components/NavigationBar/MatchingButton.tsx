@@ -59,9 +59,9 @@ const MatchingButton = () => {
     const handleMatching = () => {
         setTimeout(false);
         // Handle errors
-        if (difficulty === null || language === null) {
-            setMissingDifficulty(difficulty === null);
-            setMissingLanguage(language === null);
+        if (difficulty === "" || language === "") {
+            setMissingDifficulty(difficulty === "");
+            setMissingLanguage(language === "");
             return;
         }
 
