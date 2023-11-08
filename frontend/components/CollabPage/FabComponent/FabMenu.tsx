@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Fab, Menu, MenuItem } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import React, { useState } from "react";
+import { Fab, Menu, MenuItem } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import { StopwatchProps } from "./Stopwatch";
-import Stopwatch from './Stopwatch';
-import VideoAudioChat from '../VideoComm';
+import Stopwatch from "./Stopwatch";
+import dynamic from "next/dynamic";
+const VideoAudioChat = dynamic(() => import("../VideoComm"), { ssr: false });
 
 interface FabMenuProps {
     stopwatchProps: StopwatchProps;
@@ -61,12 +62,12 @@ const FabMenu = ({ stopwatchProps, username1, username2 }: FabMenuProps) => {
                 open={open}
                 onClose={handleClose}
                 anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                 }}
                 transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
+                    vertical: "top",
+                    horizontal: "left",
                 }}
             >
                 <MenuItem onClick={handleClickVideo}>Video</MenuItem>
