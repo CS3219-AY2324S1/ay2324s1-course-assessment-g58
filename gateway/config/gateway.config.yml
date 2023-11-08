@@ -4,7 +4,6 @@ https:
     port: 8080
 admin:
     port: 9876
-    host: localhost
 apiEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
     user:
@@ -38,15 +37,10 @@ serviceEndpoints:
     # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
     # For deployment, uncomment the environment variables and comment the localhost urls.
     userService:
-        url: "http://localhost:3001"
-        # url: "${USER_SERVER_URL}"
+        url: "${USER_SERVICE_URL}"
     questionService:
-        url: "http://localhost:3002"
-        # url: "${QUESTION_SERVICE_URL}"
-    # compilerService:
-    #     url: "http://localhost:3006"
-    # aiService:
-    #     url: "http://localhost:3008"
+        url: "${QUESTION_SERVICE_URL}"
+
 policies:
     - basic-auth
     - cors

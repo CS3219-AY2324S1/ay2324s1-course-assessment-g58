@@ -15,7 +15,6 @@ module.exports = {
                 bodyParser.json()(req, res, () => {
                     bodyParser.urlencoded({ extended: true })(req, res, async () => {
                     //TODO: make secure
-                    const RABBITMQ_URL = 'amqp://user:password@localhost:5672';
                     const message = req.body;
                     const req_destination = req.route.path;
                     console.log("req destination: ", req_destination);
@@ -23,7 +22,7 @@ module.exports = {
                     const QUEUE = req_destination === "/enqueue-request-compiler"
                         ? 'messages-compiler'
                         : 'messages-ai';
-                    const connection = await amqp.connect(RABBITMQ_URL);
+                    const connection = await amqp.connect(process.env.RABBITMQ_URL);
                     const channel = await connection.createChannel();
                     channel.responseEmitter = new EventEmitter();
                     channel.responseEmitter.setMaxListeners(0);

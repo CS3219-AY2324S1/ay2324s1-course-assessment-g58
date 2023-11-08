@@ -1,7 +1,6 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
@@ -16,16 +15,13 @@ import {
     Grid,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
-import { LANGUAGE } from "@/utils/enums";
-import SimpleSnackbar from "./RejectQuestionSnackBar";
-import VideoAudioChat from "./VideoComm";
-import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
+import dynamic from "next/dynamic";
+const VideoAudioChat = dynamic(() => import("./VideoComm"), { ssr: false });
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
-import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
 
 const CollabPage = () => {
-    const { userId, language, roomId, cancelMatching, questions } =
+    const { language, roomId, cancelMatching, questions } =
         useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
@@ -39,7 +35,6 @@ const CollabPage = () => {
         useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
-    const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
     const [callActive, setCallActive] = useState(true);
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
