@@ -38,11 +38,6 @@ const CollabPage = () => {
         useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
-<<<<<<< HEAD
-    const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
-=======
-    const [callActive, setCallActive] = useState(true);
->>>>>>> 2e67647073b954455cc0e106e26ca745fd1cab07
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
