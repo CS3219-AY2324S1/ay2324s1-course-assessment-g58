@@ -1,3 +1,4 @@
+// TO REMOVE ****
 const amqp = require('amqplib');
 const { v4: generateUuid } = require('uuid');
 
@@ -6,13 +7,12 @@ module.exports = {
   schema: {},
   policy: (actionParams) => {
     return async (req, res, next) => {
-      const RABBITMQ_URL = 'amqp://user:password@localhost:5672';
       const QUEUE = 'messages';
 
       const message = req.body;
       console.log(message);
 
-      const connection = await amqp.connect(RABBITMQ_URL);
+      const connection = await amqp.connect(process.env.RABBITMQ_URL);
       const channel = await connection.createChannel();
 
       const correlationId = generateUuid();

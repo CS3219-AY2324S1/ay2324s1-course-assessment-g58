@@ -1,7 +1,6 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { useMatching } from "@/contexts/MatchingContext";
 import { useRouter } from "next/router";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import CollabPageNavigation from "./CollabPageQuestion/CollabPageNavigation";
 import QuestionPanel from "./CollabPageQuestion/QuestionPanel";
@@ -17,18 +16,15 @@ import {
     Fab,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
-import { LANGUAGE } from "@/utils/enums";
-import SimpleSnackbar from "./RejectQuestionSnackBar";
-import VideoAudioChat from "./VideoComm";
-import RejectEndSessionSnackBar from "./RejectEndSessionSnackBar";
+import dynamic from "next/dynamic";
+const VideoAudioChat = dynamic(() => import("./VideoComm"), { ssr: false });
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
-import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
 import FabMenu from "./FabComponent/FabMenu";
 import { StopwatchProps } from "./FabComponent/Stopwatch";
 
 const CollabPage = () => {
-    const { userId, language, roomId, cancelMatching, questions } =
+    const { language, roomId, cancelMatching, questions } =
         useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
@@ -42,7 +38,11 @@ const CollabPage = () => {
         useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
+<<<<<<< HEAD
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
+=======
+    const [callActive, setCallActive] = useState(true);
+>>>>>>> 2e67647073b954455cc0e106e26ca745fd1cab07
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
