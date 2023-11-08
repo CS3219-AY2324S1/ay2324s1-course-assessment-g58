@@ -192,6 +192,24 @@ io.on("connection", (socket: Socket) => {
             .emit("runCodeDone", results);
     });
 
+    extendedSocket.on("stopwatch_start_request", () => {
+        io.sockets
+            .in(extendedSocket.roomId)
+            .emit("start_stopwatch");
+    });
+
+    extendedSocket.on("stopwatch_stop_request", () => {
+        io.sockets
+            .in(extendedSocket.roomId)
+            .emit("stop_stopwatch");
+    });
+
+    extendedSocket.on("stopwatch_reset_request", () => {
+        io.sockets
+            .in(extendedSocket.roomId)
+            .emit("reset_stopwatch");
+    });
+
     // Handle socket disconnection
     extendedSocket.on("disconnect", (reason) => {
         console.log(

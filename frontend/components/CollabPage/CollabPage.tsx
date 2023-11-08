@@ -13,12 +13,15 @@ import {
     DialogContent,
     Stack,
     Grid,
+    Fab,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import dynamic from "next/dynamic";
 const VideoAudioChat = dynamic(() => import("./VideoComm"), { ssr: false });
 import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { messageHandler } from "@/utils/handlers";
+import FabMenu from "./FabComponent/FabMenu";
+import { StopwatchProps } from "./FabComponent/Stopwatch";
 
 const CollabPage = () => {
     const { language, roomId, cancelMatching, questions } =
@@ -35,7 +38,6 @@ const CollabPage = () => {
         useState<boolean>(false);
     const [showInterviewerView, setShowInterviewerView] = useState(false);
     const [showDialog, setShowDialog] = useState(true);
-    const [callActive, setCallActive] = useState(true);
     const user1socket = roomId.split("*-*")[0];
     const user2socket = roomId.split("*-*")[1];
     const [isEndingSession, setIsEndingSession] = useState(false); // If this is true, end session procedure starts (see useEffect)
@@ -43,6 +45,32 @@ const CollabPage = () => {
         useState(false);
     const [iHaveAcceptedEndSession, setIHaveAcceptedEndSession] =
         useState(false);
+    // Stopwatch stuff
+    const [isRunning, setIsRunning] = useState(false);
+    const [isReset, setIsReset] = useState(false);
+
+    const sendStartRequest = () => {
+        socket?.emit("stopwatch_start_request");
+    };
+
+    const sendStopRequest = () => {
+        socket?.emit("stopwatch_stop_request");
+    };
+
+    const sendResetRequest = () => {
+        socket?.emit("stopwatch_reset_request");
+    };
+
+    const stopwatchProps: StopwatchProps = {
+        isRunning: isRunning,
+        isReset: isReset,
+        setIsReset: setIsReset,
+        sendStartRequest: sendStartRequest,
+        sendStopRequest: sendStopRequest,
+        sendResetRequest: sendResetRequest,
+        setIsOpen: (x: boolean) => {}, // will be filled up by FabMenu
+        isOpen: false, // will be filled up by FabMenu   
+    };
 
     const toggleInterviewerView = () => {
         setShowInterviewerView(!showInterviewerView);
@@ -56,9 +84,6 @@ const CollabPage = () => {
         if (showInterviewerView) {
             setShowInterviewerView(false);
         }
-    };
-    const toggleVideo = () => {
-        setCallActive(!callActive);
     };
 
     const handleClosePickRole = (event: any, reason: string) => {
@@ -203,6 +228,19 @@ const CollabPage = () => {
 
             messageHandler("End session request rejected", "warning");
         });
+        
+        socket.on("start_stopwatch", () => {
+            setIsRunning(true);
+        });
+
+        socket.on("stop_stopwatch", () => {
+            setIsRunning(false);
+        });
+
+        socket.on("reset_stopwatch", () => {
+            setIsReset(true);
+            setIsRunning(false);
+        });
 
         return () => {
             socket.disconnect();
@@ -308,11 +346,11 @@ const CollabPage = () => {
                     </Dialog>
                 </Grid>
             </Grid>
-            <VideoAudioChat username1={user1socket} 
-                            username2={user2socket}
-                            callActive={callActive}
-                            setCallActive={setCallActive}
-                        />
+            <FabMenu
+                stopwatchProps={stopwatchProps}
+                username1={user1socket}
+                username2={user2socket}
+            />
             {isEndingSession && <EndingSessionBackdrop />}
 
         </div>
