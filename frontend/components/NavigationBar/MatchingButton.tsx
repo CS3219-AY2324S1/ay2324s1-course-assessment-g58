@@ -59,9 +59,9 @@ const MatchingButton = () => {
     const handleMatching = () => {
         setTimeout(false);
         // Handle errors
-        if (difficulty === null || language === null) {
-            setMissingDifficulty(difficulty === null);
-            setMissingLanguage(language === null);
+        if (difficulty === "" || language === "") {
+            setMissingDifficulty(difficulty === "");
+            setMissingLanguage(language === "");
             return;
         }
 
@@ -114,6 +114,12 @@ const MatchingButton = () => {
         }
     }, [router.pathname]);
 
+    const elapsedTime = (progress / 100) * waitTime;
+    const remainingTime = waitTime - elapsedTime; // Remaining time until the countdown is finished
+    const remainingTimeInSeconds = Math.floor(remainingTime / 1000);
+    const remainingMinutes = Math.floor(remainingTimeInSeconds / 60);
+    const remainingSeconds = remainingTimeInSeconds % 60;
+
     return (
         <div>
             <Button
@@ -139,6 +145,9 @@ const MatchingButton = () => {
                     {isMatching ? (
                         <Stack className="items-center">
                             <CircularProgress size="4rem" thickness={4} />
+                            <Typography variant="caption" display="block" gutterBottom>
+                                Time Remaining: {remainingMinutes}:{remainingSeconds.toString().padStart(2, '0')}
+                            </Typography>
                         </Stack>
                     ) : (
                         <Stack>
