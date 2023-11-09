@@ -235,7 +235,7 @@ function DescriptionModal({
                 </AccordionSummary>
                 <AccordionDetails>
                   {updatedTemplates.map((template, index) => (
-                    <Accordion>
+                    <Accordion key={index}>
                       <AccordionSummary>
                         <Typography>
                           {template.language}
@@ -322,7 +322,7 @@ function DescriptionModal({
                 <AccordionDetails>
                   {question.templates.map(
                     (template, index) => (
-                      <Accordion>
+                      <Accordion key={index}>
                         <AccordionSummary>
                           <Typography>
                             {template.language}

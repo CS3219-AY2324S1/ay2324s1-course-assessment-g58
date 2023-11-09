@@ -151,7 +151,7 @@ function AddQuestionModal({ handleClose, addQuestion }: AddQuestionModalProps) {
           </AccordionSummary>
           <AccordionDetails>
             {templates.map((template, index) => (
-              <Accordion>
+              <Accordion key={index}>
                 <AccordionSummary>
                   <Typography>
                     {template.language}
