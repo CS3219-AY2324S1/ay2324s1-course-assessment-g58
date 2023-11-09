@@ -17,6 +17,8 @@ import {
     AccordionDetails,
     TextareaAutosize,
 } from "@mui/material";
+import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/prism';
+import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { messageHandler } from "@/utils/handlers";
 
@@ -351,20 +353,29 @@ function DescriptionModal({
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <Typography variant="subtitle1">
-                                                        Starter Code:{" "}
-                                                        {formatText(
-                                                            template.starterCode
-                                                        )}
+                                                        Starter Code:
                                                     </Typography>
+                                                    <SyntaxHighlighter
+                                                        language={
+                                                            template.language.toLowerCase()
+                                                        }
+                                                        style={tomorrow}
+                                                    >
+                                                        {template.starterCode}
+                                                    </SyntaxHighlighter>
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <Typography variant="subtitle1">
-                                                        Driver Code:{" "}
-                                                        {formatText(
-                                                            template.driverCode ||
-                                                                ""
-                                                        )}
+                                                        Driver Code:
                                                     </Typography>
+                                                    <SyntaxHighlighter
+                                                        language={
+                                                            template.language.toLowerCase()
+                                                        }
+                                                        style={tomorrow}
+                                                    >
+                                                        {template.driverCode || ""}
+                                                    </SyntaxHighlighter>
                                                 </Grid>
                                             </Grid>
                                         )
