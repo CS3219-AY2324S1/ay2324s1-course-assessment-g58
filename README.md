@@ -12,7 +12,7 @@
 
 ## Developer guide
 
-As of the last update of this README, only the user-service and question-service have been dockerized. A respective `Dockerfile` has been created within each of their folders. This `Dockerfile` specifies the instructions in order to build the container, install the necessary node modules etc. 
+As of the last update of this README, only the user-service and question-service have been dockerized. A `Dockerfile` has been created within each of their folders. This `Dockerfile` specifies the instructions in order to build the container, install the necessary node modules etc.
 
 To simplify the container building, a `docker-compose.yml` has been created in order to start both containers at once. This is achieved through running `docker compose build` and `docker compose up` to call both dockerfiles.
 
