@@ -17,6 +17,8 @@ import {
   AccordionDetails,
   TextareaAutosize,
 } from "@mui/material";
+import Editor from "@monaco-editor/react";
+import { editor } from "monaco-editor/esm/vs/editor/editor.api";
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/prism';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -138,6 +140,13 @@ function DescriptionModal({
       messageHandler("All fields required", "error");
       return;
     }
+    // If any of the templates are blank, don't allow the edit
+    for (const template of updatedQuestion.templates) {
+      if (template.starterCode == "") {
+        messageHandler("All templates must have starter code", "error");
+        return;
+      }
+    }
     editQuestion(updatedQuestion);
     setEditMode(false);
   };
@@ -227,69 +236,43 @@ function DescriptionModal({
                 </AccordionSummary>
                 <AccordionDetails>
                   {updatedTemplates.map((template, index) => (
-                    <Grid container spacing={2} key={index}>
-                      <Grid item xs={12}>
-                        <Typography variant="subtitle1">
-                          Language:{" "}
+                    <Accordion>
+                      <AccordionSummary>
+                        <Typography>
                           {template.language}
                         </Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          label="Starter Code"
-                          variant="outlined"
-                          fullWidth
-                          multiline
-                          rows={4}
-                          InputProps={{
-                            inputComponent:
-                              TextareaAutosize,
-                            inputProps: {
-                              style: {
-                                resize: "both",
-                              }, // Allows resizing both horizontally and vertically
-                            },
-                          }}
-                          value={template.starterCode}
-                          onChange={(e) =>
-                            handleTemplateChange(
-                              index,
-                              true,
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          label="Driver Code"
-                          variant="outlined"
-                          fullWidth
-                          multiline
-                          rows={4}
-                          InputProps={{
-                            inputComponent:
-                              TextareaAutosize,
-                            inputProps: {
-                              style: {
-                                resize: "both",
-                              }, // Allows resizing both horizontally and vertically
-                            },
-                          }}
-                          value={
-                            template.driverCode ||
-                            ""
-                          }
-                          onChange={(e) =>
-                            handleTemplateChange(
-                              index,
-                              false,
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Grid>
-                    </Grid>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2} key={index}>
+                          <Grid item xs={12}>
+                            <Typography variant="subtitle1">
+                              Starter Code:
+                            </Typography>
+                            <Editor
+                              height="30vh"
+                              value={template.starterCode}
+                              onChange={(value, event) => {
+                                handleTemplateChange(index, true, value || "");
+                              }}
+                              defaultLanguage={template.language.toLowerCase()}
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography variant="subtitle1">
+                              Driver Code:
+                            </Typography>
+                            <Editor
+                              height="30vh"
+                              value={template.driverCode || ""}
+                              onChange={(value, event) => {
+                                handleTemplateChange(index, false, value || "");
+                              }}
+                              defaultLanguage={template.language.toLowerCase()}
+                            />
+                          </Grid>
+                        </Grid>
+                      </AccordionDetails>
+                    </Accordion>
                   ))}
                 </AccordionDetails>
               </Accordion>
