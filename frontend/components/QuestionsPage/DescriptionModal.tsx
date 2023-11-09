@@ -18,7 +18,6 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import Editor from "@monaco-editor/react";
-import { editor } from "monaco-editor/esm/vs/editor/editor.api";
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/prism';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -140,7 +139,7 @@ function DescriptionModal({
       messageHandler("All fields required", "error");
       return;
     }
-    // If any of the templates are blank, don't allow the edit
+    // If any of the starter templates are blank, don't allow the edit
     for (const template of updatedQuestion.templates) {
       if (template.starterCode == "") {
         messageHandler("All templates must have starter code", "error");
