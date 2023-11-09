@@ -7,7 +7,6 @@ export default async function handler(
 ) {
     if (req.method === "POST") {
         const { email, password, token } = req.body;
-        console.log(req.body);
 
         try {
             const express_gateway: string = ((process.env

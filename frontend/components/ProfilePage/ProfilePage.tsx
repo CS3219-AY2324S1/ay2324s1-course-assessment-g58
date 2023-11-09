@@ -86,7 +86,6 @@ const ProfilePage = () => {
             email: email,
             token: token,
         }).then((res) => {
-            console.log(res);
             if (res.status == 200) {
                 setIsDialogOpen(false);
                 alert("Success! Deleted: " + res.data.email);

@@ -3,10 +3,8 @@ import { Request, Response, Router } from "express";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-    console.log("token login attempt");
     try {
         const userData = req.body.user;
-        console.log(userData);
         if (userData) {
             return res.status(200).json(userData);
         } else {
