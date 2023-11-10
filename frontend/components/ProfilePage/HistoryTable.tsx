@@ -1,108 +1,319 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Avatar, Button, Stack, Typography } from "@mui/material";
+import { ChangeEvent, Ref, forwardRef, useEffect, useState } from "react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    AppBar,
+    Avatar,
+    Box,
+    Button,
+    Dialog,
+    IconButton,
+    Slide,
+    Stack,
+    Toolbar,
+    Typography,
+    Pagination,
+    Snackbar,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { TransitionProps } from "@mui/material/transitions";
+import QuestionPanel from "../CollabPage/CollabPageQuestion/QuestionPanel";
+import QuestionResponse from "@/types/QuestionResponse";
+import { useStore } from "@/stores";
+import { fetchGet } from "@/utils/apiHelpers";
+import CodeBlock from "./CodeBlock";
+import { capitalizeString } from "@/utils/helper";
 
-const createData = (
-    peer: string,
-    completedAt: number,
-    questionsCompleted: number,
-    action: number
-) => {
-    return { peer, completedAt, questionsCompleted, action };
+type HistoryData = {
+    id: number;
+    peer: string;
+    completedOn: string;
+    language: string;
+    difficulty: string;
+    questionsCompleted: number;
 };
 
-const randomColor = () => {
-    return (
-        "#" + (0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)
-    );
-};
+interface HistoryTableProps {
+    username: string;
+}
 
-const rows = [
-    createData("Babs", 159, 6.0, 24),
-    createData("Wabs", 237, 9.0, 37),
-    createData("Eclair", 262, 16.0, 24),
-    createData("Cupcake", 305, 3.7, 67),
-    createData("Gingerbread", 356, 16.0, 49),
-];
+const HistoryTable = ({ username }: HistoryTableProps) => {
+    const [open, setOpen] = useState(false);
+    const [openToast, setOpenToast] = useState(false);
+    const [questionNumber, setQuestionNumber] = useState(1);
+    const [tableData, setTableData] = useState<HistoryData[]>([]);
+    const [questionPanelProps, setQuestionProps] = useState({
+        question_number: questionNumber,
+        question: {},
+    });
+    const [displayedResponses, setDisplayedResponses] = useState<
+        QuestionResponse[]
+    >([]);
+    const historyStore = useStore().history;
+    const dateOptions: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    };
 
-const HistoryTable = () => {
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleChange = (event: ChangeEvent<unknown>, value: number) => {
+        setQuestionNumber(value);
+        setQuestionProps({
+            question_number: value,
+            question: historyStore.getQuestionById(
+                displayedResponses[value - 1].questionId
+            )!,
+        });
+    };
+
+    const handleClick = (id: number) => {
+        const responses = historyStore.getSessionById(id);
+        if (responses == undefined || responses.length == 0) {
+            setOpenToast(true);
+            return;
+        }
+        responses?.map((response) => {
+            response.question = historyStore.getQuestionById(
+                response.questionId
+            )!;
+        });
+        setDisplayedResponses(responses!);
+        if (responses == undefined) return;
+        setQuestionProps({
+            question_number: 1,
+            question: historyStore.getQuestionById(responses[0].questionId),
+        });
+        setOpen(true);
+    };
+
+    useEffect(() => {
+        const retrieveSessions = async () => {
+            await fetchGet(`/api/sessions/${username}`).then((res) => {
+                if (res.status == 200) {
+                    const sessions = [];
+                    for (
+                        let sessionIndex = 0;
+                        sessionIndex < res.data.length;
+                        sessionIndex++
+                    ) {
+                        const session = res.data[sessionIndex];
+                        // TODO: make this section neater
+                        const formattedDate = new Date(
+                            session.createdAt
+                        ).toLocaleDateString(undefined, dateOptions);
+                        const responses = session.responses;
+                        const sessionData: HistoryData = {
+                            id: session.id,
+                            peer: session.users.filter(
+                                (user: { username: string }) =>
+                                    user.username != username
+                            )[0].username,
+                            language: capitalizeString(session.language),
+                            difficulty: session.difficulty,
+                            completedOn: formattedDate,
+                            questionsCompleted: responses.length,
+                        };
+                        sessions.push(sessionData);
+                        historyStore.addSessions(sessionData.id, responses);
+                    }
+                    setTableData(sessions);
+                    console.log(res);
+                } else {
+                    console.error("Failed to retrieve question history");
+                }
+            });
+        };
+
+        if (username) {
+            retrieveSessions();
+        }
+    }, [username]);
+
+    // Gets all questions
+    // TODO: replace this with getting questions on button click
+    useEffect(() => {
+        const fetchQuestions = async () => {
+            const fetchedQuestions = await fetchGet("/api/questions");
+            historyStore.addQuestions(fetchedQuestions.data);
+        };
+        fetchQuestions();
+    }, []);
+
     return (
         // <TableContainer component={Paper} sx={{ maxHeight: 200 }}>
         // <Table sx={{ minWidth: 650 }} size="small" stickyHeader>
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} size="small">
-                <TableHead>
-                    <TableRow sx={{ bgcolor: "lightgray" }}>
-                        <TableCell>Peer</TableCell>
-                        <TableCell align="right">Completed At</TableCell>
-                        <TableCell align="right">Questions Attempted</TableCell>
-                        <TableCell align="right" sx={{ paddingRight: 4 }}>
-                            Action
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map((row) => (
-                        <TableRow
-                            key={row.peer}
-                            sx={{
-                                "&:last-child td, &:last-child th": {
-                                    border: 0,
-                                },
-                            }}
-                        >
-                            <TableCell component="th" scope="row">
-                                <Stack
-                                    direction="row"
-                                    sx={{ alignItems: "center" }}
-                                >
-                                    <Avatar
-                                        sx={{
-                                            bgcolor: randomColor(),
-                                            width: 25,
-                                            height: 25,
-                                            marginRight: 2,
-                                            paddingLeft: 0.25,
-                                            paddingTop: 0.25,
-                                            fontSize: 16,
-                                        }}
-                                    >
-                                        {row.peer[0]}
-                                    </Avatar>
-                                    <Typography variant="subtitle1">
-                                        {row.peer}
-                                    </Typography>
-                                </Stack>
-                            </TableCell>
+        <>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} size="small">
+                    <TableHead>
+                        <TableRow sx={{ bgcolor: "lightgray" }}>
+                            <TableCell>Peer</TableCell>
+                            <TableCell align="right">Completed On</TableCell>
+                            <TableCell align="right">Language</TableCell>
+                            <TableCell align="right">Difficulty</TableCell>
                             <TableCell align="right">
-                                <Typography variant="subtitle1">
-                                    {row.completedAt}
-                                </Typography>
+                                Questions Attempted
                             </TableCell>
-                            <TableCell align="right">
-                                <Typography variant="subtitle1">
-                                    {row.questionsCompleted}
-                                </Typography>
-                            </TableCell>
-                            <TableCell align="right">
-                                <Button style={{ textTransform: "none" }}>
-                                    <Typography variant="subtitle1">
-                                        View
-                                    </Typography>
-                                </Button>
+                            <TableCell align="right" sx={{ paddingRight: 4 }}>
+                                Action
                             </TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {tableData.map((row) => (
+                            <TableRow
+                                key={row.peer}
+                                sx={{
+                                    "&:last-child td, &:last-child th": {
+                                        border: 0,
+                                    },
+                                }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    <Stack
+                                        direction="row"
+                                        sx={{ alignItems: "center" }}
+                                    >
+                                        <Avatar
+                                            sx={{
+                                                width: 25,
+                                                height: 25,
+                                                marginRight: 2,
+                                                paddingLeft: 0.1,
+                                                paddingTop: 0.1,
+                                                fontSize: 16,
+                                            }}
+                                        >
+                                            {row.peer[0]}
+                                        </Avatar>
+                                        <Typography variant="subtitle1">
+                                            {row.peer}
+                                        </Typography>
+                                    </Stack>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Typography variant="subtitle1">
+                                        {row.completedOn}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Typography variant="subtitle1">
+                                        {row.language}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Typography variant="subtitle1">
+                                        {row.difficulty}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Typography variant="subtitle1">
+                                        {row.questionsCompleted}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Button
+                                        style={{ textTransform: "none" }}
+                                        onClick={() => handleClick(row.id)}
+                                    >
+                                        <Typography variant="subtitle1">
+                                            View
+                                        </Typography>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Dialog
+                fullScreen
+                open={open}
+                onClose={handleClose}
+                TransitionComponent={Transition}
+                sx={{ justifyContent: "center", justifyItems: "center" }}
+            >
+                <AppBar sx={{ position: "relative" }}>
+                    <Toolbar>
+                        <IconButton
+                            edge="start"
+                            color="inherit"
+                            onClick={handleClose}
+                            aria-label="close"
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+
+                <Stack direction="row">
+                    <Box sx={{ width: "50%", height: "80vh", padding: 8 }}>
+                        {/* @ts-ignore */}
+                        <QuestionPanel {...questionPanelProps} />
+                    </Box>
+
+                    <Box sx={{ width: "50%", height: "80vh", padding: 8 }}>
+                        <CodeBlock
+                            code={
+                                displayedResponses[questionNumber - 1] ==
+                                undefined
+                                    ? "text"
+                                    : displayedResponses[questionNumber - 1]
+                                          .text
+                            }
+                            language={"python"}
+                        />
+                    </Box>
+                </Stack>
+                <Box>
+                    <Pagination
+                        count={3}
+                        page={questionNumber}
+                        color="primary"
+                        onChange={handleChange}
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            justifyContent: "center",
+                        }}
+                    />
+                </Box>
+            </Dialog>
+            <Snackbar
+                open={openToast}
+                autoHideDuration={300}
+                message="No Responses found for this Session!"
+                action={
+                    <IconButton
+                        size="small"
+                        aria-label="close"
+                        color="inherit"
+                        onClick={() => setOpenToast(false)}
+                    >
+                        <CloseIcon fontSize="small" />
+                    </IconButton>
+                }
+            />
+        </>
     );
 };
+
+const Transition = forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement;
+    },
+    ref: Ref<unknown>
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export default HistoryTable;

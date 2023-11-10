@@ -173,9 +173,9 @@ const ProfilePage = () => {
     }, []);
 
     return (
-        <div>
+        <Box>
             <Container>
-                <Stack direction="row" sx={{ width: "100%" }}>
+                <Stack direction="row" sx={{ width: "100%", marginTop: 1 }}>
                     <Stack sx={{ width: "35%", height: "100%", margin: 1 }}>
                         <Card sx={{ padding: 2, minHeight: 617 }}>
                             <Stack direction="row">
@@ -510,7 +510,7 @@ const ProfilePage = () => {
                         >
                             PeerPrep History
                         </Typography>
-                        <HistoryTable />
+                        <HistoryTable username={user as string} />
                     </Card>
                 </Stack>
 
@@ -525,7 +525,7 @@ const ProfilePage = () => {
                     <CircularProgress color="inherit" />
                 </Backdrop>
             </Container>
-        </div>
+        </Box>
     );
 };
 
