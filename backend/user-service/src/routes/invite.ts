@@ -96,7 +96,6 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     // Send request to email-service
-    console.log(process.env.EMAIL_SERVICE_URL);
     await fetch(process.env.EMAIL_SERVICE_URL as string, {
         method: "POST",
         mode: "cors",
