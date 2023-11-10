@@ -3,7 +3,6 @@ import {
     Button,
     Box,
     Card,
-    Container,
     Grid,
     Stack,
     TextField,
@@ -172,16 +171,14 @@ const ProfilePage = () => {
     }, []);
 
     return (
-        <div>
-            <Stack direction="row">
-                <Card
-                    sx={{
-                        marginY: 4,
-                        marginLeft: 40,
-                        marginRight: 2,
-                        width: "50%",
-                        padding: 2,
-                    }}
+        <>
+            <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                spacing={{ xs: 1, sm: 2, md: 4 }}
+                sx={{ marginY: 4, marginX: { xs: 2, sm: 4 } }}
+            >
+                <Card 
+                    sx={{ minWidth: 300, flexGrow: 1, padding: 2 }}
                 >
                     <Stack direction="row">
                         <Avatar
@@ -407,15 +404,7 @@ const ProfilePage = () => {
                     </Stack>
                 </Card>
                 <Grid
-                    container
-                    spacing={4}
-                    columns={6}
-                    sx={{
-                        justifyContent: "right",
-                        paddingY: 4,
-                        paddingRight: 40,
-                        width: "50%",
-                    }}
+                    container spacing={4} sx={{ flexGrow: 1, minWidth: 300 }}
                 >
                     <Grid item xs={6}>
                         <Card sx={{ padding: 3, minHeight: "87%" }}>
@@ -491,7 +480,7 @@ const ProfilePage = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-        </div>
+        </>
     );
 };
 

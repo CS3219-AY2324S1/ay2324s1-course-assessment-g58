@@ -68,7 +68,7 @@ function NavigationBar() {
             variant="h6"
             noWrap
             component="a"
-            onClick={() => handleMainButtonClick("Home")}
+            href='/'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -123,7 +123,7 @@ function NavigationBar() {
             variant="h5"
             noWrap
             component="a"
-            onClick={() => handleMainButtonClick("Home")}
+            href='/'
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
