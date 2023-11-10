@@ -14,12 +14,8 @@ import {
     Typography,
     Container,
 } from "@mui/material";
+import PasswordStrengthCheck, { testPasswordStrength, PasswordStrength } from "./PasswordStength";
 import { enqueueSnackbar } from "notistack";
-
-type User = {
-    username: string;
-    email: string;
-};
 
 function Copyright(props: any) {
     return (
@@ -47,6 +43,20 @@ export default function SignUpBox() {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        // Check password is strong
+        if (testPasswordStrength(password) !== PasswordStrength.STRONG) {
+            enqueueSnackbar("Your password is not strong", {
+                variant: "error",
+            });
+            return;
+        }
+        // Check email is valid
+        if (email.length < 1 || !email.includes("@")) {
+            enqueueSnackbar("Please enter a valid email", {
+                variant: "error",
+            });
+            return;
+        }
         console.log(
             "sending username, email, password: {} {} {} ",
             username,
@@ -137,6 +147,7 @@ export default function SignUpBox() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                            <PasswordStrengthCheck password={password} />
                         </Grid>
                     </Grid>
                     <Button

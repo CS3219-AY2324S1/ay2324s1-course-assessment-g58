@@ -52,21 +52,21 @@ export default function EndSessionModal({
     const timerRef = useRef<number | null>(null);
     useEffect(() => {
         if (isEndSessionHandshakeOpen) {
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-        }
-        setProgress(0);
-        timerRef.current = window.setInterval(() => {
-            setProgress((prevProgress) =>
-            prevProgress < 100 ? prevProgress + 0.1 : 100
-            );
-        }, waitTime / 1000);
-
-        return () => {
             if (timerRef.current) {
                 clearInterval(timerRef.current);
             }
-        };
+            setProgress(0);
+            timerRef.current = window.setInterval(() => {
+                setProgress((prevProgress) =>
+                prevProgress < 100 ? prevProgress + 0.1 : 100
+                );
+            }, waitTime / 1000);
+
+            return () => {
+                if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                }
+            };
         }
     }, [isEndSessionHandshakeOpen]);
 

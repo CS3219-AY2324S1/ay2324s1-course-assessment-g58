@@ -14,6 +14,8 @@ import {
     Typography,
     Container,
 } from "@mui/material";
+import PasswordStrengthCheck, { testPasswordStrength, PasswordStrength } from "./PasswordStength";
+import { enqueueSnackbar } from "notistack";
 
 function Copyright(props: any) {
     return (
@@ -40,6 +42,13 @@ export default function AdminSignup() {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        // Check password is strong
+        if (testPasswordStrength(password) !== PasswordStrength.STRONG) {
+            enqueueSnackbar("Your password is not strong", {
+                variant: "error",
+            });
+            return;
+        }
         await fetchPost("/api/users", {
             username: username,
             email: router.query.email,
@@ -51,11 +60,15 @@ export default function AdminSignup() {
                     alert("Success! Added: " + res.data.email);
                     router.push("/login?mode=login");
                 } else {
-                    alert(res.message);
+                    enqueueSnackbar(res.message, {
+                        variant: "error",
+                    });
                 }
             })
             .catch((err) => {
-                alert(err);
+                enqueueSnackbar(err.message, {
+                    variant: "error",
+                });
             });
     };
 
@@ -111,6 +124,7 @@ export default function AdminSignup() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                            <PasswordStrengthCheck password={password} />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
