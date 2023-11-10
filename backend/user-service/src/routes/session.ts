@@ -6,33 +6,34 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 /**   This POST "/" endpoint creates a Session for a user
- *      @param { user1Id, user2Id }
+ *      @param { user1username, user2username, roomId, language, difficulty }
  *      @verifies existing Users
  */
 router.post("/", async (req: Request, res: Response) => {
-    const { user1Id, user2Id } = req.body;
+    const { user1username, user2username, roomId, language, difficulty } =
+        req.body;
 
     // Verify user1 exists
     const user1 = await prisma.user.findUnique({
         where: {
-            id: user1Id,
+            username: user1username,
         },
     });
     if (!user1) {
         return res.status(404).json({
-            message: `User ${user1Id} not found.`,
+            message: `User ${user1username} not found.`,
         });
     }
 
     // Verify user2 exists
     const user2 = await prisma.user.findUnique({
         where: {
-            id: user2Id,
+            username: user2username,
         },
     });
     if (!user2) {
         return res.status(404).json({
-            message: `User ${user2Id} not found.`,
+            message: `User ${user2username} not found.`,
         });
     }
 
@@ -42,8 +43,13 @@ router.post("/", async (req: Request, res: Response) => {
     const session = await prisma.session.create({
         data: {
             users: {
-                connect: [user1Id, user2Id].map((userId) => ({ id: userId })), // This links this session to both users
+                connect: [user1username, user2username].map((username) => ({
+                    username: username,
+                })), // This links this session to both users
             },
+            roomId: roomId,
+            language: language,
+            difficulty: difficulty,
         },
         include: {
             users: {
@@ -53,7 +59,7 @@ router.post("/", async (req: Request, res: Response) => {
             },
         },
     });
-    res.json(
+    res.status(200).json(
         `Session created for ${session.users[0].username}, ${session.users[1].username}`
     );
 });
@@ -63,18 +69,18 @@ router.post("/", async (req: Request, res: Response) => {
  *      @param userId from req.param
  *      @verifies an existing User
  */
-router.get("/user/:userId", async (req: Request, res: Response) => {
-    const userId = req.params.userId as unknown as bigint;
-    if (!userId || typeof userId != "string") {
+router.get("/user/:username", async (req: Request, res: Response) => {
+    const username = req.params.username as unknown as bigint;
+    if (!username || typeof username != "string") {
         return res.status(404).json({
-            message: `Expected userId, received ${userId}.`,
+            message: `Expected username, received ${username}.`,
         });
     }
 
     // Verify user exists
     const user = await prisma.user.findUnique({
         where: {
-            id: userId,
+            username: username,
         },
     });
     if (!user) {
@@ -88,7 +94,7 @@ router.get("/user/:userId", async (req: Request, res: Response) => {
         where: {
             users: {
                 some: {
-                    id: userId,
+                    id: user.id,
                 },
             },
         },
@@ -97,7 +103,6 @@ router.get("/user/:userId", async (req: Request, res: Response) => {
             users: true,
         },
     });
-    // @ts-ignore
     res.json(SessionDataToDTO(sessions));
 });
 

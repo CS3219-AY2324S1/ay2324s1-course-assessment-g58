@@ -3,14 +3,14 @@ import { User, Response } from "@prisma/client";
 interface SessionDTO {
     id: string;
     createdAt: Date;
+    language: string;
+    difficulty: string;
     users: {
         username: string;
     }[];
     responses: {
         questionId: string;
-        language: string;
         text: string;
-        status: string;
     }[];
 }
 
@@ -30,13 +30,13 @@ export const SessionDataToDTO = (sessions: any) => {
         const mappedResponses = sessions[i].responses.map(
             (response: Response) => ({
                 questionId: response.questionId,
-                language: response.language,
                 text: JSON.stringify(response.text),
-                status: response.status.toString(),
             })
         );
         const sessionDTO: SessionDTO = {
             id: sessions[i].id.toString(),
+            language: sessions[i].language,
+            difficulty: sessions[i].difficulty,
             createdAt: sessions[i].createdAt,
             users: mappedUsers,
             responses: mappedResponses,
