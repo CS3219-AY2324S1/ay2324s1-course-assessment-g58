@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 
 const prisma = new PrismaClient({
-    log: ['query', 'info', 'warn', 'error']
+    log: ["query", "info", "warn", "error"],
 });
 const router = express.Router();
 const ADMIN_LIMIT = 10; // A limit of 10 admins
@@ -97,17 +97,29 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     // Send request to email-service
-    const response = await axios.post(process.env.EMAIL_SERVICE_URL as string, {
-        inviteeEmail: inviteeEmail,
-        inviteId: newInvitation.id,
+    console.log(process.env.EMAIL_SERVICE_URL);
+    await fetch(process.env.EMAIL_SERVICE_URL as string, {
+        method: "POST",
+        mode: "cors",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify({
+            inviteeEmail: inviteeEmail,
+            inviteId: newInvitation.id.valueOf(),
+        }),
+    }).then((response) => {
+        if (response.status !== 200) {
+            console.log("Received response:", response);
+            res.status(400).json({
+                message: `Failed to send new Email`,
+            });
+            return;
+        }
     });
-    if (!response || response.status !== 200) {
-        console.log("Received response:", response);
-        res.status(400).json({
-            message: `Failed to send new Email`,
-        });
-        return;
-    }
 
     res.status(201).json(`Invite: ${newInvitation.email} has been created`);
 });
