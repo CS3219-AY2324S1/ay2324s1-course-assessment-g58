@@ -1,5 +1,4 @@
 // External dependencies
-import { ObjectId } from "mongodb";
 import mongoose, { Types } from "mongoose";
 
 function arrayLimit(val: Array<any>) {
@@ -46,7 +45,7 @@ export interface IQuestion extends mongoose.Document {
 }
 
 // Mongoose Schema and Model
-const QuestionSchema = new mongoose.Schema({
+export const QuestionSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,

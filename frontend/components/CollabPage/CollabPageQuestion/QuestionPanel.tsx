@@ -8,9 +8,13 @@ interface QuestionPanelProps {
 
 function QuestionPanel({ question_number, question }: QuestionPanelProps) {
     return (
-        <Card sx={{ height: "100%" }}>
+        <Card sx={{ height: "100%", padding: 2 }}>
             <CardContent>
-                <Typography variant="h5" component="div">
+                <Typography
+                    variant="h5"
+                    component="div"
+                    sx={{ marginBottom: 2 }}
+                >
                     Question {question_number}:{" "}
                     {question ? question.title : "No title found"}
                 </Typography>

@@ -15,6 +15,7 @@ import CompilerServiceResult, {
     defaultRunCodeResults,
 } from "@/types/CompilerServiceResult";
 import { messageHandler } from "@/utils/handlers";
+import { useStore } from "@/stores";
 
 const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -37,6 +38,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
         scrollBeyondLastLine: false,
         tabSize: 4,
     };
+    const editorStore = useStore().editor;
 
     const runTests = async () => {
         // get source code from editor, if undefined, it is empty string
@@ -158,6 +160,7 @@ const CodeEditor = ({ language, editorContent, roomId, question }: Props) => {
             });
 
         editorRef.current = editor;
+        editorStore.setEditor(editor);
 
         // handle all required event listeners
         handleSelectionEventListeners();
