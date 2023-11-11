@@ -203,7 +203,6 @@ const CollabPage = () => {
 
         // Server tells clients this when a client in room has rejected next question prompt
         socket.on("dontProceedWithNextQuestion", () => {
-            console.log("dontProceedWithNextQuestion");
             setIsNextQnHandshakeOpen(false);
             setIHaveAcceptedNextQn(false);
 

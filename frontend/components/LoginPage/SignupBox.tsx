@@ -14,12 +14,8 @@ import {
     Typography,
     Container,
 } from "@mui/material";
-import { enqueueSnackbar } from "notistack";
-
-type User = {
-    username: string;
-    email: string;
-};
+import PasswordStrengthCheck, { testPasswordStrength, PasswordStrength } from "./PasswordStength";
+import { messageHandler } from "@/utils/handlers";
 
 function Copyright(props: any) {
     return (
@@ -47,6 +43,16 @@ export default function SignUpBox() {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        // Check password is strong
+        if (testPasswordStrength(password) !== PasswordStrength.STRONG) {
+            messageHandler("Your password is not strong", "error");
+            return;
+        }
+        // Check email is valid
+        if (email.length < 1 || !email.includes("@")) {
+            messageHandler("Please enter a valid email", "error");
+            return;
+        }
         console.log(
             "sending username, email, password: {} {} {} ",
             username,
@@ -61,16 +67,14 @@ export default function SignUpBox() {
         })
             .then((res) => {
                 if (res.status == 201) {
-                    enqueueSnackbar("Success! Added: " + res.data.email, {
-                        variant: "success",
-                    });
+                    messageHandler("Success! Added: " + res.data.email, "success");
                     router.push("/login?mode=login");
                 } else {
-                    enqueueSnackbar(res.message, { variant: "error" });
+                    messageHandler(res.message, "error");
                 }
             })
             .catch((err) => {
-                enqueueSnackbar(err);
+                messageHandler(err.message, "error");
             });
     };
 
@@ -137,6 +141,7 @@ export default function SignUpBox() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
+                            <PasswordStrengthCheck password={password} />
                         </Grid>
                     </Grid>
                     <Button
