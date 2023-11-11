@@ -22,10 +22,11 @@ import EndingSessionBackdrop from "./EndingSessionBackDrop";
 import { messageHandler } from "@/utils/handlers";
 import FabMenu from "./FabComponent/FabMenu";
 import { StopwatchProps } from "./FabComponent/Stopwatch";
+import { fetchPost } from "@/utils/apiHelpers";
+import { useStore } from "@/stores";
 
 const CollabPage = () => {
-    const { language, roomId, cancelMatching, questions } =
-        useMatching();
+    const { language, roomId, cancelMatching, questions } = useMatching();
     const router = useRouter();
     const [socket, setSocket] = useState<Socket>();
     const [questionNumber, setQuestionNumber] = useState(0);
@@ -48,6 +49,7 @@ const CollabPage = () => {
     // Stopwatch stuff
     const [isRunning, setIsRunning] = useState(false);
     const [isReset, setIsReset] = useState(false);
+    const editorStore = useStore().editor;
 
     const sendStartRequest = () => {
         socket?.emit("stopwatch_start_request");
@@ -69,7 +71,7 @@ const CollabPage = () => {
         sendStopRequest: sendStopRequest,
         sendResetRequest: sendResetRequest,
         setIsOpen: (x: boolean) => {}, // will be filled up by FabMenu
-        isOpen: false, // will be filled up by FabMenu   
+        isOpen: false, // will be filled up by FabMenu
     };
 
     const toggleInterviewerView = () => {
@@ -100,8 +102,19 @@ const CollabPage = () => {
     };
 
     // Called when Next question button is pressed by this user
-    const handleNextQuestion = () => {
+    const handleNextQuestion = async () => {
         socket?.emit("openNextQuestionPrompt");
+
+        // Create response in DB
+        await fetchPost("api/responses", {
+            text: editorStore.getEditor().getValue(),
+            questionId: questions[questionNumber]._id,
+            roomId: roomId,
+        }).then((res) => {
+            if (res.status != 201) {
+                console.error("Failed to create response");
+            }
+        });
     };
 
     // Called when this user accepts next question prompt
@@ -227,7 +240,7 @@ const CollabPage = () => {
 
             messageHandler("End session request rejected", "warning");
         });
-        
+
         socket.on("start_stopwatch", () => {
             setIsRunning(true);
         });
@@ -272,7 +285,7 @@ const CollabPage = () => {
     }, []);
 
     return (
-        <div>    
+        <div>
             <Grid container={true} spacing={2} sx={{ marginTop: "5px" }}>
                 <Grid item xs={6}>
                     {questions[questionNumber] ? (
@@ -351,7 +364,6 @@ const CollabPage = () => {
                 username2={user2socket}
             />
             {isEndingSession && <EndingSessionBackdrop />}
-
         </div>
     );
 };

@@ -116,6 +116,32 @@ async function findMatch(user: User, socket: Socket) {
         console.log("Room created:", roomName);
         console.log(matchingUser.socketId);
         console.log(user.socketId);
+
+        // Create Session
+        await fetch(process.env.USER_SERVICE_URL as string, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify({
+                user1username: user.userId,
+                user2username: matchingUser.userId,
+                roomId: roomName,
+                language: user.language,
+                difficulty: user.difficulty,
+            }),
+        }).then((res) => {
+            if (res.status == 201) {
+                console.log("Created Session");
+            } else {
+                console.log("Failed to create Session");
+            }
+        });
     } else {
         console.log("No match found for:", user);
     }
@@ -133,7 +159,6 @@ interface User {
     language: string;
     roomId?: string;
     questions?: Question[];
-    
 }
 
 export type Question = {

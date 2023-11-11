@@ -78,6 +78,7 @@ services:
             - ./matching-service/.env
         environment:
             - GATEWAY_SERVER_URL=http://gateway:8080
+            - USER_SERVICE_URL=http://users:3001/api/session
 
     collaboration:
         container_name: collaboration-service

@@ -3,6 +3,7 @@ import {
     Button,
     Box,
     Card,
+    Container,
     Grid,
     Stack,
     TextField,
@@ -29,6 +30,7 @@ import ContributionTracker from "./ContributionTracker";
 import { validateEmail } from "@/utils/validationHelpers";
 import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
+import HistoryTable from "./HistoryTable";
 
 type User = {
     username: string;
@@ -106,7 +108,10 @@ const ProfilePage = () => {
             .then((res) => {
                 console.log(res);
                 if (res.status === 201) {
-                    setInvites([...invites, inviteeEmail]);
+                    if (!invites.includes(inviteeEmail)) {
+                        // Add email if not already in list of invites
+                        setInvites([...invites, inviteeEmail]);
+                    }
                     setInviteeEmail("");
                 } else {
                     messageHandler(res.message, "error");
@@ -171,243 +176,270 @@ const ProfilePage = () => {
     }, []);
 
     return (
-        <>
-            <Stack
-                direction={{ xs: 'column', md: 'row' }}
-                spacing={{ xs: 1, sm: 2, md: 4 }}
-                sx={{ marginY: 4, marginX: { xs: 2, sm: 4 } }}
-            >
-                <Card 
-                    sx={{ minWidth: 300, flexGrow: 1, padding: 2 }}
-                >
-                    <Stack direction="row">
-                        <Avatar
-                            sx={{
-                                width: "5rem",
-                                height: "5rem",
-                                fontSize: "2.25rem",
-                            }}
-                        >
-                            {(user as string)[0]}
-                        </Avatar>
-                        <Stack padding={2}>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                                {user}
-                            </Typography>
-                            <Typography variant="caption">{email}</Typography>
-                        </Stack>
-                    </Stack>
-                    {/* Edit Profile */}
-                    <Button
-                        onClick={() => setEditing(!isEditing)}
-                        variant="contained"
-                        sx={{
-                            textTransform: "none",
-                            marginTop: "1rem",
-                            width: "100%",
-                        }}
-                    >
-                        Edit Profile
-                    </Button>
-                    {isEditing && (
-                        <Stack>
-                            <Box
-                                sx={{
-                                    bgcolor: "lightgray",
-                                    borderRadius: "0.5rem",
-                                    padding: 2,
-                                    marginTop: 2,
-                                }}
-                            >
-                                <TextField
-                                    variant="outlined"
-                                    label="Enter a New Username"
-                                    value={updatedUsername}
-                                    size="small"
-                                    onChange={(e) => {
-                                        setUpdatedUsername(e.target.value);
+        <Box>
+            <Container>
+                <Stack direction="row" sx={{ width: "100%", marginTop: 1 }}>
+                    <Stack sx={{ width: "35%", height: "100%", margin: 1 }}>
+                        <Card sx={{ padding: 2, minHeight: 617 }}>
+                            <Stack direction="row">
+                                <Avatar
+                                    sx={{
+                                        width: "5rem",
+                                        height: "5rem",
+                                        fontSize: "2.25rem",
                                     }}
-                                    sx={{ width: "100%" }}
-                                />
-                                <Stack
-                                    direction="row"
-                                    marginTop={2}
-                                    justifyContent={"right"}
                                 >
-                                    <Button
-                                        sx={{ textTransform: "none" }}
-                                        variant="contained"
-                                        color="success"
-                                        onClick={updateUser}
+                                    {(user as string)[0]}
+                                </Avatar>
+                                <Stack padding={2}>
+                                    <Typography
+                                        variant="subtitle1"
+                                        fontWeight="bold"
                                     >
-                                        <CheckIcon />
-                                    </Button>
-                                    <Button
-                                        sx={{
-                                            width: "10%",
-                                            textTransform: "none",
-                                            marginLeft: 2,
-                                        }}
-                                        variant="contained"
-                                        color="error"
-                                        onClick={() => setEditing(false)}
-                                    >
-                                        <CloseIcon />
-                                    </Button>
+                                        {user}
+                                    </Typography>
+                                    <Typography variant="caption">
+                                        {email}
+                                    </Typography>
                                 </Stack>
-                            </Box>
-                        </Stack>
-                    )}
-                    {/* Invite Admins */}
-                    {admin && (
-                        <Stack>
+                            </Stack>
+                            {/* Edit Profile */}
                             <Button
-                                onClick={() => setInviting(!isInviting)}
+                                onClick={() => setEditing(!isEditing)}
                                 variant="contained"
-                                color="success"
                                 sx={{
                                     textTransform: "none",
                                     marginTop: "1rem",
                                     width: "100%",
                                 }}
                             >
-                                Invite Admins
+                                Edit Profile
                             </Button>
-                            {isInviting && (
-                                <Box
-                                    sx={{
-                                        bgcolor: "lightgray",
-                                        borderRadius: "0.5rem",
-                                        padding: 2,
-                                        marginTop: 2,
-                                    }}
-                                >
-                                    <Typography padding={1} variant="subtitle2">
-                                        Send an Invitation Email to add a new
-                                        Admin
-                                    </Typography>
-                                    <Stack direction="row">
+                            {isEditing && (
+                                <Stack>
+                                    <Box
+                                        sx={{
+                                            bgcolor: "lightgray",
+                                            borderRadius: "0.5rem",
+                                            padding: 2,
+                                            marginTop: 2,
+                                        }}
+                                    >
                                         <TextField
                                             variant="outlined"
-                                            label="Enter an Email"
-                                            value={inviteeEmail}
+                                            label="Enter a New Username"
+                                            value={updatedUsername}
                                             size="small"
-                                            onChange={(e) =>
-                                                setInviteeEmail(e.target.value)
-                                            }
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter")
-                                                    handleInviteCreate();
+                                            onChange={(e) => {
+                                                setUpdatedUsername(
+                                                    e.target.value
+                                                );
                                             }}
                                             sx={{ width: "100%" }}
-                                            error={isInviteError}
-                                            helperText={
-                                                isInviteError
-                                                    ? "Please enter a valid email."
-                                                    : ""
-                                            }
                                         />
-                                        <Box>
+                                        <Stack
+                                            direction="row"
+                                            marginTop={2}
+                                            justifyContent={"right"}
+                                        >
+                                            <Button
+                                                sx={{ textTransform: "none" }}
+                                                variant="contained"
+                                                color="success"
+                                                onClick={updateUser}
+                                            >
+                                                <CheckIcon />
+                                            </Button>
                                             <Button
                                                 sx={{
-                                                    height: "95%",
-                                                    marginLeft: 1,
+                                                    width: "10%",
+                                                    textTransform: "none",
+                                                    marginLeft: 2,
                                                 }}
                                                 variant="contained"
-                                                color="info"
-                                                onClick={handleInviteCreate}
+                                                color="error"
+                                                onClick={() =>
+                                                    setEditing(false)
+                                                }
                                             >
-                                                <SendIcon />
+                                                <CloseIcon />
                                             </Button>
-                                        </Box>
-                                    </Stack>
-                                    {/* Invitees List */}
-                                    {invites.length > 0 && (
-                                        <List
+                                        </Stack>
+                                    </Box>
+                                </Stack>
+                            )}
+                            {/* Invite Admins */}
+                            {admin && (
+                                <Stack>
+                                    <Button
+                                        onClick={() => setInviting(!isInviting)}
+                                        variant="contained"
+                                        color="success"
+                                        sx={{
+                                            textTransform: "none",
+                                            marginTop: "1rem",
+                                            width: "100%",
+                                        }}
+                                    >
+                                        Invite Admins
+                                    </Button>
+                                    {isInviting && (
+                                        <Box
                                             sx={{
-                                                maxHeight: "200px",
-                                                overflowY: "scroll",
-                                                margin: 1,
-                                                bgcolor: "azure",
+                                                bgcolor: "lightgray",
                                                 borderRadius: "0.5rem",
+                                                padding: 2,
+                                                marginTop: 2,
                                             }}
                                         >
-                                            {/* Example list of current users */}
-                                            {invites.map((invite, index) => (
-                                                <ListItem
-                                                    key={invite as string}
-                                                >
-                                                    <ListItemAvatar>
-                                                        <Avatar />
-                                                    </ListItemAvatar>
-                                                    <ListItemText
+                                            <Typography
+                                                padding={1}
+                                                variant="subtitle2"
+                                            >
+                                                Send an Invitation Email to add
+                                                a new Admin
+                                            </Typography>
+                                            <Stack direction="row">
+                                                <TextField
+                                                    variant="outlined"
+                                                    label="Enter an Email"
+                                                    value={inviteeEmail}
+                                                    size="small"
+                                                    onChange={(e) =>
+                                                        setInviteeEmail(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter")
+                                                            handleInviteCreate();
+                                                    }}
+                                                    sx={{ width: "100%" }}
+                                                    error={isInviteError}
+                                                    helperText={
+                                                        isInviteError
+                                                            ? "Please enter a valid email."
+                                                            : ""
+                                                    }
+                                                />
+                                                <Box>
+                                                    <Button
                                                         sx={{
-                                                            overflowX: "hidden",
+                                                            height: "95%",
+                                                            marginLeft: 1,
                                                         }}
-                                                        primary={invite}
-                                                    />
-                                                    <CloseIcon
-                                                        sx={{
-                                                            cursor: "pointer",
-                                                        }}
-                                                        onClick={() =>
-                                                            handleInviteDelete(
-                                                                index
-                                                            )
+                                                        variant="contained"
+                                                        color="info"
+                                                        onClick={
+                                                            handleInviteCreate
                                                         }
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
+                                                    >
+                                                        <SendIcon />
+                                                    </Button>
+                                                </Box>
+                                            </Stack>
+                                            {/* Invitees List */}
+                                            {invites.length > 0 && (
+                                                <List
+                                                    sx={{
+                                                        maxHeight: "200px",
+                                                        overflowY: "scroll",
+                                                        margin: 1,
+                                                        bgcolor: "azure",
+                                                        borderRadius: "0.5rem",
+                                                    }}
+                                                >
+                                                    {/* Example list of current users */}
+                                                    {invites.map(
+                                                        (invite, index) => (
+                                                            <ListItem
+                                                                key={
+                                                                    invite as string
+                                                                }
+                                                            >
+                                                                <ListItemAvatar>
+                                                                    <Avatar />
+                                                                </ListItemAvatar>
+                                                                <ListItemText
+                                                                    sx={{
+                                                                        overflowX:
+                                                                            "hidden",
+                                                                    }}
+                                                                    primary={
+                                                                        invite
+                                                                    }
+                                                                />
+                                                                <CloseIcon
+                                                                    sx={{
+                                                                        cursor: "pointer",
+                                                                    }}
+                                                                    onClick={() =>
+                                                                        handleInviteDelete(
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </ListItem>
+                                                        )
+                                                    )}
+                                                </List>
+                                            )}
+                                        </Box>
                                     )}
-                                </Box>
+                                </Stack>
                             )}
-                        </Stack>
-                    )}
-                    {/* Delete Account */}
-                    <Stack>
-                        <Button
-                            sx={{
-                                width: "100%",
-                                textTransform: "none",
-                                marginTop: 2,
-                            }}
-                            variant="contained"
-                            color="error"
-                            onClick={() => setIsDialogOpen(true)}
-                        >
-                            Delete Account
-                        </Button>
-                        <Dialog
-                            open={isDialogOpen}
-                            onClose={() => setIsDialogOpen(false)}
-                        >
-                            <DialogTitle>Warning</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>
-                                    Are you sure you want to delete your
-                                    account? This action cannot be undone.
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
+                            {/* Delete Account */}
+                            <Stack>
                                 <Button
-                                    onClick={() => setIsDialogOpen(false)}
-                                    color="primary"
+                                    sx={{
+                                        width: "100%",
+                                        textTransform: "none",
+                                        marginTop: 2,
+                                    }}
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => setIsDialogOpen(true)}
                                 >
-                                    Cancel
+                                    Delete Account
                                 </Button>
-                                <Button onClick={deleteUser} color="error">
-                                    Delete
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                                <Dialog
+                                    open={isDialogOpen}
+                                    onClose={() => setIsDialogOpen(false)}
+                                >
+                                    <DialogTitle>Warning</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            Are you sure you want to delete your
+                                            account? This action cannot be
+                                            undone.
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button
+                                            onClick={() =>
+                                                setIsDialogOpen(false)
+                                            }
+                                            color="primary"
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            onClick={deleteUser}
+                                            color="error"
+                                        >
+                                            Delete
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </Stack>
+                        </Card>
                     </Stack>
-                </Card>
-                <Grid
-                    container spacing={4} sx={{ flexGrow: 1, minWidth: 300 }}
-                >
-                    <Grid item xs={6}>
-                        <Card sx={{ padding: 3, minHeight: "87%" }}>
+
+                    {/* Submissions/Users */}
+                    <Stack sx={{ width: "65%", height: "100%", margin: 1 }}>
+                        <Card
+                            sx={{ padding: 2, marginBottom: 2, minHeight: 250 }}
+                        >
                             <Stack direction="row">
                                 <Typography variant="h6" fontWeight="bold">
                                     {submissions}
@@ -418,9 +450,7 @@ const ProfilePage = () => {
                             </Stack>
                             <ContributionTracker />
                         </Card>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Card>
+                        <Card sx={{ padding: 2, minHeight: 350 }}>
                             {/* Header */}
                             <Typography
                                 variant="h6"
@@ -467,20 +497,38 @@ const ProfilePage = () => {
                                 expand / refresh
                             </Button>
                         </Card>
-                    </Grid>
-                </Grid>
-            </Stack>
-            {/* Renders a backdrop while processing request */}
-            <Backdrop
-                sx={{
-                    color: "#fff",
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                }}
-                open={isSubmitting}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-        </>
+                    </Stack>
+                </Stack>
+
+                {/* History */}
+                <Stack sx={{ width: "100%" }}>
+                    <Card sx={{ padding: 2, margin: 1 }}>
+                        <Typography
+                            variant="h5"
+                            sx={{
+                                paddingX: 2,
+                                paddingY: 1,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            PeerPrep History
+                        </Typography>
+                        <HistoryTable username={user as string} />
+                    </Card>
+                </Stack>
+
+                {/* Renders a backdrop while processing request */}
+                <Backdrop
+                    sx={{
+                        color: "#fff",
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                    open={isSubmitting}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            </Container>
+        </Box>
     );
 };
 
