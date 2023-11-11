@@ -107,7 +107,7 @@ router.post("/", async (req: Request, res: Response) => {
         referrerPolicy: "no-referrer",
         body: JSON.stringify({
             inviteeEmail: inviteeEmail,
-            inviteId: newInvitation.id.toString(),
+            inviteId: newInvitation.id.valueOf(),
         }),
     }).then((response) => {
         if (response.status !== 200) {
