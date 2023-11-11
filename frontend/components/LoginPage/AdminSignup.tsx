@@ -15,7 +15,7 @@ import {
     Container,
 } from "@mui/material";
 import PasswordStrengthCheck, { testPasswordStrength, PasswordStrength } from "./PasswordStength";
-import { enqueueSnackbar } from "notistack";
+import { messageHandler } from "@/utils/handlers";
 
 function Copyright(props: any) {
     return (
@@ -44,9 +44,7 @@ export default function AdminSignup() {
         event.preventDefault();
         // Check password is strong
         if (testPasswordStrength(password) !== PasswordStrength.STRONG) {
-            enqueueSnackbar("Your password is not strong", {
-                variant: "error",
-            });
+            messageHandler("Your password is not strong", "error");
             return;
         }
         await fetchPost("/api/users", {
@@ -60,15 +58,11 @@ export default function AdminSignup() {
                     alert("Success! Added: " + res.data.email);
                     router.push("/login?mode=login");
                 } else {
-                    enqueueSnackbar(res.message, {
-                        variant: "error",
-                    });
+                    messageHandler(res.message, "error");
                 }
             })
             .catch((err) => {
-                enqueueSnackbar(err.message, {
-                    variant: "error",
-                });
+                messageHandler(err.message, "error");
             });
     };
 

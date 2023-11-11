@@ -15,7 +15,7 @@ import {
     Container,
 } from "@mui/material";
 import PasswordStrengthCheck, { testPasswordStrength, PasswordStrength } from "./PasswordStength";
-import { enqueueSnackbar } from "notistack";
+import { messageHandler } from "@/utils/handlers";
 
 function Copyright(props: any) {
     return (
@@ -45,16 +45,12 @@ export default function SignUpBox() {
         event.preventDefault();
         // Check password is strong
         if (testPasswordStrength(password) !== PasswordStrength.STRONG) {
-            enqueueSnackbar("Your password is not strong", {
-                variant: "error",
-            });
+            messageHandler("Your password is not strong", "error");
             return;
         }
         // Check email is valid
         if (email.length < 1 || !email.includes("@")) {
-            enqueueSnackbar("Please enter a valid email", {
-                variant: "error",
-            });
+            messageHandler("Please enter a valid email", "error");
             return;
         }
         console.log(
@@ -71,16 +67,14 @@ export default function SignUpBox() {
         })
             .then((res) => {
                 if (res.status == 201) {
-                    enqueueSnackbar("Success! Added: " + res.data.email, {
-                        variant: "success",
-                    });
+                    messageHandler("Success! Added: " + res.data.email, "success");
                     router.push("/login?mode=login");
                 } else {
-                    enqueueSnackbar(res.message, { variant: "error" });
+                    messageHandler(res.message, "error");
                 }
             })
             .catch((err) => {
-                enqueueSnackbar(err);
+                messageHandler(err.message, "error");
             });
     };
 
