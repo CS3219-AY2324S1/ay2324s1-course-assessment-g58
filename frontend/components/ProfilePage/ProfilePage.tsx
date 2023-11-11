@@ -106,7 +106,10 @@ const ProfilePage = () => {
             .then((res) => {
                 console.log(res);
                 if (res.status === 201) {
-                    setInvites([...invites, inviteeEmail]);
+                    if (!invites.includes(inviteeEmail)) {
+                        // Add email if not already in list of invites
+                        setInvites([...invites, inviteeEmail]);
+                    }
                     setInviteeEmail("");
                 } else {
                     messageHandler(res.message, "error");

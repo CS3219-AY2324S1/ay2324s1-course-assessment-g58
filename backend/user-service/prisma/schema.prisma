@@ -24,7 +24,7 @@ model User {
 }
 
 model Invitation {
-  id        BigInt   @id(map: "invitation_pkey") @default(autoincrement())
+  id        String   @id(map: "invitation_pkey") @default(cuid())
   email     String   @unique(map: "invitaion_email_key")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   invitedBy User     @relation(fields: [userId], references: [id])
