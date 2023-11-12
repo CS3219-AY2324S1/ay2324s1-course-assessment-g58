@@ -16,9 +16,9 @@ serializes a binary tree. You do not necessarily need to follow this format, so
 please be creative and come up with different approaches yourself.
 Example 1: 
         (1)
-       /   \
+       /   \\
     (2)     (3)
-           /   \
+           /   \\
         (4)     (5)
 Input: root = [1,2,3,null,null,4,5]
 Output: [1,2,3,null,null,4,5]
