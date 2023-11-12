@@ -27,8 +27,9 @@ Constraints:
         {
             language: LANGUAGE.PYTHON,
             starterCode:
-`class Solution:
-    def findRepeatedDnaSequences(self, s: str) -> list[str]:
+`from typing import List
+class Solution:
+    def findRepeatedDnaSequences(self, s: str) -> List[str]:
         pass
 `
             , driverCode:

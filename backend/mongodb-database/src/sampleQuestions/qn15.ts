@@ -36,8 +36,9 @@ Constraints:
         {
             language: LANGUAGE.PYTHON,
             starterCode:
-`class Solution:
-    def maxSlidingWindow(self, nums: list[int], k: int) -> list[int]:
+`from typing import List
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
         pass
 `
             , driverCode:

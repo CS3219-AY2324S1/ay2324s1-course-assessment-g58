@@ -36,8 +36,9 @@ Constraints:
         {
             language: LANGUAGE.PYTHON,
             starterCode:
-`class Solution:
-    def canFinish(self,numCourses:int,prerequisites:list[list[int]])->bool:
+`from typing import List
+class Solution:
+    def canFinish(self,numCourses:int,prerequisites:List[List[int]])->bool:
         return False   
 `
             , driverCode:

@@ -37,8 +37,9 @@ Constraints:
         {
             language: LANGUAGE.PYTHON,
             starterCode:
-`class Solution:
-def solveNQueens(self, n: int) -> list[list[str]]:
+`from typing import List
+class Solution:
+def solveNQueens(self, n: int) -> List[List[str]]:
     pass
 `
             , driverCode:
