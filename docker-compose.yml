@@ -98,7 +98,7 @@ services:
         container_name: compiler-service
         build:
             context: .
-            dockerfile: ./compiler-service/Dockerfile
+            dockerfile: ./backend/compiler-service/Dockerfile
         ports:
             - "3006:3006"
         environment: # Running locally has different url than running on docker (not localhost)
