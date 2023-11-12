@@ -1,8 +1,6 @@
-import { Question } from "../models/question.model";
 import { LANGUAGE, DIFFICULTY } from "./LanguageEnum";
 
-export const question1: Question = {
-    _id: "",
+export const question1 = {
     title: "Reverse String",
     description:
 `Write a function that reverses a string. The input string is given as an array of characters s.
@@ -17,7 +15,13 @@ Output: ["o","l","l","e","h"]
 Example 2:
 
 Input: s = ["H","a","n","n","a","h"]
-Output: ["h","a","n","n","a","H"]`,
+Output: ["h","a","n","n","a","H"]
+
+Constraints:
+
+- 1 <= s.length <= 10^5
+- s[i] is a printable ascii character. 
+`,
     difficulty: DIFFICULTY.EASY,
     category: "Strings, Algorithms",
     templates: [

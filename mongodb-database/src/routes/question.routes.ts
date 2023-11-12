@@ -184,7 +184,7 @@ router.post('/create-user', async (req, res) => {
     }
 });
 
-router.post('set-questions-to-default', async (req, res) => {
+router.post('/set-questions-to-default', async (req, res) => {
     try {
         console.log('Setting questions to default...');
         await setQuestionsToDefault();
