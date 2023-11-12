@@ -3,6 +3,7 @@ import QuestionModel, { IQuestion } from "../models/question.model";
 import {QuestionHistoryObjModel, IQuestionHistoryObj } from "../models/question-history.model";
 import { IResponse } from "../models/response.model";
 import UserModel, { IUser } from "../models/user.model";
+import { sampleQuestions } from "../sampleQuestions/SampleQuestions";
 
 export async function createQuestion(question: Partial<IQuestion>): Promise<IQuestion> {
     const newQuestion = new QuestionModel(question);
@@ -49,5 +50,12 @@ export async function getHistory(user: IUser): Promise<IQuestionHistoryObj[] | n
         return null;
     }
     return userData.history;
- }
+}
+
+export async function setQuestionsToDefault(): Promise<void> {
+    // Delete all questions
+    await QuestionModel.deleteMany({});
+    // Add questions from SampleQuestions array to db
+    await QuestionModel.insertMany(sampleQuestions);
+}
  
