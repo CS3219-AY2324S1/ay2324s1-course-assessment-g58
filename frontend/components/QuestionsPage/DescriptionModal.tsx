@@ -66,19 +66,6 @@ const textareaStyle: React.CSSProperties = {
   resize: "vertical" as ResizeOption, // specify the type
 };
 
-function formatText(text: string) {
-  return text.split("\n").map((str, index, array) =>
-    index === array.length - 1 ? (
-      str
-    ) : (
-      <>
-        {str}
-        <br />
-      </>
-    )
-  );
-}
-
 function DescriptionModal({
   question,
   closeModal,
@@ -297,7 +284,9 @@ function DescriptionModal({
                 color="text.primary"
               >
                 Question Description:{" "}
-                {formatText(question.description)}
+                <pre style={{ whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                    {question ? question.description : "No description found"}
+                </pre>
               </Typography>
               <Typography
                 id="modal-modal-difficulty"

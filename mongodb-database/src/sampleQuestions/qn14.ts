@@ -13,7 +13,7 @@ than the node's key.
 - Both the left and right subtrees must also be binary search trees.
 Example 1:
     (2)
-   /   \
+   /   \\
  (1)   (3)
 Input: root = [2,1,3]
 Output: true 

@@ -13,7 +13,7 @@ Return true if there is a cycle in the linked list. Otherwise, return false.
 
 Example 1:
 (3) -> (2) -> (0) -> (-4)
-        ^              |
+        ^              
         |______________|  
 
 Input: head = [3,2,0,-4], pos = 1
@@ -23,7 +23,7 @@ Explanation: There is a cycle in the linked list, where the tail connects to the
 
 Example 2:
 (1) -> (2)
-^       |
+^       
 |_______|  
 
 Input: head = [1,2], pos = 0
