@@ -1,7 +1,7 @@
 import express from 'express';
 import { json } from 'body-parser';
 import { createQuestion, getQuestions, deleteQuestionByObjectId, 
-    editQuestionById, addQuestionToHistory, findHistory, clearHistory, getHistory } from '../services/question.service';
+    editQuestionById, addQuestionToHistory, findHistory, clearHistory, getHistory, setQuestionsToDefault } from '../services/question.service';
 import { Types } from 'mongoose';``
 import { createUser } from '../services/user.service';
 import QuestionModel from '../models/question.model';
@@ -180,6 +180,17 @@ router.post('/create-user', async (req, res) => {
             console.log('Duplicate username detected.');
             return res.status(400).json({ message: 'A user with this username already exists. Please choose a different username.' });
         }
+        res.status(500).json({ message: "500 Internal Server Error" + err.message });
+    }
+});
+
+router.post('/set-questions-to-default', async (req, res) => {
+    try {
+        console.log('Setting questions to default...');
+        await setQuestionsToDefault();
+        console.log('Questions set to default!');
+        res.status(200).json({ message: 'Questions set to default!' });
+    } catch (err: any) {
         res.status(500).json({ message: "500 Internal Server Error" + err.message });
     }
 });

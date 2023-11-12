@@ -32,6 +32,17 @@ type questionCall = {
     lengthOfArray: number[] | null;
 };
 
+export type Question = {
+    _id: string;
+    title: string;
+    description: string;
+    difficulty: string;
+    category: string;
+    templates: questionTemplate[];
+    functions: questionFunction[];
+    calls: questionCall[];
+};
+
 // Class Implementation
 export interface IQuestion extends mongoose.Document {
     _id: Types.ObjectId;

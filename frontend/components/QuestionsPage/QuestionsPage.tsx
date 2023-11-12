@@ -9,6 +9,7 @@ import { messageHandler } from "@/utils/handlers";
 import { Box, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AddQuestionModal from "./AddQuestionModal";
+import ConfirmResetDialog from "./ConfirmResetDialog";
 
 const QuestionPage = () => {
     // get user's role
@@ -82,6 +83,25 @@ const QuestionPage = () => {
         return response.status;
     };
 
+    const [openResetDialog, setOpenResetDialog] = useState(false);
+    const setToDefaultQns = async () => {
+        const response = await fetchPost("/api/questions", "setToDefault");
+        if (response.status == 201) {
+            messageHandler("Success! Set to default questions", "success");
+            setRefresh((prev) => !prev);
+        } else {
+            const errorMsg = response.message || response.data.message;
+            messageHandler(errorMsg, "error");
+        }
+        setOpenResetDialog(false);
+        return response.status;
+    }
+    const confirmDialogProps = {
+        open: openResetDialog,
+        setOpen: setOpenResetDialog,
+        handleConfirm: setToDefaultQns,
+    }
+
     useEffect(() => {
         const fetchQuestions = async () => {
             const fetchedQuestions = await fetchGet("/api/questions");
@@ -117,18 +137,34 @@ const QuestionPage = () => {
                 />
             )}
             {admin && (
-                <Fab
-                    color="primary"
-                    aria-label="add"
-                    style={{
-                        position: "fixed",
-                        bottom: "20px",
-                        right: "20px",
-                    }}
-                    onClick={() => setAddQuestionOpen(true)}
-                >
-                    <AddIcon />
-                </Fab>
+                <>
+                    <Fab
+                        color="primary"
+                        aria-label="reset"
+                        variant="extended"
+                        style={{
+                            position: "fixed",
+                            bottom: "20px",
+                            left: "20px",
+                        }}
+                        onClick={() => setOpenResetDialog(true)}
+                    >
+                        Reset Questions
+                    </Fab>
+                    <Fab
+                        color="primary"
+                        aria-label="add"
+                        style={{
+                            position: "fixed",
+                            bottom: "20px",
+                            right: "20px",
+                        }}
+                        onClick={() => setAddQuestionOpen(true)}
+                    >
+                        <AddIcon />
+                    </Fab>
+                    <ConfirmResetDialog {...confirmDialogProps}/>
+                </>
             )}
         </main>
     );

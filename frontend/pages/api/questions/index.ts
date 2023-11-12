@@ -14,6 +14,27 @@ export default async function handler(
     res: NextApiResponse<ResponseData>
 ) {
     if (req.method === "POST") {
+        if (req.body === "setToDefault") {
+            try {
+                const express_gateway: string = ((process.env
+                    .GATEWAY_SERVER_URL as string) +
+                    process.env
+                        .QUESTION_SERVICE_SET_TO_DEFAULT_ENDPOINT) as string;
+                const response = await fetchPost(express_gateway as string, {
+                    setToDefault: true,
+                });
+                return res.json({ status: 201, data: response });
+            } catch (error) {
+                if (error instanceof HttpError) {
+                    return res.json({
+                        status: error.status,
+                        message: error.message,
+                    });
+                } else {
+                    return res.json({ status: 400, data: error });
+                }
+            }
+        }
         const data = req.body as Question;
         try {
             const express_gateway: string = ((process.env
