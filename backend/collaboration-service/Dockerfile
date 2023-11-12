@@ -3,10 +3,10 @@ FROM --platform=linux/amd64 node:20
 
 WORKDIR /app/collaboration-service
 
-COPY ./collaboration-service/package*.json .
+COPY ./backend/collaboration-service/package*.json .
 RUN npm install
 
-COPY ./collaboration-service .
+COPY ./backend/collaboration-service .
 
 RUN npm run build
 

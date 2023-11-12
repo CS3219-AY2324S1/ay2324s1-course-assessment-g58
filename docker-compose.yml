@@ -61,21 +61,21 @@ services:
         container_name: question-service
         build:
             context: .
-            dockerfile: ./mongodb-database/Dockerfile
+            dockerfile: ./backend/mongodb-database/Dockerfile
         ports:
             - "3002:3002"
         env_file:
-            - ./mongodb-database/.env
+            - ./backend/mongodb-database/.env
 
     matching:
         container_name: matching-service
         build:
             context: .
-            dockerfile: ./matching-service/Dockerfile
+            dockerfile: ./backend/matching-service/Dockerfile
         ports:
             - "3004:3004"
         env_file:
-            - ./matching-service/.env
+            - ./backend/matching-service/.env
         environment:
             - GATEWAY_SERVER_URL=http://gateway:8080
             - USER_SERVICE_URL=http://users:3001/api/session
@@ -84,7 +84,7 @@ services:
         container_name: collaboration-service
         build:
             context: .
-            dockerfile: ./collaboration-service/Dockerfile
+            dockerfile: ./backend/collaboration-service/Dockerfile
         ports:
             - "3005:3005"
 
