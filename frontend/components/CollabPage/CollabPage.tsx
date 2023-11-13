@@ -13,7 +13,6 @@ import {
     DialogContent,
     Stack,
     Grid,
-    Fab,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import dynamic from "next/dynamic";
@@ -97,8 +96,8 @@ const CollabPage = () => {
     };
 
     const questionPanelProps = {
-        question_number: questionNumber + 1,
-        question: questions[questionNumber],
+        question_number: questionNumber,
+        question: questions,
     };
 
     // Called when Next question button is pressed by this user
@@ -285,18 +284,16 @@ const CollabPage = () => {
     }, []);
 
     return (
-        <div>
-            <Grid container={true} spacing={2} sx={{ marginTop: "5px" }}>
+        <div style={{ margin: "10px", maxHeight: "100vh" }}>
+            <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    {questions[questionNumber] ? (
+                    <Box display="flex">
                         <QuestionPanel {...questionPanelProps} />
-                    ) : (
-                        <p>No more questions available.</p>
-                    )}
+                    </Box>
                 </Grid>
                 <Grid item xs={6}>
                     <Stack direction="column" spacing={1}>
-                        <Box display="flex" justifyContent="space-between">
+                        <Box justifyContent="space-between">
                             {!isEndingSession && (
                                 <CollabPageNavigation
                                     {...collabPageNavigationProps}
