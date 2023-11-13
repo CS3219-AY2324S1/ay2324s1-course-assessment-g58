@@ -28,7 +28,6 @@ import { useEffect, useState, FormEvent } from "react";
 import { fetchGet, fetchPut, fetchDelete, fetchPost } from "@/utils/apiHelpers";
 import ContributionTracker from "./ContributionTracker";
 import { validateEmail } from "@/utils/validationHelpers";
-import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
 import HistoryTable from "./HistoryTable";
 
@@ -66,7 +65,6 @@ const ProfilePage = () => {
                     "success"
                 );
             } else {
-                enqueueSnackbar(res.message, { variant: "error" });
                 messageHandler(res.message, "error");
             }
         });
