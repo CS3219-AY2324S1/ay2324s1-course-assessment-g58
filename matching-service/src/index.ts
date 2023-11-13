@@ -81,6 +81,8 @@ async function findMatch(user: User, socket: Socket) {
         const roomName = `${user.socketId}*-*${matchingUser.socketId}`;
         user.roomId = roomName;
         matchingUser.roomId = roomName;
+
+        const difficulty = user.difficulty;
         
 
         // Get questions for the room

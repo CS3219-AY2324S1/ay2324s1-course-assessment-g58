@@ -1,7 +1,7 @@
 import express from 'express';
 import { json } from 'body-parser';
-import { createQuestion, getQuestions, deleteQuestionByObjectId, 
-    editQuestionById, addQuestionToHistory, findHistory, clearHistory, getHistory, setQuestionsToDefault } from '../services/question.service';
+import { createQuestion, getQuestions, deleteQuestionByObjectId, filterQuestions,
+    editQuestionById, addQuestionToHistory, clearHistory, getHistory, setQuestionsToDefault } from '../services/question.service';
 import { Types } from 'mongoose';``
 import { createUser } from '../services/user.service';
 import QuestionModel from '../models/question.model';
@@ -10,6 +10,7 @@ import ResponseModel from '../models/response.model';
 import { IQuestion } from '../models/question.model';
 import { IResponse } from '../models/response.model';
 import { IUser } from '../models/user.model';
+import { get } from 'config';
 
 
 const router = express.Router();
@@ -194,6 +195,31 @@ router.post('/set-questions-to-default', async (req, res) => {
         res.status(500).json({ message: "500 Internal Server Error" + err.message });
     }
 });
+
+router.get('/filter-questions', async (req, res) => {
+    try {
+        const category = req.body.category as string[];  // Assuming category is an array in the request
+        const difficulty = req.body.difficulty as string[];
+
+        console.log('Filtering questions by category:', category);
+        console.log('Filtering questions by difficulty:', difficulty);
+
+        const filteredQuestions = await filterQuestions({ category, difficulty });
+
+        if (filteredQuestions.length > 0) {
+            console.log('Questions filtered!');
+            res.status(200).json(filteredQuestions);
+        } else {
+            console.log('Questions not found!');
+            res.status(404).json({ message: 'Questions not found' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: '500 Internal Server Error' });
+    }
+});
+
+
 
 export { router as QuestionRouter };
 

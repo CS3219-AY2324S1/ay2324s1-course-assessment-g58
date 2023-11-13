@@ -58,4 +58,22 @@ export async function setQuestionsToDefault(): Promise<void> {
     // Add questions from SampleQuestions array to db
     await QuestionModel.insertMany(sampleQuestions);
 }
+
+export async function filterQuestions({ category, difficulty }: { category: string[]; difficulty: string[] }): Promise<IQuestion[]> {
+    let filter: any = {};
+
+    if (category && category.length > 0) {
+        filter.category = { $in: category };
+    }
+
+    if (difficulty && difficulty.length > 0) {
+        filter.difficulty = { $in: difficulty };
+    }
+
+    if (Object.keys(filter).length === 0) {
+        return QuestionModel.find(); // Return all questions if no filters are applied
+    }
+
+    return QuestionModel.find(filter);
+}
  
