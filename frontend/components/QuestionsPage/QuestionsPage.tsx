@@ -95,12 +95,12 @@ const QuestionPage = () => {
         }
         setOpenResetDialog(false);
         return response.status;
-    }
+    };
     const confirmDialogProps = {
         open: openResetDialog,
         setOpen: setOpenResetDialog,
         handleConfirm: setToDefaultQns,
-    }
+    };
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -122,7 +122,7 @@ const QuestionPage = () => {
                     addQuestion={addQuestion}
                 />
             )}
-            <Box display="flex" padding={2}>
+            <Box display="flex" maxHeight="80vh" padding={2}>
                 <QuestionTable
                     questions={questions}
                     deleteQuestion={deleteQuestion}
@@ -163,7 +163,7 @@ const QuestionPage = () => {
                     >
                         <AddIcon />
                     </Fab>
-                    <ConfirmResetDialog {...confirmDialogProps}/>
+                    <ConfirmResetDialog {...confirmDialogProps} />
                 </>
             )}
         </main>

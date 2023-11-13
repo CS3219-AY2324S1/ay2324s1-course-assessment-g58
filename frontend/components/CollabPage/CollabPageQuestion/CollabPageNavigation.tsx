@@ -51,7 +51,6 @@ function CollabPageNavigation({
         isLastQuestion: isLastQuestion,
     };
 
-
     const EndSessionHandshakeModalProps = {
         isEndSessionHandshakeOpen: isEndSessionHandshakeOpen,
         setIsEndSessionHandshakeOpen: setIsEndSessionHandshakeOpen,
