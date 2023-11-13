@@ -96,7 +96,7 @@ const CollabPage = () => {
     };
 
     const questionPanelProps = {
-        question_number: questionNumber + 1,
+        question_number: questionNumber,
         question: questions,
     };
 
