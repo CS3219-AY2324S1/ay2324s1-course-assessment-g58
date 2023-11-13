@@ -24,6 +24,7 @@ apiEndpoints:
       - "/get-all-questions"
       - "/delete-question"
       - "/edit-question"
+      - "/filter-questions"
   compiler:
     host: "*"
     paths:

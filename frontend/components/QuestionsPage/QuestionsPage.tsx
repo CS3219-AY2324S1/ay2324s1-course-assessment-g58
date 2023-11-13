@@ -9,6 +9,7 @@ import { messageHandler } from "@/utils/handlers";
 import { Box, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AddQuestionModal from "./AddQuestionModal";
+import FilterBar from "./FilterBar";
 
 const QuestionPage = () => {
     // get user's role
@@ -31,6 +32,10 @@ const QuestionPage = () => {
     const handleCloseModal = () => {
         setQuestionModalOpen(false);
     };
+
+    // State for filter bar
+    const [categoryOptions, setCategoryOptions] = useState<{ value: number; label: string }[]>([]);
+    const [difficultyOptions, setDifficultyOptions] = useState<{ value: number; label: string }[]>([]);
 
     // Stuff for question table
     const [questions, setQuestions] = useState<Question[]>([]);
@@ -82,6 +87,19 @@ const QuestionPage = () => {
         return response.status;
     };
 
+    // filter stuff
+    const handleApplyFilters = (selectedCategories: string[], selectedDifficulties: string[]) => {
+        // Handle applying filters, e.g., fetching filtered data
+        console.log('Applying filters:', selectedCategories, selectedDifficulties);
+        // Update logic as needed
+      };
+    
+    const handleResetFilters = () => {
+    // Handle resetting filters, e.g., resetting the state or fetching all data
+    console.log('Resetting filters');
+    };
+    
+
     useEffect(() => {
         const fetchQuestions = async () => {
             const fetchedQuestions = await fetchGet("/api/questions");
@@ -89,6 +107,27 @@ const QuestionPage = () => {
         };
         fetchQuestions();
     }, [refresh]);
+
+    useEffect(() => {
+        const categories = new Set<string>();
+        const difficulties = new Set<string>();
+        questions.forEach((question) => {
+            categories.add(question.category);
+            difficulties.add(question.difficulty);
+        });
+        const categoryOptions = Array.from(categories).map((category, index) => ({
+            value: index,
+            label: category,
+        }));
+        const difficultyOptions = Array.from(difficulties).map((difficulty, index) => ({
+            value: index,
+            label: difficulty,
+        }));
+        setCategoryOptions(categoryOptions);
+        setDifficultyOptions(difficultyOptions);
+    }, [questions]);
+
+    console.log('Current value of questions:', questions);
 
     if (!user) {
         return <LoginPage />;
@@ -102,6 +141,12 @@ const QuestionPage = () => {
                     addQuestion={addQuestion}
                 />
             )}
+            <FilterBar
+                categoryOptions={categoryOptions}
+                difficultyOptions={difficultyOptions}
+                onApplyFilters={handleApplyFilters}
+                onResetFilters={handleResetFilters}
+            />
             <Box display="flex" padding={2}>
                 <QuestionTable
                     questions={questions}
