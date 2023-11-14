@@ -1,14 +1,5 @@
 import { fetchGet } from "@/utils/apiHelpers";
 import { useEffect, useState } from "react";
-import {
-    CartesianGrid,
-    XAxis,
-    YAxis,
-    Tooltip,
-    Area,
-    AreaChart,
-    ResponsiveContainer,
-} from "recharts";
 import SessionTrackerGraph from "./SessionTrackerGraph";
 import { Typography } from "@mui/material";
 
