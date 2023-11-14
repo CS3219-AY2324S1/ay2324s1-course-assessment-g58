@@ -10,6 +10,9 @@ import {
   AccordionSummary,
   AccordionDetails,
   TextareaAutosize,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Editor from "@monaco-editor/react";
@@ -18,6 +21,7 @@ import Question, {
   defaultQuestionTemplates,
 } from "@/types/Question";
 import { messageHandler } from "@/utils/handlers";
+import { DIFFICULTY } from "@/utils/enums";
 
 interface AddQuestionModalProps {
   handleClose: () => void;
@@ -121,14 +125,26 @@ function AddQuestionModal({ handleClose, addQuestion }: AddQuestionModalProps) {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         />
-        <TextField
+        <InputLabel id="difficulty-label">
+          Difficulty
+        </InputLabel>
+        <Select
+          labelId="difficulty-label"
           label="Difficulty"
-          variant="outlined"
           fullWidth
-          margin="normal"
           value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-        />
+          onChange={(e) =>
+            setDifficulty(e.target.value)
+          }
+        >
+          {Object.values(DIFFICULTY).map((value) => {
+            return (
+              <MenuItem key={value} value={value}>
+                {value}
+              </MenuItem>
+            );
+          })}
+        </Select>
         <TextField
           label="Description"
           variant="outlined"
