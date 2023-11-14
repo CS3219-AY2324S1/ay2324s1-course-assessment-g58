@@ -12,8 +12,8 @@ import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 
 interface FilterSelectorProps {
   options: { value: number; label: string }[];
-  selectedValues: string[]; // Change this line to use string[]
-  onChange: (value: string[]) => void; // Change this line to use string[]
+  selectedValues: string[]; 
+  onChange: (value: string[]) => void; 
 }
 
 export default function FilterSelector({ options, selectedValues, onChange }: FilterSelectorProps) {
