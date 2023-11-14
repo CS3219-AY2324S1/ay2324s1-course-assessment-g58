@@ -276,7 +276,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                 </Stack>
                 <Box>
                     <Pagination
-                        count={3}
+                        count={displayedResponses.length}
                         page={questionNumber}
                         color="primary"
                         onChange={handleChange}
