@@ -3,10 +3,10 @@ FROM --platform=linux/amd64 node:20
 
 WORKDIR /app/matching-service
 
-COPY ./matching-service/package*.json .
+COPY ./backend/matching-service/package*.json .
 RUN npm install
 
-COPY ./matching-service .
+COPY ./backend/matching-service .
 
 EXPOSE 3004
 
