@@ -59,6 +59,7 @@ function SessionTracker(props: trackerProps) {
             }
 
             // add number of sessions
+            if (data) {
             data.forEach((obj) => {
                 // increment month by one as it is a range from 0 (January) to 11 (December)
                 const year_month = `${obj.year}-${obj.month + 1}`;
@@ -67,7 +68,7 @@ function SessionTracker(props: trackerProps) {
                 // transfer number of sessions
                 presentMonths[year_month] = count;
             });
-
+            }
             // push values in hash map to array
             for (
                 let date = new Date(oneYearAgo);
