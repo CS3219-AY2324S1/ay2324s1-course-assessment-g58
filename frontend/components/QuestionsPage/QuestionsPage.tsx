@@ -6,7 +6,7 @@ import Question from "@/types/Question";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginPage from "../LoginPage/LoginPage";
 import { messageHandler } from "@/utils/handlers";
-import { Box, Fab } from "@mui/material";
+import { Alert, Box, Fab, Snackbar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import AddQuestionModal from "./AddQuestionModal";
 import ConfirmResetDialog from "./ConfirmResetDialog";
@@ -43,6 +43,7 @@ const QuestionPage = () => {
     // state is changed on adding, editing or deleting qns, useEffect is called
     // and refreshes the table
     const [refresh, setRefresh] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
 
     const addQuestion = async (newQuestion: Question) => {
         // Add the new question to the backend and then update the state
@@ -107,11 +108,25 @@ const QuestionPage = () => {
         handleConfirm: setToDefaultQns,
     };
     // filter stuff
-    const handleApplyFilters = (selectedCategories: string[], selectedDifficulties: string[]) => {
+    const handleApplyFilters = async (selectedCategories: string[], selectedDifficulties: string[]) => {
         // Handle applying filters, e.g., fetching filtered data
         console.log('Applying filters:', selectedCategories, selectedDifficulties);
         // Update logic as needed
-      };
+        
+        await fetchPost("/api/questions/filter", {
+            category: selectedCategories,
+            difficulty: selectedDifficulties
+        }).then((res) => {
+            console.log(res);
+            if (res.status === 200) {
+                setQuestions(res.data);
+            } else {
+                console.error("Failed to apply filters");
+                setOpenAlert(true);
+            }
+        });
+        
+    };
     
     const handleResetFilters = () => {
     // Handle resetting filters, e.g., resetting the state or fetching all data
@@ -134,6 +149,15 @@ const QuestionPage = () => {
             categories.add(question.category);
             difficulties.add(question.difficulty);
         });
+        // Note: This sets the filters to the tags of the remaining questions.
+        // While this works when all questions are present, after filtering, the options are reduced to that of the filtered questions
+        // If this is an unintended consequence
+        // Consider using a different variable to maintain the state of all the categories and difficulties at the start!
+        // If not, great work!  
+
+        // Also, there are impossible combinations, e.g bit manipulation and hard. 
+        // For this case, I added an alert!
+
         const categoryOptions = Array.from(categories).map((category, index) => ({
             value: index,
             label: category,
@@ -210,6 +234,15 @@ const QuestionPage = () => {
                     <ConfirmResetDialog {...confirmDialogProps} />
                 </>
             )}
+            <Snackbar
+                open={openAlert}
+                autoHideDuration={6000}
+                onClose={() => setOpenAlert(false)}
+            >
+                <Alert onClose={() => setOpenAlert(false)} severity="error" sx={{ width: '100%' }}>
+                    Question with specified filters does not exist!
+                </Alert>
+            </Snackbar>
         </main>
     );
 };

@@ -196,7 +196,7 @@ router.post('/set-questions-to-default', async (req, res) => {
     }
 });
 
-router.get('/filter-questions', async (req, res) => {
+router.post('/filter-questions', async (req, res) => {
     try {
         const category = req.body.category as string[];  // Assuming category is an array in the request
         const difficulty = req.body.difficulty as string[];

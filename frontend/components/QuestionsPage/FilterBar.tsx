@@ -1,6 +1,7 @@
 // FilterBar.tsx
 import * as React from 'react';
 import FilterSelector from './FilterSelector'; // Import your FilterSelector component
+import { Box } from '@mui/material';
 
 interface FilterBarProps {
   categoryOptions: { value: number; label: string }[];
@@ -29,12 +30,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   return (
-    <div>
+    <Box sx={{paddingX: 2, paddingY: 1}}>
       <FilterSelector options={categoryOptions} selectedValues={selectedCategories} onChange={setSelectedCategories} />
       <FilterSelector options={difficultyOptions} selectedValues={selectedDifficulties} onChange={setSelectedDifficulties} />
       <button onClick={handleApplyFilters}>Apply Filters</button>
       <button onClick={handleResetFilters}>Reset Filters</button>
-    </div>
+    </Box>
   );
 };
 
