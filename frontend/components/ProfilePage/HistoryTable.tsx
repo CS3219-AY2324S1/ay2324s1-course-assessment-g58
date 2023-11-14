@@ -54,6 +54,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
     const [displayedResponses, setDisplayedResponses] = useState<
         QuestionResponse[]
     >([]);
+    const [modalLanguage, setModalLanguage] = useState("python");
     const historyStore = useStore().history;
     const dateOptions: Intl.DateTimeFormatOptions = {
         year: "numeric",
@@ -92,6 +93,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
             question_number: 1,
             question: historyStore.getQuestionById(responses[0].questionId),
         });
+        setModalLanguage(tableData[id - 1].language.toLowerCase());
         setOpen(true);
     };
 
@@ -269,11 +271,11 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                             code={
                                 displayedResponses[questionNumber - 1] ==
                                 undefined
-                                    ? "text"
+                                    ? "  Press the question number  "
                                     : displayedResponses[questionNumber - 1]
                                           .text
                             }
-                            language={"python"}
+                            language={modalLanguage}
                         />
                     </Box>
                 </Stack>
