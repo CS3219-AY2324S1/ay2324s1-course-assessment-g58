@@ -108,6 +108,12 @@ async function findMatch(user: User, socket: Socket) {
             console.log("Error getting questions");
         }
 
+        // Randomly select how many questions to give (from 2-4)
+        const numQuestions = Math.random() * (4 - 2) + 2;
+
+        // Randomly select numQuestions qns
+        questions = questions.sort(() => Math.random() - Math.random()).slice(0, numQuestions);
+
         user.questions = questions;
         matchingUser.questions = questions;
 
