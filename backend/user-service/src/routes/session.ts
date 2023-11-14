@@ -148,6 +148,11 @@ router.get("/:username/past-year", async (req: Request, res: Response) => {
                     1
                 ),
             },
+            users: {
+                some: {
+                    username: username,
+                },
+            },
         },
         orderBy: {
             month: "asc",
