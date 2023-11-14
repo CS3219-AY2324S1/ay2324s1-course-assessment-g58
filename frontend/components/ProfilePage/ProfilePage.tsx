@@ -26,7 +26,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { fetchToken, useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState, FormEvent } from "react";
 import { fetchGet, fetchPut, fetchDelete, fetchPost } from "@/utils/apiHelpers";
-import ContributionTracker from "./ContributionTracker";
+import SessionTracker from "./SessionComponent/SessionTracker";
 import { validateEmail } from "@/utils/validationHelpers";
 import { messageHandler } from "@/utils/handlers";
 import HistoryTable from "./HistoryTable";
@@ -425,7 +425,7 @@ const ProfilePage = () => {
                         <Card
                             sx={{ padding: 2, marginBottom: 2, minHeight: 250 }}
                         >
-                            <ContributionTracker username={user} />
+                            <SessionTracker username={user} />
                         </Card>
                         <Card sx={{ padding: 2, minHeight: 350 }}>
                             {/* Header */}
