@@ -13,6 +13,8 @@ import {
     DialogContent,
     Stack,
     Grid,
+    Card,
+    Typography,
 } from "@mui/material";
 import CodeEditor from "./CodeEditor";
 import dynamic from "next/dynamic";
@@ -97,7 +99,7 @@ const CollabPage = () => {
 
     const questionPanelProps = {
         question_number: questionNumber,
-        question: questions,
+        question: questions[questionNumber],
     };
 
     // Called when Next question button is pressed by this user
@@ -288,7 +290,15 @@ const CollabPage = () => {
             <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <Box display="flex">
-                        <QuestionPanel {...questionPanelProps} />
+                        {questions[questionNumber] ? (
+                            <QuestionPanel {...questionPanelProps} />
+                        ) : (
+                            <Card sx={{ maxHeight: "100vh", padding: 2 }}>
+                                <Typography>
+                                    No more questions available.
+                                </Typography>
+                            </Card>
+                        )}
                     </Box>
                 </Grid>
                 <Grid item xs={6}>
