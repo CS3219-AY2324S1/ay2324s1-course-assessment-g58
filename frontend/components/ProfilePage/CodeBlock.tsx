@@ -9,12 +9,10 @@ interface CodeBlockProps {
 }
  
 const CodeBlock: FC<CodeBlockProps> = ({ code, language }) => {
-    console.log(code);
     const formattedCode = code.slice(1, -1)
         .replace(/\\n/g, '\n')
         .replace(/\\t/g, '\t')
         .replace(/\\"/g, '"');
-    console.log(formattedCode);
     return (
         <Box
             sx={{
@@ -32,7 +30,6 @@ const CodeBlock: FC<CodeBlockProps> = ({ code, language }) => {
                 }}
             >
                 {formattedCode}
-                {/* {"class new:\n\tdef hi:"} */}
             </SyntaxHighlighter>
         </Box>
     );
