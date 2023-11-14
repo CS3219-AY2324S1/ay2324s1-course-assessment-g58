@@ -40,6 +40,8 @@ model Session {
   difficulty String     @default("Easy")
   language   String
   roomId     String
+  year       Int
+  month      Int
   users      User[]
   responses  Response[]
 

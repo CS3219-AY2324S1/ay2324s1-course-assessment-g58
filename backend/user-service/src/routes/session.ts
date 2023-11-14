@@ -39,6 +39,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     // TODO: How do i / do i need to prevent the same party from recreating the same session?
 
+    const currDate = new Date();
+
     // Return the sessions where the user was a part of
     const session = await prisma.session.create({
         data: {
@@ -50,6 +52,8 @@ router.post("/", async (req: Request, res: Response) => {
             roomId: roomId,
             language: language,
             difficulty: difficulty,
+            year: currDate.getFullYear(),
+            month: currDate.getMonth(),
         },
         include: {
             users: {
@@ -104,6 +108,58 @@ router.get("/user/:username", async (req: Request, res: Response) => {
         },
     });
     res.json(SessionDataToDTO(sessions));
+});
+
+/* The `router.get("/:username/past-year", async (req: Request, res: Response) => { ... })` endpoint is
+used to retrieve the count of sessions a user had in the past year. */
+router.get("/:username/past-year", async (req: Request, res: Response) => {
+    const username = req.params.username as unknown as bigint;
+    if (!username || typeof username != "string") {
+        return res.status(404).json({
+            message: `Expected username, received ${username}.`,
+        });
+    }
+
+    // Verify user exists
+    const user = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
+    if (!user) {
+        return res.status(404).json({
+            message: `User ${user} not found.`,
+        });
+    }
+
+    const currDate = new Date();
+    // Return an array containing the date to count of sessions the user had in that period.
+    // We return the past year's data only
+    const pastYearSessionCount = await prisma.session.groupBy({
+        by: ["year", "month"],
+        _count: {
+            _all: true,
+        },
+        where: {
+            createdAt: {
+                gte: new Date(
+                    currDate.getFullYear() - 1,
+                    currDate.getMonth(),
+                    1
+                ),
+            },
+            users: {
+                some: {
+                    username: username,
+                },
+            },
+        },
+        orderBy: {
+            month: "asc",
+        },
+    });
+
+    res.json(pastYearSessionCount);
 });
 
 /**   This DELETE "/" endpoint delete a Session

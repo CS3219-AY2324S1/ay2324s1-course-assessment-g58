@@ -256,7 +256,10 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                 </AppBar>
 
                 <Stack direction="row">
-                    <Box sx={{ width: "50%", height: "80vh", padding: 8 }}>
+                    <Box
+                        display="flex"
+                        sx={{ width: "50%", height: "80vh", padding: 8 }}
+                    >
                         {/* @ts-ignore */}
                         <QuestionPanel {...questionPanelProps} />
                     </Box>
