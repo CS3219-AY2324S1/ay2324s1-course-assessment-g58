@@ -11,7 +11,6 @@ export default async function handler(
             const express_gateway: string =
                 (process.env.GATEWAY_SERVER_URL as string) +
                 "/filter-questions";
-            console.log(express_gateway)
             const response = await fetchPost(express_gateway as string, {
                 category: category,
                 difficulty: difficulty,
