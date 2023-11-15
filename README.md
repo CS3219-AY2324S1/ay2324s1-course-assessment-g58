@@ -1,4 +1,5 @@
-# Getting Started with Docker for Development
+# PeerPrep 
+## Getting Started with Docker for Development
 
 1. Install docker at https://www.docker.com/
 
@@ -17,7 +18,7 @@ To simplify the container building, a `docker-compose.yml` has been created in o
 
 Note that user-service requires a Supabase database and question-service requires a MongoDB database. The respective `README.md` should aid you in creating your own databases.
 
-Also, the ai-service requires your own OpenAI key and email-service requires an SMTP_PASSWORD to run locally. For ease of testing, do so on peerprep.ryanchuahj.com
+Also, the ai-service requires your own OpenAI key and email-service requires an SMTP_PASSWORD to run locally. For ease of testing, do so on [peerprep.ryanchuahj.com](peerprep.ryanchuahj.com), or contact the developers.
 
 ## Finishing Development
 
