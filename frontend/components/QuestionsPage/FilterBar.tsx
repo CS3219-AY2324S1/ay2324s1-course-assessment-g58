@@ -1,7 +1,7 @@
 // FilterBar.tsx
 import * as React from 'react';
 import FilterSelector from './FilterSelector'; // Import your FilterSelector component
-import { Box, Button } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 
 interface FilterBarProps {
   categoryOptions: { value: number; label: string }[];
@@ -30,13 +30,54 @@ const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   return (
-    <Box sx={{paddingX: 2, paddingY: 1}}>
-      <FilterSelector options={categoryOptions} selectedValues={selectedCategories} onChange={setSelectedCategories} />
-      <FilterSelector options={difficultyOptions} selectedValues={selectedDifficulties} onChange={setSelectedDifficulties} />
-      <Button onClick={handleApplyFilters}>Apply Filters</Button>
-      <Button onClick={handleResetFilters}>Reset Filters</Button>
+    <Box sx={{ padding: 2 }}>
+      <Grid container spacing={2}>
+        <Grid item>
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Category
+            </Typography>
+            <FilterSelector
+              options={categoryOptions}
+              selectedValues={selectedCategories}
+              onChange={setSelectedCategories}
+            />
+          </Box>
+        </Grid>
+        <Grid item>
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Difficulty
+            </Typography>
+            <FilterSelector
+              options={difficultyOptions}
+              selectedValues={selectedDifficulties}
+              onChange={setSelectedDifficulties}
+            />
+          </Box>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={handleApplyFilters}
+            variant="contained"
+            className="bg-blue-400"
+          >
+            Apply Filters
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={handleResetFilters}
+            variant="contained"
+            className="bg-blue-400"
+          >
+            Reset Filters
+          </Button>
+        </Grid>
+      </Grid>
     </Box>
-  );
+    
+      );
 };
 
 export default FilterBar;
