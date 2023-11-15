@@ -32,7 +32,7 @@ type User = {
 };
 
 const ProfilePage = () => {
-    const { user, email, logout, setUser } = useAuth();
+    const { user, email, logout, setUser, token } = useAuth();
     const [submissions, setSubmissions] = useState(0);
     const [isEditing, setEditing] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
@@ -57,7 +57,7 @@ const ProfilePage = () => {
     }, [user]);
 
     const refreshUsers = async () => {
-        await fetchGet("/api/users").then((res) => {
+        await fetchGet("/api/users", { token: token }).then((res) => {
             if (res.status == 200 && res.data) setUsers(res.data);
         });
     };
@@ -67,6 +67,7 @@ const ProfilePage = () => {
         await fetchPut("/api/users", {
             username: updatedUsername,
             email: email,
+            token: token,
         }).then((res) => {
             if (res.data) {
                 // get new token
@@ -83,8 +84,8 @@ const ProfilePage = () => {
         event.preventDefault();
         await fetchDelete("/api/users", {
             email: email,
+            token: token,
         }).then((res) => {
-            console.log(res);
             if (res.status == 200) {
                 setIsDialogOpen(false);
                 alert("Success! Deleted: " + res.data.email);

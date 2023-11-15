@@ -6,7 +6,7 @@ export default async function handler(
     res: NextApiResponse<ResponseData>
 ) {
     if (req.method === "POST") {
-        const { email, password } = req.body;
+        const { email, password, token } = req.body;
 
         try {
             const express_gateway: string = ((process.env
@@ -16,10 +16,12 @@ export default async function handler(
             const response = await fetchPost(express_gateway as string, {
                 email: email,
                 password: password,
+                token: token,
             });
 
             return res.json({ status: response.status, data: response });
         } catch (error: any) {
+            console.log("error");
             if (error instanceof HttpError) {
                 return res.json({
                     status: error.status,

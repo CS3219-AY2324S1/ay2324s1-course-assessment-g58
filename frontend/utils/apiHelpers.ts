@@ -27,8 +27,13 @@ export class HttpError extends Error {
  * resolves to the parsed JSON response from the server.
  */
 
-export async function fetchGet(url: string) {
-    const response = await fetch(url);
+export async function fetchGet(url: string, data: any) {
+    const token: string = data.token || "";
+    const response = await fetch(url, {
+        headers: {
+            authorization: `${token}`,
+        },
+    });
     const res = await response.json(); // parses JSON response into native JavaScript objects
 
     if (response.status >= 300) {
@@ -39,6 +44,7 @@ export async function fetchGet(url: string) {
 }
 
 export async function fetchPost(url: string, data: any) {
+    const token = data.token || "";
     // Default options are marked with *
     const response = await fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -47,6 +53,7 @@ export async function fetchPost(url: string, data: any) {
         credentials: "same-origin", // include, *same-origin, omit
         headers: {
             "Content-Type": "application/json",
+            authorization: `${token}`,
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         redirect: "follow", // manual, *follow, error
@@ -64,6 +71,7 @@ export async function fetchPost(url: string, data: any) {
 }
 
 export async function fetchPut(url: string, data: any) {
+    const token = data.token || "";
     // Default options are marked with *
     const response = await fetch(url, {
         method: "PUT", // *GET, POST, PUT, DELETE, etc.
@@ -72,6 +80,7 @@ export async function fetchPut(url: string, data: any) {
         credentials: "same-origin", // include, *same-origin, omit
         headers: {
             "Content-Type": "application/json",
+            Authorization: `${token}`,
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         redirect: "follow", // manual, *follow, error
@@ -88,6 +97,7 @@ export async function fetchPut(url: string, data: any) {
 }
 
 export async function fetchDelete(url: string, data: any) {
+    const token = data.token || "";
     // Default options are marked with *
     const response = await fetch(url, {
         method: "DELETE", // *GET, POST, PUT, DELETE, etc.
@@ -96,6 +106,7 @@ export async function fetchDelete(url: string, data: any) {
         credentials: "same-origin", // include, *same-origin, omit
         headers: {
             "Content-Type": "application/json",
+            Authorization: `${token}`,
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         redirect: "follow", // manual, *follow, error

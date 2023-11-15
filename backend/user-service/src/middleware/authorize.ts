@@ -34,7 +34,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
         jwt.verify(
             token,
-            process.env.ACCESS_TOKEN ?? "",
+            process.env.JWT_ACCESS_TOKEN ?? "",
             (err: JwtVerifyError | null, user: any) => {
                 if (err) {
                     return res.status(403).json({
@@ -82,7 +82,7 @@ export function authorize(req: Request, res: Response, next: NextFunction) {
 
         jwt.verify(
             token,
-            process.env.ACCESS_TOKEN ?? "",
+            process.env.JWT_ACCESS_TOKEN ?? "",
             (err: JwtVerifyError | null, user: any) => {
                 // no token provided
                 if (err) {

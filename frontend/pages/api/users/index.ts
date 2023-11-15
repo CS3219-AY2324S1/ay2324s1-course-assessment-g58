@@ -17,7 +17,7 @@ export default async function handler(
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
                 process.env.USER_SERVICE_ENDPOINT) as string;
-            const response = await fetchGet(express_gateway as string);
+            const response = await fetchGet(express_gateway as string, "");
             return res.json({ status: 200, data: response });
         } catch (error) {
             if (error instanceof HttpError) {

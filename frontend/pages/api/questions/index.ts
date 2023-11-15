@@ -14,6 +14,8 @@ export default async function handler(
 ) {
     if (req.method === "POST") {
         const { _id, title, description, difficulty, category } = req.body;
+        const token = req.headers.authorization;
+
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
@@ -24,6 +26,7 @@ export default async function handler(
                 description: description,
                 difficulty: difficulty,
                 category: category,
+                token: token,
             });
             return res.json({ status: 201, data: response });
         } catch (error) {
@@ -37,11 +40,14 @@ export default async function handler(
             }
         }
     } else if (req.method === "GET") {
+        const token = req.headers.authorization;
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
                 process.env.QUESTION_SERVICE_GET_QUESTION_ENDPOINT) as string;
-            const response = await fetchGet(express_gateway as string);
+            const response = await fetchGet(express_gateway as string, {
+                token: token,
+            });
             return res.json({ status: 200, data: response });
         } catch (error) {
             if (error instanceof HttpError) {
@@ -55,6 +61,8 @@ export default async function handler(
         }
     } else if (req.method === "DELETE") {
         const { _id, title, description, difficulty, category } = req.body;
+        const token = req.headers.authorization;
+
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
@@ -66,6 +74,7 @@ export default async function handler(
                 description: description,
                 difficulty: difficulty,
                 category: category,
+                token: token,
             });
             return res.json({ status: 200, data: response });
         } catch (error) {
@@ -80,6 +89,8 @@ export default async function handler(
         }
     } else if (req.method === "PUT") {
         const { _id, title, description, difficulty, category } = req.body;
+        const token = req.headers.authorization;
+
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
@@ -90,6 +101,7 @@ export default async function handler(
                 description: description,
                 difficulty: difficulty,
                 category: category,
+                token: token,
             });
             return res.json({ status: 200, data: response });
         } catch (error) {
