@@ -82,13 +82,22 @@ async function findMatch(user: User, socket: Socket) {
         user.roomId = roomName;
         matchingUser.roomId = roomName;
         
-
         // Get questions for the room
-        const response = await fetch(
-            (process.env.GATEWAY_SERVER_URL as string) +
-                (process.env.QUESTION_SERVICE_GET_QUESTION_ENDPOINT as string)
-        );
-        console.log(response);
+        const response = await fetch((process.env.GATEWAY_SERVER_URL as string) + "/filter-questions", {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify({
+                difficulty: [user.difficulty],
+            }),
+        });
+
 
         var questions: Question[] = [];
 

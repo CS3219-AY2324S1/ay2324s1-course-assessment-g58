@@ -1,0 +1,7 @@
+{
+    "functions": {
+        "pages/api/chatbot/*.ts": {
+            "maxDuration": 300
+        }
+    }
+}

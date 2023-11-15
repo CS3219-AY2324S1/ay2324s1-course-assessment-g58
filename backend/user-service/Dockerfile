@@ -16,8 +16,6 @@ COPY ./backend/user-service .
 
 EXPOSE 3001
 
-RUN npx prisma generate
-
-RUN npx prisma db push
+RUN npx prisma generate --schema /app/prisma/schema.prisma
 
 CMD [ "npm", "start" ]

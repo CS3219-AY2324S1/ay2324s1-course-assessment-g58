@@ -26,9 +26,8 @@ import SendIcon from "@mui/icons-material/Send";
 import { fetchToken, useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState, FormEvent } from "react";
 import { fetchGet, fetchPut, fetchDelete, fetchPost } from "@/utils/apiHelpers";
-import ContributionTracker from "./ContributionTracker";
+import SessionTracker from "./SessionComponent/SessionTracker";
 import { validateEmail } from "@/utils/validationHelpers";
-import { enqueueSnackbar } from "notistack";
 import { messageHandler } from "@/utils/handlers";
 import HistoryTable from "./HistoryTable";
 
@@ -50,7 +49,6 @@ const ProfilePage = () => {
     const [isInviteError, setInviteError] = useState(false);
     const [isSubmitting, setSubmitting] = useState(false);
 
-    // TODO: Add a toast for successful update/creation/deletion
     const updateUser = async (event: FormEvent) => {
         event.preventDefault();
         await fetchPut("/api/users", {
@@ -66,7 +64,6 @@ const ProfilePage = () => {
                     "success"
                 );
             } else {
-                enqueueSnackbar(res.message, { variant: "error" });
                 messageHandler(res.message, "error");
             }
         });
@@ -147,6 +144,11 @@ const ProfilePage = () => {
     };
 
     const refreshInvites = async () => {
+        // don't refresh if not admin
+        if (!admin) {
+            return;
+        }
+
         const token = fetchToken();
         await fetchPost("/api/invite/get-all", { token: token }).then((res) => {
             if (res.status == 200 && res.data) {
@@ -158,21 +160,6 @@ const ProfilePage = () => {
     useEffect(() => {
         refreshUsers();
         refreshInvites();
-    }, []);
-
-    useEffect(() => {
-        const squares = document.querySelector(".squares");
-        squares!.innerHTML = "";
-        let totalSubmissions = 0;
-        for (var i = 1; i < 365; i++) {
-            const level = Math.floor(Math.random() * 3);
-            squares!.insertAdjacentHTML(
-                "beforeend",
-                `<li data-level="${level}"></li>`
-            );
-            totalSubmissions += level;
-        }
-        setSubmissions(totalSubmissions);
     }, []);
 
     return (
@@ -219,7 +206,6 @@ const ProfilePage = () => {
                                 <Stack>
                                     <Box
                                         sx={{
-                                            bgcolor: "lightgray",
                                             borderRadius: "0.5rem",
                                             padding: 2,
                                             marginTop: 2,
@@ -286,7 +272,6 @@ const ProfilePage = () => {
                                     {isInviting && (
                                         <Box
                                             sx={{
-                                                bgcolor: "lightgray",
                                                 borderRadius: "0.5rem",
                                                 padding: 2,
                                                 marginTop: 2,
@@ -440,15 +425,7 @@ const ProfilePage = () => {
                         <Card
                             sx={{ padding: 2, marginBottom: 2, minHeight: 250 }}
                         >
-                            <Stack direction="row">
-                                <Typography variant="h6" fontWeight="bold">
-                                    {submissions}
-                                </Typography>
-                                <Typography marginLeft={0.5} marginTop={0.75}>
-                                    submissions in the last year
-                                </Typography>
-                            </Stack>
-                            <ContributionTracker />
+                            <SessionTracker username={user} />
                         </Card>
                         <Card sx={{ padding: 2, minHeight: 350 }}>
                             {/* Header */}
@@ -465,7 +442,6 @@ const ProfilePage = () => {
                                     maxHeight: "200px",
                                     overflowY: "auto",
                                     margin: 1,
-                                    bgcolor: "lightgray",
                                     borderRadius: "0.5rem",
                                 }}
                             >
