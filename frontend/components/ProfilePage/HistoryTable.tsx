@@ -18,7 +18,6 @@ import {
     Toolbar,
     Typography,
     Pagination,
-    Snackbar,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
@@ -28,6 +27,7 @@ import { useStore } from "@/stores";
 import { fetchGet } from "@/utils/apiHelpers";
 import CodeBlock from "./CodeBlock";
 import { capitalizeString } from "@/utils/helper";
+import { messageHandler } from "@/utils/handlers";
 
 type HistoryData = {
     id: number;
@@ -44,7 +44,6 @@ interface HistoryTableProps {
 
 const HistoryTable = ({ username }: HistoryTableProps) => {
     const [open, setOpen] = useState(false);
-    const [openToast, setOpenToast] = useState(false);
     const [questionNumber, setQuestionNumber] = useState(1);
     const [tableData, setTableData] = useState<HistoryData[]>([]);
     const [questionPanelProps, setQuestionProps] = useState({
@@ -54,6 +53,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
     const [displayedResponses, setDisplayedResponses] = useState<
         QuestionResponse[]
     >([]);
+    const [modalLanguage, setModalLanguage] = useState("python");
     const historyStore = useStore().history;
     const dateOptions: Intl.DateTimeFormatOptions = {
         year: "numeric",
@@ -78,9 +78,16 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
     const handleClick = (id: number) => {
         const responses = historyStore.getSessionById(id);
         if (responses == undefined || responses.length == 0) {
-            setOpenToast(true);
+            messageHandler("No Responses found for this Session!", "error");
             return;
         }
+
+        const session = tableData.find((session) => session.id === id);
+        if (!session) {
+            messageHandler("Session not found!", "error");
+            return;
+        }
+
         responses?.map((response) => {
             response.question = historyStore.getQuestionById(
                 response.questionId
@@ -92,6 +99,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
             question_number: 1,
             question: historyStore.getQuestionById(responses[0].questionId),
         });
+        setModalLanguage(session.language.toLowerCase());
         setOpen(true);
     };
 
@@ -269,11 +277,11 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                             code={
                                 displayedResponses[questionNumber - 1] ==
                                 undefined
-                                    ? "text"
+                                    ? "  Press the question number  "
                                     : displayedResponses[questionNumber - 1]
                                           .text
                             }
-                            language={"python"}
+                            language={modalLanguage}
                         />
                     </Box>
                 </Stack>
@@ -291,21 +299,6 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                     />
                 </Box>
             </Dialog>
-            <Snackbar
-                open={openToast}
-                autoHideDuration={300}
-                message="No Responses found for this Session!"
-                action={
-                    <IconButton
-                        size="small"
-                        aria-label="close"
-                        color="inherit"
-                        onClick={() => setOpenToast(false)}
-                    >
-                        <CloseIcon fontSize="small" />
-                    </IconButton>
-                }
-            />
         </>
     );
 };

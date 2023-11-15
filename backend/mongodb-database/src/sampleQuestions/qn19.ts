@@ -43,8 +43,10 @@ Constraints:
         {
             language: LANGUAGE.PYTHON,
             starterCode:
-`class Solution:
-    def xorGame(self, nums: list[int]) -> bool:
+`from typing import List
+
+class Solution:
+    def xorGame(self, nums: List[int]) -> bool:
         pass
 `
             , driverCode:

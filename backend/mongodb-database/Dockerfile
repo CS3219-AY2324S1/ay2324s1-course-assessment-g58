@@ -7,13 +7,13 @@ WORKDIR /app
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY ./mongodb-database/package*.json .
+COPY ./backend/mongodb-database/package*.json .
 RUN npm install
 
 # If you are building your code for production
 # RUN npm ci --omit=dev
 
-COPY ./mongodb-database .
+COPY ./backend/mongodb-database .
 
 EXPOSE 3002
 

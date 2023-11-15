@@ -56,24 +56,9 @@ const InterviewerView = () => {
   };
   return (
     <Paper elevation={3} style={{ position: 'fixed', bottom: 190, right: 0, width: '300px', height: '70%', overflowY: 'auto' }}>
-      {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px' }}>
-        <Typography variant="h6">Example Submissions</Typography>
-      </div> */}
-      {/* Add your interviewer view content here replace Textarea below with this
-          submissions?.map((submission) => (
-                    <div key={submission._id}>
-                        <p>{submissions.description}</p>
-                    </div>
-                ))*/}
-      {/* <TextareaAutosize
-                    minRows={10}
-                    className="code-input"
-                    style={{ width: '100%' }} // Stretch horizontally
-                    placeholder="Contents"
-                    /> */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="Interview view tabs">
-          <Tab label="Example submissions" {...a11yProps(0)} />
+          <Tab label="Notes" {...a11yProps(0)} />
           <Tab label="Help Bot" {...a11yProps(1)} />
         </Tabs>
       </Box>
@@ -82,7 +67,7 @@ const InterviewerView = () => {
           minRows={10}
           className="code-input"
           style={{ width: '100%' }} // Stretch horizontally
-          placeholder="Contents"
+          placeholder="Write your notes here..."
         />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>

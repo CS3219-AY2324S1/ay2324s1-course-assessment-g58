@@ -1,15 +1,15 @@
 # Referenced from https://nodejs.org/en/docs/guides/nodejs-docker-webapp
 FROM --platform=linux/amd64 node:20
 
-WORKDIR /app/collaboration-service
+WORKDIR /app/compiler-service
 
-COPY ./collaboration-service/package*.json .
+COPY ./backend/compiler-service/package*.json .
 RUN npm install
 
-COPY ./collaboration-service .
+COPY ./backend/compiler-service .
 
 RUN npm run build
 
-EXPOSE 3005
+EXPOSE 3006
 
-CMD [ "npm", "start" ]
+CMD ["npm", "start" ]

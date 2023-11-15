@@ -16,12 +16,16 @@ import {
   AccordionSummary,
   AccordionDetails,
   TextareaAutosize,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Editor from "@monaco-editor/react";
 import SyntaxHighlighter from 'react-syntax-highlighter/dist/cjs/prism';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { messageHandler } from "@/utils/handlers";
+import { DIFFICULTY } from "@/utils/enums";
 
 interface DescriptionModalProps {
   question: Question | null;
@@ -186,16 +190,26 @@ function DescriptionModal({
                   setUpdatedCategory(e.target.value)
                 }
               />
-              <TextField
+              <InputLabel id="difficulty-label">
+                Difficulty
+              </InputLabel>
+              <Select
+                labelId="difficulty-label"
                 label="Difficulty"
-                variant="outlined"
                 fullWidth
-                margin="normal"
                 value={updatedDifficulty}
                 onChange={(e) =>
                   setUpdatedDifficulty(e.target.value)
                 }
-              />
+              >
+                {Object.values(DIFFICULTY).map((value) => {
+                  return (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
               <TextField
                 label="Description"
                 variant="outlined"
