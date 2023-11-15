@@ -30,10 +30,14 @@ export default async function handler(
             const data = await response.json();
 
             if (!response.ok) {
-                throw new HttpError(data.status, data.message);
+                return res
+                    .status(response.status)
+                    .json({ status: response.status, data: data });
             }
 
-            return res.json({ status: response.status, data: data });
+            return res
+                .status(response.status)
+                .json({ status: response.status, data: data });
         } catch (error) {
             return res.json({ status: 500, message: `${error}` });
         }

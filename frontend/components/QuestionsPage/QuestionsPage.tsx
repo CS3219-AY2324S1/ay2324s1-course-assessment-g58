@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const QuestionPage = () => {
     // get user's role
-    const { admin } = useAuth();
+    const { token, admin } = useAuth();
 
     // Stuff for modal popup
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,8 +32,12 @@ const QuestionPage = () => {
     const [refresh, setRefresh] = useState(false);
 
     const addQuestion = async (newQuestion: Question) => {
+        if (!token) return;
         // Add the new question to the backend and then update the state
-        const response = await fetchPost("/api/questions", newQuestion);
+        const response = await fetchPost("/api/questions", {
+            ...newQuestion,
+            token,
+        });
         if (response.status == 201) {
             alert("Success! Added: " + response.data.title);
             setRefresh((prev) => !prev);
@@ -44,8 +48,12 @@ const QuestionPage = () => {
     };
 
     const deleteQuestion = async (question: Question) => {
+        if (!token) return;
         // Delete the question from the backend and then update the state
-        const response = await fetchDelete("/api/questions", question);
+        const response = await fetchDelete("/api/questions", {
+            ...question,
+            token,
+        });
         if (response.status == 200) {
             alert("Success! Deleted: " + response.data.title);
             setRefresh((prev) => !prev);
@@ -56,8 +64,12 @@ const QuestionPage = () => {
     };
 
     const editQuestion = async (updatedQuestion: Question) => {
+        if (!token) return;
         // Edit the question from the backend and then update the state
-        const response = await fetchPut("/api/questions", updatedQuestion);
+        const response = await fetchPut("/api/questions", {
+            ...updatedQuestion,
+            token,
+        });
         if (response.status == 200) {
             alert("Success! Updated: " + response.data.title);
             setRefresh((prev) => !prev);
@@ -69,12 +81,15 @@ const QuestionPage = () => {
     };
 
     useEffect(() => {
+        if (!token) return;
         const fetchQuestions = async () => {
-            const fetchedQuestions = await fetchGet("/api/questions");
+            const fetchedQuestions = await fetchGet("/api/questions", {
+                token: token,
+            });
             setQuestions(fetchedQuestions.data);
         };
         fetchQuestions();
-    }, [refresh]);
+    }, [refresh, token]);
 
     return (
         <main>
