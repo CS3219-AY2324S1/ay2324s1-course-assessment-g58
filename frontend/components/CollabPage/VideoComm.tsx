@@ -25,29 +25,9 @@ declare global {
   const partnerNameRef = useRef<string | null>(null);
   const { socketId } = useMatching();
   
-  // const waitForNavigator = () => {
-  //   return new Promise((resolve) => {
-  //     if (navigator.mediaDevices ) {
-  //       // Navigator is available, resolve the promise immediately
-  //       resolve(null);
-  //     } else {
-  //       // Navigator is not available, wait for the window to load
-  //       window.onload = () => {
-  //         if (navigator.mediaDevices ) {
-  //           resolve(null);
-  //         } else {
-  //           // Handle the case where getUserMedia is still not supported
-  //           console.log("getUserMedia is not supported on this browser");
-  //           resolve(null); // Resolve the promise to continue with the code
-  //         }
-  //       };
-  //     }
-  //   });
-  // };
 
 
   useEffect(() => {
-    // Get current username
     if (socketId === username1) {
       userNameRef.current =username1;
       partnerNameRef.current = username2;
@@ -60,16 +40,15 @@ declare global {
     }
     const peer = socketId ? new Peer(socketId) : new Peer();
 
-    let dispose = () => {};
+    let cleanup = () => {};
     if (socketId !== username1) {
-      // waitForNavigator().then(() => {
       setTimeout(() => {
         navigator.mediaDevices.getUserMedia(
           { video: true, audio: true })
           .then((stream) => {
             window.localStream = stream;
             showVideo(stream, userVideoRef.current, true);
-            dispose = showStream(
+            cleanup = showStream(
               peer.call(username1!, stream),
               partnerVideoRef.current
             );
@@ -78,19 +57,17 @@ declare global {
             console.log("Failed to get local stream", error);
           }
         );
-      }, 3000);
+      }, 4000);
       return () => {
-        dispose();
+        cleanup();
         peer.destroy();
         if (window.localStream) {
           window.localStream.getVideoTracks().forEach((track) => track.stop());
           window.localStream.getAudioTracks().forEach((track) => track.stop());
         }
       };
-    // })
     } else {
       const handler = (call: MediaConnection) => {
-        // waitForNavigator().then(() => {
         navigator.mediaDevices.getUserMedia(
           { video: true, audio: true })
           .then((stream) => {
@@ -102,17 +79,14 @@ declare global {
             console.log("Failed to get local stream", error);
           }
         );
-        // });
         
-
-
-        dispose = showStream(call, partnerVideoRef.current);
+        cleanup = showStream(call, partnerVideoRef.current);
       };
 
       peer.on("call", handler);
 
       return () => {
-        dispose();
+        cleanup();
         peer.off("call", handler);
         peer.destroy();
         if (window.localStream) {
