@@ -1,3 +1,13 @@
+# Assignment 5 instructions
+
+1. Create the `.env` files in the respective directories based on the txt files submitted in canvas (for ./backend/ai-service, ./backend/user-service, ./backend/email-service, ./frontend, ./matching-service, ./mongodb-database)
+
+1. Run `docker-compose build`
+
+1. Run `docker-compose up`
+
+1. Goto http://localhost:3000
+
 # Getting Started with Docker for Development
 
 1. Install docker at https://www.docker.com/
