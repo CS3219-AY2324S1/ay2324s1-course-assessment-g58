@@ -31,7 +31,7 @@ Constraints:
 - p contains only lowercase English letters, '?' or '*'. 
 `,
     difficulty: DIFFICULTY.HARD,
-    category: "Strings, Algorithms",
+    category: "Strings",
     templates: [
         {
             language: LANGUAGE.PYTHON,

@@ -32,7 +32,7 @@ Constraints:
 - -1000 <= matrix[i][j] <= 1000 
 `,
     difficulty: DIFFICULTY.MEDIUM,
-    category: "Arrays, Algorithms",
+    category: "Arrays",
     templates: [
         {
             language: LANGUAGE.PYTHON,

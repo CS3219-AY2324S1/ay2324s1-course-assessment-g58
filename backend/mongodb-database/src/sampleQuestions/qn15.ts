@@ -31,7 +31,7 @@ Constraints:
 - 1 <= k <= nums.length
 `,
     difficulty: DIFFICULTY.HARD,
-    category: "Arrays, Algorithms",
+    category: "Arrays",
     templates: [
         {
             language: LANGUAGE.PYTHON,

@@ -27,7 +27,7 @@ Constraints:
 - 0 <= n <= 30
 `,
     difficulty: DIFFICULTY.EASY,
-    category: "Recursion, Algorithms",
+    category: "Recursion",
     templates: [
         {
             language: LANGUAGE.PYTHON,

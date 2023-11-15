@@ -23,7 +23,7 @@ Constraints:
 - s[i] is a printable ascii character. 
 `,
     difficulty: DIFFICULTY.EASY,
-    category: "Strings, Algorithms",
+    category: "Strings",
     templates: [
         {
             language: LANGUAGE.PYTHON,
