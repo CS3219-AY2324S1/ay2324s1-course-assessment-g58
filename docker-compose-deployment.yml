@@ -1,0 +1,167 @@
+version: '3.8'
+
+x-logging:
+  &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+
+services:
+    gateway:
+        depends_on:
+            - users
+            - questions
+            - matching
+            - collaboration
+            - compiler
+            - ai
+            - email
+        container_name: gateway
+        build:
+            context: .
+            dockerfile: ./gateway/Dockerfile
+        ports:
+            - "8080:8080"
+
+    users:
+        depends_on:
+            - email
+        container_name: user-service
+        build:
+            context: .
+            dockerfile: ./backend/user-service/Dockerfile
+        env_file:
+            - .env
+        ports:
+            - "3001:3001"
+
+    questions:
+        container_name: question-service
+        build:
+            context: .
+            dockerfile: ./backend/mongodb-database/Dockerfile
+        ports:
+            - "3002:3002"
+
+    matching:
+        container_name: matching-service
+        build:
+            context: .
+            dockerfile: ./backend/matching-service/Dockerfile
+        ports:
+            - "3004:3004"
+
+    collaboration:
+        container_name: collaboration-service
+        build:
+            context: .
+            dockerfile: ./backend/collaboration-service/Dockerfile
+        ports:
+            - "3005:3005"
+
+    compiler:
+        depends_on:
+            - server
+            - workers
+            - db
+            - redis
+            - rabbitmq
+        container_name: compiler-service
+        build:
+            context: .
+            dockerfile: ./backend/compiler-service/Dockerfile
+        ports:
+            - "3006:3006"
+    
+    email:
+        container_name: email-service
+        build:
+            context: .
+            dockerfile: ./backend/email-service/Dockerfile
+        ports:
+            - "3007:3007"
+
+    ai:
+        container_name: ai-service
+        depends_on:
+            - rabbitmq
+        build:
+            context: .
+            dockerfile: ./backend/ai-service/Dockerfile
+        ports:
+            - "3008:3008"
+
+    server: # Judge0
+        image: judge0/judge0:1.13.0
+        volumes:
+            - ./backend/judge0/judge0.conf:/judge0.conf:ro
+        ports:
+            - "2358:2358"
+        privileged: true
+        <<: *default-logging
+        restart: always
+
+    workers: # Judge0
+        image: judge0/judge0:1.13.0
+        command: ["./scripts/workers"]
+        volumes:
+            - ./backend/judge0/judge0.conf:/judge0.conf:ro
+        privileged: true
+        <<: *default-logging
+        restart: always
+
+    db: # Judge0
+        image: postgres:13.0
+        environment:
+            - REDIS_HOST=redis
+            - REDIS_PASSWORD=YourPasswordHere1234
+            - POSTGRES_HOST=db
+            - POSTGRES_DB=judge0
+            - POSTGRES_USER=judge0
+            - POSTGRES_PASSWORD=YourPasswordHere1234
+        volumes:
+            - postgres-data:/var/lib/postgresql/data/
+        <<: *default-logging
+        restart: always
+
+    redis: # Judge0
+        image: redis:6.0
+        command: [
+            "bash", "-c",
+            'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+        ]
+        environment:
+            - REDIS_HOST=redis
+            - REDIS_PASSWORD=YourPasswordHere1234
+            - POSTGRES_HOST=db
+            - POSTGRES_DB=judge0
+            - POSTGRES_USER=judge0
+            - POSTGRES_PASSWORD=YourPasswordHere1234
+        volumes:
+            - redis-data:/data
+        <<: *default-logging
+        restart: always
+
+    rabbitmq:
+        image: rabbitmq:management
+        hostname: rabbitmq
+        ports:
+            - "5672:5672"      # AMQP protocol
+            - "15672:15672"    # Management UI
+        expose:
+            - 5672
+            - 15672
+        environment:
+            RABBITMQ_DEFAULT_USER: user
+            RABBITMQ_DEFAULT_PASS: password
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+            - rabbitmq_log:/var/log/rabbitmq
+
+volumes:
+    postgres-data:
+    redis-data:
+    rabbitmq_data:
+    rabbitmq_log:
+    

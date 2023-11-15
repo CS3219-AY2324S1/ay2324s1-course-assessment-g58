@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -12,12 +12,48 @@ datasource db {
 }
 
 model User {
-  id        BigInt   @id(map: "users_pkey") @default(autoincrement())
-  username  String   @unique(map: "user_username_key")
-  email     String   @unique(map: "user_email_key")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  password  String
-  admin     Boolean
+  id         BigInt       @id(map: "users_pkey") @default(autoincrement())
+  username   String       @unique(map: "user_username_key")
+  email      String       @unique(map: "user_email_key")
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  password   String
+  admin      Boolean
+  invitation Invitation[]
+  session    Session[]
 
   @@map("User")
+}
+
+model Invitation {
+  id        String   @id(map: "invitation_pkey") @default(cuid())
+  email     String   @unique(map: "invitaion_email_key")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  invitedBy User     @relation(fields: [userId], references: [id])
+  userId    BigInt
+
+  @@map("Invitation")
+}
+
+model Session {
+  id         BigInt     @id(map: "session_pkey") @default(autoincrement())
+  createdAt  DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  difficulty String     @default("Easy")
+  language   String
+  roomId     String
+  year       Int
+  month      Int
+  users      User[]
+  responses  Response[]
+
+  @@map("Session")
+}
+
+model Response {
+  id         BigInt  @id(map: "response_pkey") @default(autoincrement())
+  questionId String
+  text       Json
+  session    Session @relation(fields: [sessionId], references: [id], onDelete: Cascade) // On Session delete, delete all attached Responses
+  sessionId  BigInt
+
+  @@map("Response")
 }

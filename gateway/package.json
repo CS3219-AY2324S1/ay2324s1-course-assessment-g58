@@ -7,8 +7,12 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Question service: No tests yet, add tests\" && exit 0"
-},
+  },
   "dependencies": {
-    "express-gateway": "^1.16.11"
+    "amqplib": "^0.10.3",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "express-gateway": "^1.16.11",
+    "uuid": "^9.0.1"
   }
 }

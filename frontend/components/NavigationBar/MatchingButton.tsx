@@ -30,14 +30,12 @@ const MatchingButton = () => {
     const [isMatching, setMatching] = useState(false);
     const [missingLanguage, setMissingLanguage] = useState(false);
     const [missingDifficulty, setMissingDifficulty] = useState(false);
-    const diffChoices = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD];
-    const langChoices = [
-        LANGUAGE.PYTHON,
-        LANGUAGE.JAVA,
-        LANGUAGE.CPP,
-        LANGUAGE.C,
-        LANGUAGE.JAVASCRIPT,
-    ];
+
+    const langOptions = Object.keys(LANGUAGE).map((key) => ({
+        key: key,
+        value: (LANGUAGE as any)[key],
+    }));
+
     const [progress, setProgress] = useState(0);
     const waitTime = 30000;
     const router = useRouter();
@@ -61,9 +59,9 @@ const MatchingButton = () => {
     const handleMatching = () => {
         setTimeout(false);
         // Handle errors
-        if (difficulty === null || language === null) {
-            setMissingDifficulty(difficulty === null);
-            setMissingLanguage(language === null);
+        if (difficulty === "" || language === "") {
+            setMissingDifficulty(difficulty === "");
+            setMissingLanguage(language === "");
             return;
         }
 
@@ -116,6 +114,12 @@ const MatchingButton = () => {
         }
     }, [router.pathname]);
 
+    const elapsedTime = (progress / 100) * waitTime;
+    const remainingTime = waitTime - elapsedTime; // Remaining time until the countdown is finished
+    const remainingTimeInSeconds = Math.floor(remainingTime / 1000);
+    const remainingMinutes = Math.floor(remainingTimeInSeconds / 60);
+    const remainingSeconds = remainingTimeInSeconds % 60;
+
     return (
         <div>
             <Button
@@ -141,6 +145,9 @@ const MatchingButton = () => {
                     {isMatching ? (
                         <Stack className="items-center">
                             <CircularProgress size="4rem" thickness={4} />
+                            <Typography variant="caption" display="block" gutterBottom>
+                                Time Remaining: {remainingMinutes}:{remainingSeconds.toString().padStart(2, '0')}
+                            </Typography>
                         </Stack>
                     ) : (
                         <Stack>
@@ -186,14 +193,17 @@ const MatchingButton = () => {
                                     label="language"
                                     className="w-full"
                                     value={language}
-                                    onChange={(e) =>
-                                        setLanguage(e.target.value as string)
-                                    }
+                                    onChange={(e) => {
+                                        setLanguage(e.target.value);
+                                    }}
                                 >
-                                    {Object.values(LANGUAGE).map((value) => {
+                                    {langOptions.map((option) => {
                                         return (
-                                            <MenuItem key={value} value={value}>
-                                                {value}
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.key}
+                                            >
+                                                {option.value}
                                             </MenuItem>
                                         );
                                     })}

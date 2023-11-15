@@ -18,14 +18,23 @@
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
+    "@types/react-syntax-highlighter": "^15.5.9",
     "autoprefixer": "10.4.15",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
+    "mobx": "^6.10.2",
     "monaco-editor": "^0.43.0",
     "next": "13.4.19",
+    "notistack": "^3.0.1",
+    "peerjs": "^1.5.1",
     "postcss": "8.4.29",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-draggable": "^4.4.6",
+    "react-modal": "^3.16.1",
+    "react-syntax-highlighter": "^15.5.0",
+    "react-table": "^7.8.0",
+    "recharts": "^2.9.3",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "typescript": "5.2.2",
@@ -35,6 +44,7 @@
     "yjs": "^13.6.8"
   },
   "devDependencies": {
+    "@types/react-table": "^7.7.17",
     "mini-css-extract-plugin": "^2.7.6"
   }
 }

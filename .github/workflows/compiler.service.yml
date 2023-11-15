@@ -5,9 +5,9 @@ name: Compiler service CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "staging" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "staging" ]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./compiler-service/
+        working-directory: ./backend/compiler-service/
     strategy:
       matrix:
         node-version: [18.x]
@@ -28,13 +28,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: ./compiler-service/package-lock.json
+        cache-dependency-path: ./backend/compiler-service/package-lock.json
     - name: Install dependencies
       run: npm ci
-      working-directory: ./compiler-service
+      working-directory: ./backend/compiler-service
     - name: Build
       run: npm run build --if-present
-      working-directory: ./compiler-service
+      working-directory: ./backend/compiler-service
     - name: Test
       run: npm test
-      working-directory: ./compiler-service
+      working-directory: ./backend/compiler-service

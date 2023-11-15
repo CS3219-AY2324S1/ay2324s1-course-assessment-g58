@@ -1,57 +1,95 @@
 http:
-    port: 8080
+  port: 8080
+https:
+  port: 8080
 admin:
-    port: 9876
-    host: localhost
+  port: 9876
 apiEndpoints:
-    # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
-    user:
-        host: "*"
-        paths:
-            - "/api/users"
-            - "/api/login"
-            - "/api/logout"
-            - "/api/token-login"
-    questionBank:
-        host: "*"
-        paths:
-            - "/add-new-question"
-            - "/get-all-questions"
-            - "/delete-question"
-            - "/edit-question"
+  # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/apiEndpoints
+  user:
+    host: "*"
+    paths:
+      - "/api/users"
+      - "/api/users/verify-invitation"
+      - "/api/login"
+      - "/api/logout"
+      - "/api/token-login"
+      - "/api/invite"
+      - "/api/response"
+      - "/api/session/*"
+  questionBank:
+    host: "*"
+    paths:
+      - "/add-new-question"
+      - "/get-all-questions"
+      - "/delete-question"
+      - "/edit-question"
+      - "/set-questions-to-default"
+      - "/filter-questions"
+  compiler:
+    host: "*"
+    paths:
+      - "/compile"
+      - "/enqueue-request-compiler"
+
+  ai:
+    host: "*"
+    paths:
+      - "/enqueue-request-ai"
 
 serviceEndpoints:
-    # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
-    userService:
-        url: "http://localhost:3001"
-    questionService:
-        url: "http://localhost:3002"
+  # see: http://www.express-gateway.io/docs/configuration/gateway.config.yml/serviceEndpoints
+  # For deployment, uncomment the environment variables and comment the localhost urls.
+  userService:
+    url: "${USER_SERVICE_URL}"
+  questionService:
+    url: "${QUESTION_SERVICE_URL}"
 
 policies:
-    - basic-auth
-    - cors
-    - expression
-    - key-auth
-    - log
-    - oauth2
-    - proxy
-    - rate-limit
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+  - rabbitmq-middleware-policy
 
 pipelines:
-    # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
-    userPipeline:
-        apiEndpoints:
-            - user
-        policies:
-            - proxy:
-                  - action:
-                        serviceEndpoint: userService
-    questionPipeline:
-        apiEndpoints:
-            - questionBank
-        policies:
-            - proxy:
-                  - action:
-                        serviceEndpoint: questionService
+  # see: https://www.express-gateway.io/docs/configuration/gateway.config.yml/pipelines
+  userPipeline:
+    apiEndpoints:
+      - user
+    policies:
+      - log:
+          - action:
+              message: ${req.method} ${req.originalUrl} # parameter for log action
+      - proxy:
+          - action:
+              serviceEndpoint: userService
+              timeout: 65000
+  questionPipeline:
+    apiEndpoints:
+      - questionBank
+    policies:
+      - log:
+          - action:
+              message: ${req.method} ${req.originalUrl} # parameter for log action
+      - proxy:
+          - action:
+              serviceEndpoint: questionService
+              timeout: 65000
+  compilerPipeline:
+    apiEndpoints:
+      - compiler
+    policies:
+      - rabbitmq-middleware-policy:
+
+  aiPipeline:
+    apiEndpoints:
+      - ai
+    policies:
+      - rabbitmq-middleware-policy:
 
 routes:

@@ -1,0 +1,5 @@
+node_modules
+.env
+
+# Keep compiled ts files, in ./dist, out of version control
+dist

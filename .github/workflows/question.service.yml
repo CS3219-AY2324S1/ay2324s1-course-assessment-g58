@@ -5,9 +5,9 @@ name: Question service CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "staging" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "staging" ]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./mongodb-database/
+        working-directory: ./backend/mongodb-database/
     strategy:
       matrix:
         node-version: [18.x]
@@ -28,13 +28,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: ./mongodb-database/package-lock.json
+        cache-dependency-path: ./backend/mongodb-database/package-lock.json
     - name: Install dependencies
       run: npm ci
-      working-directory: ./mongodb-database
+      working-directory: ./backend/mongodb-database
     - name: Build
       run: npm run build --if-present
-      working-directory: ./mongodb-database
+      working-directory: ./backend/mongodb-database
     - name: Test
       run: npm test
-      working-directory: ./mongodb-database
+      working-directory: ./backend/mongodb-database

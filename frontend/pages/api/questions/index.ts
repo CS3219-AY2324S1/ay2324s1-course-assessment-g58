@@ -1,3 +1,4 @@
+import Question from "@/types/Question";
 import {
     HttpError,
     ResponseData,
@@ -13,18 +14,33 @@ export default async function handler(
     res: NextApiResponse<ResponseData>
 ) {
     if (req.method === "POST") {
-        const { _id, title, description, difficulty, category } = req.body;
+        if (req.body === "setToDefault") {
+            try {
+                const express_gateway: string = ((process.env
+                    .GATEWAY_SERVER_URL as string) +
+                    process.env
+                        .QUESTION_SERVICE_SET_TO_DEFAULT_ENDPOINT) as string;
+                const response = await fetchPost(express_gateway as string, {
+                    setToDefault: true,
+                });
+                return res.json({ status: 201, data: response });
+            } catch (error) {
+                if (error instanceof HttpError) {
+                    return res.json({
+                        status: error.status,
+                        message: error.message,
+                    });
+                } else {
+                    return res.json({ status: 400, data: error });
+                }
+            }
+        }
+        const data = req.body as Question;
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
                 process.env.QUESTION_SERVICE_ADD_QUESTION_ENDPOINT) as string;
-            const response = await fetchPost(express_gateway as string, {
-                _id: _id,
-                title: title,
-                description: description,
-                difficulty: difficulty,
-                category: category,
-            });
+            const response = await fetchPost(express_gateway as string, data);
             return res.json({ status: 201, data: response });
         } catch (error) {
             if (error instanceof HttpError) {
@@ -79,18 +95,12 @@ export default async function handler(
             }
         }
     } else if (req.method === "PUT") {
-        const { _id, title, description, difficulty, category } = req.body;
+        const data = req.body as Question;
         try {
             const express_gateway: string = ((process.env
                 .GATEWAY_SERVER_URL as string) +
                 process.env.QUESTION_SERVICE_EDIT_QUESTION_ENDPOINT) as string;
-            const response = await fetchPut(express_gateway as string, {
-                _id: _id,
-                title: title,
-                description: description,
-                difficulty: difficulty,
-                category: category,
-            });
+            const response = await fetchPut(express_gateway as string, data);
             return res.json({ status: 200, data: response });
         } catch (error) {
             if (error instanceof HttpError) {

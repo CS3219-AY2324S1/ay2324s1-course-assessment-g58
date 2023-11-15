@@ -1,28 +1,20 @@
 :root {
-    --foreground-rgb: 0, 0, 0;
-    --background-start-rgb: 214, 219, 220;
-    --background-end-rgb: 255, 255, 255;
+    --background-color: rgb(238, 238, 238);
+    --dark-background-color: #121212;
     --square-size: 9px;
     --square-gap: 3px;
     --week-width: calc(var(--square-size) + var(--square-gap));
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-        --background-start-rgb: 0, 0, 0;
-        --background-end-rgb: 0, 0, 0;
-    }
+body {
+    background-color: var(--background-color);
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
 }
 
-body {
-    color: rgb(var(--foreground-rgb));
-    background: linear-gradient(
-            to bottom,
-            transparent,
-            rgb(var(--background-end-rgb))
-        )
-        rgb(var(--background-start-rgb));
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--dark-background-color);
+    }
 }
 
 .months {
@@ -125,3 +117,27 @@ textarea {
 .otherUserSelection {
     background-color: lightsalmon;
 }
+.video-container {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #000;
+    z-index: 999;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    
+    
+  }
+  .hidden {
+    display: none;
+    
+    
+  }
+  .video-collab-container{
+    position: fixed;
+    top: 100px; /* Adjust the top value to your desired position */
+    right: 700px; /* Adjust the right value to your desired position */
+    z-index: 1000; /* Make sure it's above other content */
+
+  }
+  

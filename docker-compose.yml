@@ -1,7 +1,51 @@
 version: '3.8'
 
+x-logging:
+  &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+
 services:
+    frontend:
+        depends_on:
+            - gateway
+        container_name: frontend
+        build:
+            context: .
+            dockerfile: ./frontend/Dockerfile
+        ports:
+            - "3000:3000"
+        env_file:
+            - ./frontend/.env
+        environment: # Running locally has different url than running on docker (not localhost)
+            - NEXT_PUBLIC_MATCHING_SERVER_URL=http://matching:3004
+            - NEXT_PUBLIC_COLLAB_SERVER_URL=http://collaboration:3005
+            - GATEWAY_SERVER_URL=http://gateway:8080
+
+    gateway:
+        depends_on:
+            - users
+            - questions
+            - matching
+            - collaboration
+            - compiler
+            - ai
+            - email
+        container_name: gateway
+        build:
+            context: .
+            dockerfile: ./gateway/Dockerfile
+        ports:
+            - "8080:8080"
+        environment:
+            - USER_SERVICE_URL=http://users:3001
+            - QUESTION_SERVICE_URL=http://questions:3002
+            - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
     users:
+        depends_on:
+            - email
         container_name: user-service
         build:
             context: .
@@ -10,13 +54,139 @@ services:
             - "3001:3001"
         env_file:
             - ./backend/user-service/.env
+        environment:
+            - EMAIL_SERVICE_URL=http://email:3007/email
 
     questions:
         container_name: question-service
         build:
             context: .
-            dockerfile: ./mongodb-database/Dockerfile
+            dockerfile: ./backend/mongodb-database/Dockerfile
         ports:
             - "3002:3002"
         env_file:
-            - ./mongodb-database/.env
+            - ./backend/mongodb-database/.env
+
+    matching:
+        container_name: matching-service
+        build:
+            context: .
+            dockerfile: ./backend/matching-service/Dockerfile
+        ports:
+            - "3004:3004"
+        env_file:
+            - ./backend/matching-service/.env
+        environment:
+            - GATEWAY_SERVER_URL=http://gateway:8080
+            - USER_SERVICE_URL=http://users:3001/api/session
+
+    collaboration:
+        container_name: collaboration-service
+        build:
+            context: .
+            dockerfile: ./backend/collaboration-service/Dockerfile
+        ports:
+            - "3005:3005"
+
+    compiler:
+        depends_on:
+            - server
+            - workers
+            - db
+            - redis
+            - rabbitmq
+        container_name: compiler-service
+        build:
+            context: .
+            dockerfile: ./backend/compiler-service/Dockerfile
+        ports:
+            - "3006:3006"
+        environment: # Running locally has different url than running on docker (not localhost)
+            - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+            - JUDGE0_URL=http://server:2358/
+    
+    email:
+        container_name: email-service
+        build:
+            context: .
+            dockerfile: ./backend/email-service/Dockerfile
+        ports:
+            - "3007:3007"
+        env_file:
+            - ./backend/email-service/.env
+
+    ai:
+        container_name: ai-service
+        depends_on:
+            - rabbitmq
+        build:
+            context: .
+            dockerfile: ./backend/ai-service/Dockerfile
+        ports:
+            - "3008:3008"
+        env_file:
+            - ./backend/ai-service/.env
+        environment: # Running locally has different url than running on docker (not localhost)
+            - RABBITMQ_URL=amqp://user:password@rabbitmq:5672
+
+    server: # Judge0
+        image: judge0/judge0:1.13.0
+        volumes:
+            - ./backend/judge0/judge0.conf:/judge0.conf:ro
+        ports:
+            - "2358:2358"
+        privileged: true
+        <<: *default-logging
+        restart: always
+
+    workers: # Judge0
+        image: judge0/judge0:1.13.0
+        command: ["./scripts/workers"]
+        volumes:
+            - ./backend/judge0/judge0.conf:/judge0.conf:ro
+        privileged: true
+        <<: *default-logging
+        restart: always
+
+    db: # Judge0
+        image: postgres:13.0
+        env_file: ./backend/judge0/judge0.conf
+        volumes:
+            - postgres-data:/var/lib/postgresql/data/
+        <<: *default-logging
+        restart: always
+
+    redis: # Judge0
+        image: redis:6.0
+        command: [
+            "bash", "-c",
+            'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+        ]
+        env_file: ./backend/judge0/judge0.conf
+        volumes:
+            - redis-data:/data
+        <<: *default-logging
+        restart: always
+
+    rabbitmq:
+        image: rabbitmq:management
+        hostname: rabbitmq
+        ports:
+            - "5672:5672"      # AMQP protocol
+            - "15672:15672"    # Management UI
+        expose:
+            - 5672
+            - 15672
+        environment:
+            RABBITMQ_DEFAULT_USER: user
+            RABBITMQ_DEFAULT_PASS: password
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+            - rabbitmq_log:/var/log/rabbitmq
+
+volumes:
+    postgres-data:
+    redis-data:
+    rabbitmq_data:
+    rabbitmq_log:
+    
