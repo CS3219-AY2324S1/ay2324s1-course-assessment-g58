@@ -29,7 +29,7 @@ Constraints:
 - text1 and text2 consist of only lowercase English characters
 `,
     difficulty: DIFFICULTY.MEDIUM,
-    category: "Strings, Algorithms",
+    category: "Strings",
     templates: [
         {
             language: LANGUAGE.PYTHON,

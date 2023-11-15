@@ -22,7 +22,7 @@ Constraints:
 - s[i] is either 'A', 'C', 'G', or 'T'. 
 `,
     difficulty: DIFFICULTY.MEDIUM,
-    category: "Algorithms, Bit Manipulation",
+    category: "Bit Manipulation",
     templates: [
         {
             language: LANGUAGE.PYTHON,

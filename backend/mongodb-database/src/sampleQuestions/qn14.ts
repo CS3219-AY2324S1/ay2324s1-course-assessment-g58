@@ -34,7 +34,7 @@ Constraints:
  
 `,
     difficulty: DIFFICULTY.MEDIUM,
-    category: "Data Structures, Algorithms",
+    category: "Data Structures",
     templates: [
         {
             language: LANGUAGE.PYTHON,

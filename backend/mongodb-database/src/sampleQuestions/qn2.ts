@@ -46,7 +46,7 @@ Constraints:
 Follow up: Can you solve it using O(1) (i.e. constant) memory? 
 `,
     difficulty: DIFFICULTY.EASY,
-    category: "Data Structures, Algorithms",
+    category: "Data Structures",
     templates: [
         {
             language: LANGUAGE.PYTHON,

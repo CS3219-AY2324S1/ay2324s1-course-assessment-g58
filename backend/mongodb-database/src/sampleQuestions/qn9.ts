@@ -31,7 +31,7 @@ Constraints:
 - All the pairs prerequisites[i] are unique. 
 `,
     difficulty: DIFFICULTY.MEDIUM,
-    category: "Data Structures, Algorithms",
+    category: "Data Structures",
     templates: [
         {
             language: LANGUAGE.PYTHON,

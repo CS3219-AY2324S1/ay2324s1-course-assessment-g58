@@ -32,7 +32,7 @@ Constraints:
 - -1000 <= Node.val <= 1000
 `,
     difficulty: DIFFICULTY.HARD,
-    category: "Data Structures, Algorithms",
+    category: "Data Structures",
     templates: [
         {
             language: LANGUAGE.PYTHON,

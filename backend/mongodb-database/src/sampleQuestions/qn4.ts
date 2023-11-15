@@ -17,7 +17,7 @@ Constraints:
 - Each string does not contain leading zeros except for the zero itself
 `,
     difficulty: DIFFICULTY.EASY,
-    category: "Bit Manipulation, Algorithms",
+    category: "Bit Manipulation",
     templates: [
         {
             language: LANGUAGE.PYTHON,
