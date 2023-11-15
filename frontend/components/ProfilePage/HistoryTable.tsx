@@ -275,10 +275,10 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                     <Box sx={{ width: "50%", height: "80vh", padding: 8 }}>
                         <CodeBlock
                             code={
-                                displayedResponses[questionNumber - 1] ==
+                                displayedResponses[questionNumber] ==
                                 undefined
                                     ? "  Press the question number  "
-                                    : displayedResponses[questionNumber - 1]
+                                    : displayedResponses[questionNumber]
                                           .text
                             }
                             language={modalLanguage}
