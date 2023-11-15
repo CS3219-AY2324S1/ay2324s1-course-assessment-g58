@@ -4,7 +4,9 @@
 
 2. Duplicate `.env.example` and rename the new file `.env`
 
-3. Retrieve secrets from group chat. Search `EMAILSECRETS`.
+3. IMPORTANT: the SMTP_PASSWORD uses a secret key only available to developers. 
+    For testing, please contact the developers. 
+    Optionally, you can also test the email functionality on peerprep.ryanchuahj.com.
 
 4. Run `npm start` to start the service.
 
