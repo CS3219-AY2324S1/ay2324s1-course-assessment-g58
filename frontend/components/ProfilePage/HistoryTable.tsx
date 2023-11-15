@@ -44,7 +44,7 @@ interface HistoryTableProps {
 
 const HistoryTable = ({ username }: HistoryTableProps) => {
     const [open, setOpen] = useState(false);
-    const [questionNumber, setQuestionNumber] = useState(1);
+    const [questionNumber, setQuestionNumber] = useState(0);
     const [tableData, setTableData] = useState<HistoryData[]>([]);
     const [questionPanelProps, setQuestionProps] = useState({
         question_number: questionNumber,
@@ -66,9 +66,9 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
     };
 
     const handleChange = (event: ChangeEvent<unknown>, value: number) => {
-        setQuestionNumber(value);
+        setQuestionNumber(value - 1);
         setQuestionProps({
-            question_number: value,
+            question_number: value - 1,
             question: historyStore.getQuestionById(
                 displayedResponses[value - 1].questionId
             )!,
@@ -96,7 +96,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
         setDisplayedResponses(responses!);
         if (responses == undefined) return;
         setQuestionProps({
-            question_number: 1,
+            question_number: 0,
             question: historyStore.getQuestionById(responses[0].questionId),
         });
         setModalLanguage(session.language.toLowerCase());
@@ -288,7 +288,7 @@ const HistoryTable = ({ username }: HistoryTableProps) => {
                 <Box>
                     <Pagination
                         count={displayedResponses.length}
-                        page={questionNumber}
+                        page={questionNumber + 1}
                         color="primary"
                         onChange={handleChange}
                         sx={{
