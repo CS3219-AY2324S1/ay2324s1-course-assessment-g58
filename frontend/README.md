@@ -11,7 +11,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 If you are using VSCode, download the tailwind css extension for code suggestions!
 
-First, run the development server:
+First, run `npm install`
+
+
+Then, run the development server:
 
 ```bash
 npm run dev
