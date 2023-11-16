@@ -2,21 +2,21 @@
 
 1. Create the `.env` files in the respective directories based on the txt files submitted in canvas (for ./backend/ai-service, ./backend/user-service, ./backend/email-service, ./frontend, ./matching-service, ./mongodb-database)
 
-1. Run `docker-compose build`
+2. Start docker
 
-1. Run `docker-compose up`
+3. Run `docker-compose build` and wait for the build to finish
 
-1. Goto http://localhost:3000
+4. Run `docker-compose up` and wait for the services to finish setting up
 
-# Getting Started with Docker for Development
+5. Go to http://localhost:3000
+
+## Getting Started with Docker for Development
 
 1. Install docker at https://www.docker.com/
 
 2. Start docker
 
 3. Run `docker-compose up --build` to build and run images and containers
-
-4. Note: this does not start the api-gateway. Follow the relevant `./gateway/README.md`
 
 ## Developer guide
 
