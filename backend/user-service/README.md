@@ -10,7 +10,7 @@
 
 5. Run `npx prisma generate`
 
-6. Run `npx prisma db push --schema='{PATH TO schema.prisma file}'`. This will only need to be done once to update your local `schema.prisma` to supabase
+6. Run `npx prisma db push --schema='{PATH TO schema.prisma file}'`. This will only need to be done once to update your local `schema.prisma` to supabase e.g. `npx prisma db push --schema='prisma\schema.prisma'`
 
 7. Run `npm start` to start the service.
 
