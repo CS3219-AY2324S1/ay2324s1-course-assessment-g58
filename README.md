@@ -8,7 +8,11 @@
 
 4. Run `docker-compose up` and wait for the services to finish setting up
 
-5. Go to http://localhost:3000
+5. Go to http://localhost:3000 and create an account
+
+6. Repeat step 5 on an incognito browser
+
+7. Click `Match` on both browsers and specify similar requirements to successfully match
 
 ## Getting Started with Docker for Development
 
