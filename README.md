@@ -1,14 +1,26 @@
 # Getting Started with Docker for Development
+This will help you set up your local environment to run PeerPrep. Note that if you have received `.env` files for frontend, question and user services, simply add those files to the respective `frontend`, `backend/user-service` and `mongodb-database` directories and rename them to `.env`. Thereafter, skip step 3, 4 and 5.
 
 1. Install docker at https://www.docker.com/
 
 2. Start docker
 
-3. Run `docker compose build` to build the images and containers
+3. Enter the `backend/user-service` directory and follow the `README.md` to configure the user-service
 
-4. Run `docker compose up` to start the container (Note: this will only start the user & question service)
+4. Enter the `mongodb-database` directory and follow the `README.md` to configure the question-service
 
-5. Note: this does not start the api-gateway. Follow the relevant `./gateway/README.md`
+5. Enter the `frontend` directory and follow the `README.md` to configure the frontend
+
+6. Run `docker compose build` from the root directory to build the images and containers
+
+7. Run `docker compose up` from the root directory to start the container 
+(Note: this will only start the user & question service)
+
+8. Enter the `frontend` directory and run `npm install`, followed by `npm run dev`.
+
+9. Enter the `gateway` directory and run `npm install`, followed by `npm start`.
+
+10. Visit http://localhost:3000 and create an account
 
 ## Developer guide
 
