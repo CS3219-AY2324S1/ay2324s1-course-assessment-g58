@@ -13,3 +13,5 @@ npm install -g http-server
 ```
 http-server
 ```
+
+3. Access peerprep on http://localhost:8080/
